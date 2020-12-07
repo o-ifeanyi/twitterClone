@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "415201169644",
+    "project_id": "fc-twitter",
+    "storage_bucket": "fc-twitter.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:415201169644:android:bedc42e5cbf159a8c815c9",
+        "android_client_info": {
+          "package_name": "com.onuifeanyi.fc_twitter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "415201169644-v2aoqqt4ioquik1ubllu32lnktqjdhlv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD4emT9F3Llu_84UJRlFL8VeAaEZlJa6O0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "415201169644-v2aoqqt4ioquik1ubllu32lnktqjdhlv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
