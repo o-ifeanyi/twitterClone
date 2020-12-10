@@ -14,14 +14,14 @@ class MockFireBaseFirestore extends Mock implements FirebaseFirestore {}
 class MockUserCredential extends Mock implements UserCredential {}
 
 void main() {
-  UserModel userEntity;
+  UserModel userModel;
   MockFireBaseAuth mockFireBaseAuth;
   MockFireBaseFirestore mockFireBaseFirestore;
   MockUserCredential mockUserCredential;
   UserRepositoryImpl fireBaseUserRepositoryImpl;
 
   setUp(() {
-    userEntity = UserModel(email: 'ifeanyi@email.com', password: '123456');
+    userModel = UserModel(email: 'ifeanyi@email.com', password: '123456');
     mockFireBaseAuth = MockFireBaseAuth();
     mockUserCredential = MockUserCredential();
     mockFireBaseFirestore = MockFireBaseFirestore();
@@ -37,7 +37,7 @@ void main() {
           .thenAnswer(
         (_) => Future.value(mockUserCredential),
       );
-      final user = await fireBaseUserRepositoryImpl.signUpNewUser(userEntity);
+      final user = await fireBaseUserRepositoryImpl.signUpNewUser(userModel);
 
       expect(user, equals(Right(mockUserCredential)));
     });
@@ -47,7 +47,7 @@ void main() {
       when(mockFireBaseAuth.createUserWithEmailAndPassword(
               email: anyNamed('email'), password: anyNamed('password')))
           .thenThrow(Error());
-      final user = await fireBaseUserRepositoryImpl.signUpNewUser(userEntity);
+      final user = await fireBaseUserRepositoryImpl.signUpNewUser(userModel);
 
       expect(user, equals(Left(AuthFailure(message: 'Sign up failed'))));
     });
@@ -58,7 +58,7 @@ void main() {
           .thenAnswer(
         (_) => Future.value(mockUserCredential),
       );
-      final user = await fireBaseUserRepositoryImpl.logInUser(userEntity);
+      final user = await fireBaseUserRepositoryImpl.logInUser(userModel);
 
       expect(user, equals(Right(mockUserCredential)));
     });
@@ -69,7 +69,7 @@ void main() {
               email: anyNamed('email'), password: anyNamed('password')))
           .thenThrow(Error());
 
-      final user = await fireBaseUserRepositoryImpl.logInUser(userEntity);
+      final user = await fireBaseUserRepositoryImpl.logInUser(userModel);
       print('user ==>  $user');
 
       expect(user, equals(Left(AuthFailure(message: 'Login failed'))));

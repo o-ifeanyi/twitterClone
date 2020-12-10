@@ -12,13 +12,13 @@ class MockUserCredential extends Mock implements UserCredential {}
 class MockUserRepositoryImpl extends Mock implements UserRepositoryImpl {}
 
 void main() {
-  UserModel userEntity;
+  UserModel userModel;
   AuthBloc authBloc;
   MockUserRepositoryImpl fireBaseUserRepositoryImpl;
   MockUserCredential mockUserCredential;
 
   setUp(() {
-    userEntity = UserModel(email: 'ifeanyi@email.com', password: '123456');
+    userModel = UserModel(email: 'ifeanyi@email.com', password: '123456');
     fireBaseUserRepositoryImpl = MockUserRepositoryImpl();
     mockUserCredential = MockUserCredential();
     authBloc = AuthBloc(
@@ -28,9 +28,9 @@ void main() {
 
   group('Sign up event', () {
     test(
-        'shpuld emit [Authinprogress] and [Authcomplete] when sign up is successful',
+        'should emit [Authinprogress] and [Authcomplete] when sign up is successful',
         () async {
-      when(fireBaseUserRepositoryImpl.signUpNewUser(userEntity)).thenAnswer(
+      when(fireBaseUserRepositoryImpl.signUpNewUser(userModel)).thenAnswer(
         (_) => Future.value(Right(mockUserCredential)),
       );
       when(fireBaseUserRepositoryImpl.saveUserDetail(mockUserCredential))
@@ -43,12 +43,12 @@ void main() {
       ];
       expectLater(authBloc, emitsInOrder(expected));
 
-      authBloc.add(SignUp(user: userEntity));
+      authBloc.add(SignUp(user: userModel));
     });
 
-    test('shpuld emit [Authinprogress] and [Authfailed] when sign up fails',
+    test('should emit [Authinprogress] and [Authfailed] when sign up fails',
         () async {
-      when(fireBaseUserRepositoryImpl.signUpNewUser(userEntity)).thenAnswer(
+      when(fireBaseUserRepositoryImpl.signUpNewUser(userModel)).thenAnswer(
         (_) => Future.value(Left(AuthFailure(message: 'Sign up failed'))),
       );
       final expected = [
@@ -57,15 +57,15 @@ void main() {
       ];
       expectLater(authBloc, emitsInOrder(expected));
 
-      authBloc.add(SignUp(user: userEntity));
+      authBloc.add(SignUp(user: userModel));
     });
   });
 
   group('Log in event', () {
     test(
-        'shpuld emit [Authinprogress] and [Authcomplete] when log in is successful',
+        'should emit [Authinprogress] and [Authcomplete] when log in is successful',
         () async {
-      when(fireBaseUserRepositoryImpl.logInUser(userEntity)).thenAnswer(
+      when(fireBaseUserRepositoryImpl.logInUser(userModel)).thenAnswer(
         (_) => Future.value(Right(mockUserCredential)),
       );
       final expected = [
@@ -74,12 +74,12 @@ void main() {
       ];
       expectLater(authBloc, emitsInOrder(expected));
 
-      authBloc.add(Login(user: userEntity));
+      authBloc.add(Login(user: userModel));
     });
 
-    test('shpuld emit [Authinprogress] and [Authfailed] when log in fails',
+    test('should emit [Authinprogress] and [Authfailed] when log in fails',
         () async {
-      when(fireBaseUserRepositoryImpl.logInUser(userEntity)).thenAnswer(
+      when(fireBaseUserRepositoryImpl.logInUser(userModel)).thenAnswer(
         (_) => Future.value(Left(AuthFailure(message: 'Sign up failed'))),
       );
       final expected = [
@@ -88,7 +88,7 @@ void main() {
       ];
       expectLater(authBloc, emitsInOrder(expected));
 
-      authBloc.add(Login(user: userEntity));
+      authBloc.add(Login(user: userModel));
     });
   });
 
