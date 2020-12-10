@@ -34,14 +34,13 @@ void main() {
   });
   group('timeline bloc test', () {
     test(
-        'should emit [SendingTweet, SendingComplete] when tweet is sent successfully',
+        'should emit [SendingComplete] first when tweet is sent successfully',
         () async {
       when(mockTimeLineRepository.sendTweet(tweetModel)).thenAnswer(
         (_) => Future.value(Right(true)),
       );
 
       final expectations = [
-        SendingTweet(),
         SendingComplete(),
       ];
       expectLater(timeLineBloc, emitsInOrder(expectations));
@@ -49,14 +48,13 @@ void main() {
       timeLineBloc.add(SendTweet(tweet: tweetModel));
     });
 
-    test('should emit [SendingTweet, SendingFailed] when sending tweet fails',
+    test('should emit [SendingError] first when sending tweet fails',
         () async {
       when(mockTimeLineRepository.sendTweet(tweetModel)).thenAnswer(
         (_) => Future.value(Left(TimeLineFailure(message:'Failed to send tweet'))),
       );
 
       final expectations = [
-        SendingTweet(),
         SendingError(message:'Failed to send tweet'),
       ];
       expectLater(timeLineBloc, emitsInOrder(expectations));

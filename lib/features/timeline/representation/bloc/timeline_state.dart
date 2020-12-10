@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:fc_twitter/features/timeline/representation/bloc/bloc.dart';
 import 'package:flutter/material.dart';
 
 class TimeLineState extends Equatable {
@@ -30,8 +31,6 @@ class TimeLineState extends Equatable {
 
 class InitialTimeLineState extends TimeLineState {}
 
-class SendingTweet extends TimeLineState {}
-
 class SendingError extends TimeLineState {
   final String message;
 
@@ -54,4 +53,8 @@ class FetchingError extends TimeLineState {
   List<Object> get props => [message];
 }
 
-class FetchingComplete extends TimeLineState {}
+class FetchingComplete extends TimeLineState {
+  final Stream tweetStream;
+
+  FetchingComplete({this.tweetStream});
+}

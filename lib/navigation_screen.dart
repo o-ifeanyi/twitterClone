@@ -64,9 +64,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
       body: SafeArea(
         child: BlocListener<TimeLineBloc, TimeLineState>(
           listener: (context, state) {
-            if (state is SendingTweet) {
-              state.showSnackBar(context, _scaffoldKey, 'Sending', 20);
-            } else if (state is SendingError) {
+            if (state is SendingError) {
               state.showSnackBar(context, _scaffoldKey, 'Error', 2,
                   isError: true);
             } else if (state is SendingComplete) {

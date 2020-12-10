@@ -40,7 +40,7 @@ void main() async {
               repositoryImpl: TimeLineRepositoryImpl(
                 firebaseFirestore: FirebaseFirestore.instance,
               ),
-            ),
+            )..add(FetchTweet()),
           ),
           BlocProvider<SettingsBloc>(
             create: (BuildContext context) => SettingsBloc(
