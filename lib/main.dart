@@ -1,16 +1,20 @@
-import 'package:fc_twitter/bloc/auth_bloc.dart';
-import 'package:fc_twitter/bloc/tweet_bloc.dart';
-import 'package:fc_twitter/bloc/theme_bloc.dart';
-import 'package:fc_twitter/screens/auth_form.dart';
-import 'package:fc_twitter/screens/auth_screen.dart';
-import 'package:fc_twitter/screens/tweet_screen.dart';
-import 'package:fc_twitter/screens/navigation_screen.dart';
-import 'package:fc_twitter/util/themes.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fc_twitter/features/authentication/data/repository/user_repository.dart';
+import 'package:fc_twitter/features/settings/representation/bloc/bloc.dart';
+import 'package:fc_twitter/features/timeline/data/repository/timeline_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'core/util/themes.dart';
+import 'features/authentication/representation/bloc/bloc.dart';
+import 'features/authentication/representation/pages/auth_form.dart';
+import 'features/authentication/representation/pages/auth_screen.dart';
+import 'features/timeline/representation/bloc/bloc.dart';
+import 'features/timeline/representation/pages/tweet_screen.dart';
+import 'navigation_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,14 +26,25 @@ void main() async {
       MultiBlocProvider(
         providers: [
           BlocProvider<AuthBloc>(
-            create: (BuildContext context) => AuthBloc(InitialAuthState()),
+            create: (BuildContext context) => AuthBloc(
+              initialState: InitialAuthState(),
+              repositoryImpl: UserRepositoryImpl(
+                firebaseAuth: FirebaseAuth.instance,
+                firebaseFirestore: FirebaseFirestore.instance,
+              ),
+            ),
           ),
-          BlocProvider<TweetBloc>(
-            create: (BuildContext context) => TweetBloc(InitialState()),
+          BlocProvider<TimeLineBloc>(
+            create: (BuildContext context) => TimeLineBloc(
+              initialState: InitialTimeLineState(),
+              repositoryImpl: TimeLineRepositoryImpl(
+                firebaseFirestore: FirebaseFirestore.instance,
+              ),
+            ),
           ),
-          BlocProvider<ThemeBloc>(
-            create: (BuildContext context) => ThemeBloc(
-              ThemeState(index == 0
+          BlocProvider<SettingsBloc>(
+            create: (BuildContext context) => SettingsBloc(
+              AppTheme(index == 0
                   ? lightThemeData[index]
                   : darkThemeData[darkIndex]),
             ),
@@ -45,10 +60,10 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ThemeBloc, ThemeState>(builder: (context, state) {
+    return BlocBuilder<SettingsBloc, SettingsState>(builder: (context, state) {
       return MaterialApp(
         title: 'Flutter Demo',
-        theme: state.theme,
+        theme: (state as AppTheme).theme,
         home: StreamBuilder<User>(
             stream: FirebaseAuth.instance.authStateChanges(),
             builder: (context, snapshot) {
