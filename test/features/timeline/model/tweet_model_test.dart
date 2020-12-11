@@ -21,7 +21,7 @@ void main() {
 
     test('should return a valid model wwhen converting from snapshot',
         () async {
-      final snapshot = (json.decode(fixture('tweet.json')));
+      final snapshot = (json.decode(tweetFixture()));
 
       snapshot['timeStamp'] = Timestamp.now();
 

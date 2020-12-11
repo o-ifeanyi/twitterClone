@@ -1,3 +1,8 @@
-import 'dart:io';
+import 'dart:convert';
 
-String fixture(String name) => File('test/fixtures/$name').readAsStringSync();
+String tweetFixture() => json.encode({
+      "name": "ifeanyi",
+      "userName": "onuoha",
+      "message": "hello world",
+      "timeStamp": "0s"
+    });
