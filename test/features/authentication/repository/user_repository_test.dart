@@ -1,4 +1,3 @@
-import 'package:cloud_firestore_mocks/cloud_firestore_mocks.dart';
 import 'package:dartz/dartz.dart';
 import 'package:fc_twitter/core/error/failure.dart';
 import 'package:fc_twitter/features/authentication/data/model/user_model.dart';
@@ -10,23 +9,37 @@ import 'package:mockito/mockito.dart';
 
 class MockFireBaseAuth extends Mock implements FirebaseAuth {}
 
+class MockFireBaseUser extends Mock implements User {}
+
 class MockUserCredential extends Mock implements UserCredential {}
+
+class MockFirestore extends Mock implements FirebaseFirestore {}
+
+class MockCollectionReference extends Mock implements CollectionReference {}
+
+class MockDocumentReference extends Mock implements DocumentReference {}
 
 void main() {
   UserModel userModel;
   MockFireBaseAuth mockFireBaseAuth;
-  FirebaseFirestore mockFireBaseFirestore;
+  FirebaseFirestore mockFirebaseFirestore;
   MockUserCredential mockUserCredential;
   UserRepositoryImpl fireBaseUserRepositoryImpl;
+  MockCollectionReference collectionReference;
+  MockDocumentReference documentReference;
+  MockFireBaseUser mockUser;
 
   setUp(() {
     userModel = UserModel(email: 'ifeanyi@email.com', password: '123456');
+    mockUser = MockFireBaseUser();
     mockFireBaseAuth = MockFireBaseAuth();
     mockUserCredential = MockUserCredential();
-    mockFireBaseFirestore = MockFirestoreInstance();
+    mockFirebaseFirestore = MockFirestore();
+    collectionReference = MockCollectionReference();
+    documentReference = MockDocumentReference();
     fireBaseUserRepositoryImpl = UserRepositoryImpl(
         firebaseAuth: mockFireBaseAuth,
-        firebaseFirestore: mockFireBaseFirestore);
+        firebaseFirestore: mockFirebaseFirestore);
   });
 
   group('user authentication', () {
@@ -49,6 +62,29 @@ void main() {
       final user = await fireBaseUserRepositoryImpl.signUpNewUser(userModel);
 
       expect(user, equals(Left(AuthFailure(message: 'Sign up failed'))));
+    });
+
+    test('should return true when saving user detail occurs successfully',
+        () async {
+      when(mockUserCredential.user).thenReturn(mockUser);
+      when(mockUser.uid).thenReturn('user-id');
+      when(mockFirebaseFirestore.collection(any)).thenReturn(collectionReference);
+      when(collectionReference.doc(any)).thenReturn(documentReference);
+      when(documentReference.set(any)).thenAnswer((realInvocation) => null);
+
+      final user = await fireBaseUserRepositoryImpl.saveUserDetail(mockUserCredential);
+      print(mockUserCredential.user.uid);
+
+      expect(user, equals(Right(true)));
+    });
+
+    test('should return an AuthFailure when saving user detail fails',
+        () async {
+      when(mockFirebaseFirestore.collection(any)).thenThrow(Error());
+
+      final user = await fireBaseUserRepositoryImpl.saveUserDetail(mockUserCredential);
+
+      expect(user, equals(Left(AuthFailure(message: 'Saving failed'))));
     });
 
     test('should return a new user when loging in succesful', () async {

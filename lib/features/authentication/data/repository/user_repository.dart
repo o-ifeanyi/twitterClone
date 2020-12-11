@@ -51,7 +51,7 @@ class UserRepositoryImpl extends UserRepository {
   Future<Either<AuthFailure, bool>> saveUserDetail(
       UserCredential credential) async {
     try {
-      await FirebaseFirestore.instance
+      await firebaseFirestore
           .collection('users')
           .doc(credential.user.uid)
           .set({'username': credential.user.displayName});

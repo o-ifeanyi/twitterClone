@@ -1,5 +1,6 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cloud_firestore_mocks/cloud_firestore_mocks.dart';
 import 'package:dartz/dartz.dart';
 import 'package:fc_twitter/core/error/failure.dart';
 import 'package:fc_twitter/core/model/stream_converter.dart';
@@ -11,10 +12,17 @@ import 'package:mockito/mockito.dart';
 
 class MockTimeLineRepository extends Mock implements TimeLineRepositoryImpl {}
 
+class MockFirestore extends Mock implements FirebaseFirestore {}
+
+class MockCollectionReference extends Mock implements CollectionReference {}
+
 void main() {
   TweetModel tweetModel;
   MockTimeLineRepository mockTimeLineRepository;
-  FirebaseFirestore firebaseFirestore;
+  FirebaseFirestore mockFirebaseFirestore;
+  MockCollectionReference collectionReference;
+  // ignore: close_sinks
+  StreamController streamController;
   TimeLineBloc timeLineBloc;
 
   setUp(() {
@@ -25,7 +33,9 @@ void main() {
       timeStamp: Timestamp.now(),
     );
     mockTimeLineRepository = MockTimeLineRepository();
-    firebaseFirestore = MockFirestoreInstance();
+    mockFirebaseFirestore = MockFirestore();
+    collectionReference = MockCollectionReference();
+    streamController = StreamController<QuerySnapshot>();
     timeLineBloc = TimeLineBloc(
       initialState: InitialTimeLineState(),
       repositoryImpl: mockTimeLineRepository,
@@ -68,8 +78,10 @@ void main() {
     test(
         'should emit [FetchingTweet, FetchingComplete] when fetching tweet is successful',
         () async {
+      when(mockFirebaseFirestore.collection(any)).thenReturn(collectionReference);
+      when(collectionReference.snapshots()).thenAnswer((_) => streamController.stream);
       when(mockTimeLineRepository.fetchTweets()).thenAnswer(
-        (_) => Future.value(Right(StreamConverter(collection: firebaseFirestore.collection('tweets')))),
+        (_) => Future.value(Right(StreamConverter(collection: mockFirebaseFirestore.collection('tweets')))),
       );
 
       final expectations = [

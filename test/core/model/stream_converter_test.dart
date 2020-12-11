@@ -1,20 +1,31 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cloud_firestore_mocks/cloud_firestore_mocks.dart';
 import 'package:fc_twitter/core/model/stream_converter.dart';
 import 'package:fc_twitter/features/timeline/data/model/tweet_model.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/mockito.dart';
+
+class MockCollectionReference extends Mock implements CollectionReference {}
+
+class MockFirestore extends Mock implements FirebaseFirestore {}
 
 void main() {
   CollectionReference collection;
   FirebaseFirestore firebaseFirestore;
   StreamConverter streamConverter;
+  // ignore: close_sinks
+  StreamController streamController;
 
   setUp(() {
-    firebaseFirestore = MockFirestoreInstance();
+    firebaseFirestore = MockFirestore();
+    collection = MockCollectionReference();
+    streamController = StreamController<QuerySnapshot>();
   });
 
   group('stream converter', () {
     test('Should hold an initial stream of type CollectionReference', () async {
+      when(firebaseFirestore.collection(any)).thenReturn(collection);
       collection = firebaseFirestore.collection('tweets');
 
       streamConverter = StreamConverter(collection: collection);
@@ -23,6 +34,9 @@ void main() {
     });
 
     test('Should return a stream of type TweetModel when toTweetModel is called', () async {
+      when(firebaseFirestore.collection(any)).thenReturn(collection);
+      when(collection.snapshots()).thenAnswer((_) => streamController.stream);
+
       collection = firebaseFirestore.collection('tweets');
 
       streamConverter = StreamConverter(collection: collection);
