@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:fc_twitter/core/error/failure.dart';
-import 'package:fc_twitter/core/util/stream_converter.dart';
+import 'package:fc_twitter/core/model/stream_converter.dart';
 import 'package:fc_twitter/features/timeline/data/model/tweet_model.dart';
 import 'package:fc_twitter/features/timeline/domain/repository/timeline_repository.dart.dart';
 
@@ -15,12 +15,7 @@ class TimeLineRepositoryImpl implements TimeLineRepository {
   Future<Either<TimeLineFailure, StreamConverter>> fetchTweets() async {
     try {
       final collection = firebaseFirestore.collection('tweets');
-      return Right(StreamConverter(stream: collection.snapshots()));
-      // return Right(collection.snapshots().map((snapshot) {
-      //   return snapshot.docs
-      //       .map((doc) => TweetModel.fromSnapShot(doc))
-      //       .toList();
-      // }));
+      return Right(StreamConverter(collection: collection));
     } catch (error) {
       return Left(TimeLineFailure(message: 'Failed to load tweets'));
     }

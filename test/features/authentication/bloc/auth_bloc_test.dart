@@ -28,13 +28,12 @@ void main() {
 
   group('Sign up event', () {
     test(
-        'should emit [Authinprogress] and [Authcomplete] when sign up is successful',
+        'should emit [Authinprogress] and [Authcomplete] when sign up and save is successful',
         () async {
       when(fireBaseUserRepositoryImpl.signUpNewUser(userModel)).thenAnswer(
         (_) => Future.value(Right(mockUserCredential)),
       );
-      when(fireBaseUserRepositoryImpl.saveUserDetail(mockUserCredential))
-          .thenAnswer(
+      when(fireBaseUserRepositoryImpl.saveUserDetail(mockUserCredential)).thenAnswer(
         (_) => Future.value(Right(true)),
       );
       final expected = [
@@ -54,6 +53,23 @@ void main() {
       final expected = [
         AuthInProgress(),
         AuthFailed(message: 'Sign up failed'),
+      ];
+      expectLater(authBloc, emitsInOrder(expected));
+
+      authBloc.add(SignUp(user: userModel));
+    });
+
+    test('should emit [AuthFailed] when user details fails to save',
+        () async {
+      when(fireBaseUserRepositoryImpl.signUpNewUser(userModel)).thenAnswer(
+        (_) => Future.value(Right(mockUserCredential)),
+      );
+      when(fireBaseUserRepositoryImpl.saveUserDetail(mockUserCredential)).thenAnswer(
+        (_) => Future.value(Left(AuthFailure(message: 'Saving details failed'))),
+      );
+      final expected = [
+        AuthInProgress(),
+        AuthFailed(message: 'Saving details failed'),
       ];
       expectLater(authBloc, emitsInOrder(expected));
 

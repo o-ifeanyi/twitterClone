@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:fc_twitter/features/timeline/data/model/tweet_model.dart';
 import 'package:fc_twitter/features/timeline/representation/bloc/bloc.dart';
 import 'package:flutter/material.dart';
 
@@ -54,7 +55,7 @@ class FetchingError extends TimeLineState {
 }
 
 class FetchingComplete extends TimeLineState {
-  final Stream tweetStream;
+  final Stream<List<TweetModel>> tweetStream;
 
   FetchingComplete({this.tweetStream});
 }

@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore_mocks/cloud_firestore_mocks.dart';
 import 'package:dartz/dartz.dart';
 import 'package:fc_twitter/core/error/failure.dart';
-import 'package:fc_twitter/core/util/stream_converter.dart';
+import 'package:fc_twitter/core/model/stream_converter.dart';
 import 'package:fc_twitter/features/timeline/data/model/tweet_model.dart';
 import 'package:fc_twitter/features/timeline/data/repository/timeline_repository.dart';
 import 'package:fc_twitter/features/timeline/representation/bloc/bloc.dart';
@@ -13,6 +14,7 @@ class MockTimeLineRepository extends Mock implements TimeLineRepositoryImpl {}
 void main() {
   TweetModel tweetModel;
   MockTimeLineRepository mockTimeLineRepository;
+  FirebaseFirestore firebaseFirestore;
   TimeLineBloc timeLineBloc;
 
   setUp(() {
@@ -23,6 +25,7 @@ void main() {
       timeStamp: Timestamp.now(),
     );
     mockTimeLineRepository = MockTimeLineRepository();
+    firebaseFirestore = MockFirestoreInstance();
     timeLineBloc = TimeLineBloc(
       initialState: InitialTimeLineState(),
       repositoryImpl: mockTimeLineRepository,
@@ -66,7 +69,7 @@ void main() {
         'should emit [FetchingTweet, FetchingComplete] when fetching tweet is successful',
         () async {
       when(mockTimeLineRepository.fetchTweets()).thenAnswer(
-        (_) => Future.value(Right(StreamConverter())),
+        (_) => Future.value(Right(StreamConverter(collection: firebaseFirestore.collection('tweets')))),
       );
 
       final expectations = [

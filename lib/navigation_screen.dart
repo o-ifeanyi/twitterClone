@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_icons/flutter_icons.dart';
 
 import 'core/icons/new_message_icon.dart';
 import 'core/icons/new_tweet_icon.dart';
@@ -32,20 +33,38 @@ class _NavigationScreenState extends State<NavigationScreen> {
     );
   }
 
-  Widget _getActionButton(int index) {
-    switch (index) {
-      case 0:
-      case 1:
-      case 2:
-        return NewTweetIcon();
-        break;
-      case 3:
-        return NewMessageIcon();
-        break;
-      default:
-        return null;
-    }
-  }
+  // Widget _getTitle(int index) {
+  //   switch (index) {
+  //     case 0:
+  //       return IconButton(
+  //         icon: Icon(
+  //           FontAwesome.twitter,
+  //           color: Theme.of(context).primaryColor,
+  //         ),
+  //         onPressed: () {},
+  //       );
+  //       break;
+  //     case 1:
+  //       return Container(
+  //         padding: const EdgeInsets.only(left: 15),
+  //         height: 40,
+  //         decoration: BoxDecoration(
+  //           color: Theme.of(context).backgroundColor,
+  //           borderRadius: BorderRadius.circular(30),
+  //         ),
+  //       );
+  //       break;
+  //     case 2:
+  //       return Text('Notifications',
+  //           style: Theme.of(context).textTheme.headline6);
+  //       break;
+  //     case 3:
+  //       return Text('Messages', style: Theme.of(context).textTheme.headline6);
+  //       break;
+  //     default:
+  //       return SizedBox.shrink();
+  //   }
+  // }
 
   int _selectedIndex = 0;
 
@@ -61,6 +80,32 @@ class _NavigationScreenState extends State<NavigationScreen> {
     return Scaffold(
       key: _scaffoldKey,
       drawer: CustomDrawer(),
+      // appBar: AppBar(
+      //   backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      //   elevation: 1,
+      //   leading: Padding(
+      //     padding: const EdgeInsets.all(10),
+      //     child: GestureDetector(
+      //       onTap: () => _scaffoldKey.currentState.openDrawer(),
+      //       child: CircleAvatar(
+      //         backgroundColor: Theme.of(context).primaryColor,
+      //       ),
+      //     ),
+      //   ),
+      //   title: _getTitle(_selectedIndex),
+      //   actions: [
+      //     IconButton(
+      //       icon: Icon(
+      //         _selectedIndex == 0
+      //             ? Icons.star_border_outlined
+      //             : AntDesign.setting,
+      //         color: Theme.of(context).primaryColor,
+      //       ),
+      //       onPressed: () {},
+      //     ),
+      //   ],
+      //   centerTitle: _selectedIndex == 0,
+      // ),
       body: SafeArea(
         child: BlocListener<TimeLineBloc, TimeLineState>(
           listener: (context, state) {
@@ -91,7 +136,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
           _barItem(Icons.mail_outline_rounded, Icons.mail_rounded),
         ],
       ),
-      floatingActionButton: _getActionButton(_selectedIndex),
+      floatingActionButton:
+          _selectedIndex < 3 ? NewTweetIcon() : NewMessageIcon(),
     );
   }
 }

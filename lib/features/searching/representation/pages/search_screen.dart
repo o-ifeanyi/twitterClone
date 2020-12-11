@@ -4,53 +4,49 @@ import 'package:flutter_icons/flutter_icons.dart';
 class SearchScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(
-      slivers: [
-        SliverAppBar(
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          elevation: 1,
-          snap: true,
-          floating: true,
-          leading: Padding(
-            padding: const EdgeInsets.all(10),
-            child: GestureDetector(
-              onTap: () => Scaffold.of(context).openDrawer(),
-              child: CircleAvatar(
-                backgroundColor: Theme.of(context).primaryColor,
-              ),
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        elevation: 1,
+        leading: Padding(
+          padding: const EdgeInsets.all(10),
+          child: GestureDetector(
+            onTap: () => Scaffold.of(context).openDrawer(),
+            child: CircleAvatar(
+              backgroundColor: Theme.of(context).primaryColor,
             ),
           ),
-          title: Container(
-            padding: const EdgeInsets.only(left: 15),
-            height: 40,
-            decoration: BoxDecoration(
-              color: Theme.of(context).backgroundColor,
-              borderRadius: BorderRadius.circular(30),
-            ),
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: 'Search Twitter',
-                border: InputBorder.none,
-              ),
+        ),
+        title: Container(
+          padding: const EdgeInsets.only(left: 15),
+          height: 40,
+          decoration: BoxDecoration(
+            color: Theme.of(context).backgroundColor,
+            borderRadius: BorderRadius.circular(30),
+          ),
+          child: TextField(
+            decoration: InputDecoration(
+              hintText: 'Search Twitter',
+              border: InputBorder.none,
             ),
           ),
-          actions: [
-            IconButton(
-                icon: Icon(
-                  AntDesign.setting,
-                  color: Theme.of(context).primaryColor,
-                ),
-                onPressed: () {}),
-          ],
         ),
-        SliverList(
-          delegate: SliverChildListDelegate([
-            SizedBox(
-              height: 1000,
-            )
-          ]),
-        ),
-      ],
+        actions: [
+          IconButton(
+              icon: Icon(
+                AntDesign.setting,
+                color: Theme.of(context).primaryColor,
+              ),
+              onPressed: () {}),
+        ],
+      ),
+      body: ListView(
+        children: [
+          SizedBox(
+            height: 1000,
+          ),
+        ],
+      ),
     );
   }
 }

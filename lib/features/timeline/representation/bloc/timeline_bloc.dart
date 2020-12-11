@@ -38,8 +38,8 @@ class TimeLineBloc extends Bloc<TimeLineEvent, TimeLineState> {
       (failure) async* {
         yield FetchingError(message: failure.message);
       },
-      (success) async* {
-        yield FetchingComplete(tweetStream: success.stream);
+      (converter) async* {
+        yield FetchingComplete(tweetStream: converter.toTweetModel(converter.collection));
       },
     );
   }

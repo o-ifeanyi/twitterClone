@@ -35,8 +35,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         }, (success) async* {
           yield AuthComplete();
         });
-        yield AuthComplete();
       });
+      // if signup is successful and saving fails the newly created user should probably be deleted
     } catch (error) {
       print(error);
     }

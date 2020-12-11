@@ -1,3 +1,4 @@
+import 'package:cloud_firestore_mocks/cloud_firestore_mocks.dart';
 import 'package:dartz/dartz.dart';
 import 'package:fc_twitter/core/error/failure.dart';
 import 'package:fc_twitter/features/authentication/data/model/user_model.dart';
@@ -9,14 +10,12 @@ import 'package:mockito/mockito.dart';
 
 class MockFireBaseAuth extends Mock implements FirebaseAuth {}
 
-class MockFireBaseFirestore extends Mock implements FirebaseFirestore {}
-
 class MockUserCredential extends Mock implements UserCredential {}
 
 void main() {
   UserModel userModel;
   MockFireBaseAuth mockFireBaseAuth;
-  MockFireBaseFirestore mockFireBaseFirestore;
+  FirebaseFirestore mockFireBaseFirestore;
   MockUserCredential mockUserCredential;
   UserRepositoryImpl fireBaseUserRepositoryImpl;
 
@@ -24,7 +23,7 @@ void main() {
     userModel = UserModel(email: 'ifeanyi@email.com', password: '123456');
     mockFireBaseAuth = MockFireBaseAuth();
     mockUserCredential = MockUserCredential();
-    mockFireBaseFirestore = MockFireBaseFirestore();
+    mockFireBaseFirestore = MockFirestoreInstance();
     fireBaseUserRepositoryImpl = UserRepositoryImpl(
         firebaseAuth: mockFireBaseAuth,
         firebaseFirestore: mockFireBaseFirestore);
@@ -70,7 +69,6 @@ void main() {
           .thenThrow(Error());
 
       final user = await fireBaseUserRepositoryImpl.logInUser(userModel);
-      print('user ==>  $user');
 
       expect(user, equals(Left(AuthFailure(message: 'Login failed'))));
     });

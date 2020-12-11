@@ -4,12 +4,10 @@ import 'package:flutter_icons/flutter_icons.dart';
 class MessageScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(slivers: [
-      SliverAppBar(
+    return Scaffold(
+      appBar: AppBar(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 1,
-        snap: true,
-        floating: true,
         leading: Padding(
           padding: const EdgeInsets.all(10),
           child: GestureDetector(
@@ -29,15 +27,13 @@ class MessageScreen extends StatelessWidget {
               onPressed: () {}),
         ],
       ),
-      SliverList(
-        delegate: SliverChildListDelegate(
-          [
-            SizedBox(
-              height: 1000,
-            )
-          ],
-        ),
+      body: ListView(
+        children: [
+          SizedBox(
+            height: 1000,
+          )
+        ],
       ),
-    ]);
+    );
   }
 }
