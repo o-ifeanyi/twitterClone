@@ -23,12 +23,30 @@ class TweetModel extends TweetEntity {
     );
   }
 
+  factory TweetModel.fromEntity(TweetEntity tweet) {
+    return TweetModel(
+      name: tweet.name,
+      userName: tweet.userName,
+      message: tweet.message,
+      timeStamp: tweet.timeStamp,
+    );
+  }
+
+  TweetEntity toEntity() {
+    return TweetEntity(
+      name: this.name,
+      userName: this.userName,
+      message: this.message,
+      timeStamp: this.timeStamp,
+    );
+  }
+
   Map<String, dynamic> toDocument() {
     return {
-      'name': name,
-      'userName': userName,
-      'message': message,
-      'timeStamp': timeStamp,
+      'name': this.name,
+      'userName': this.userName,
+      'message': this.message,
+      'timeStamp': this.timeStamp,
     };
   }
 

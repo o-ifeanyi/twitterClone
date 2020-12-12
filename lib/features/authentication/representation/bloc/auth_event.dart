@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:fc_twitter/features/authentication/data/model/user_model.dart';
+import 'package:fc_twitter/features/authentication/domain/user_entity/user_entity.dart';
 
 class AuthEvent extends Equatable {
   @override
@@ -7,7 +7,7 @@ class AuthEvent extends Equatable {
 }
 
 class SignUp extends AuthEvent {
-  final UserModel user;
+  final UserEntity user;
 
   SignUp({this.user});
 
@@ -16,7 +16,7 @@ class SignUp extends AuthEvent {
 }
 
 class Login extends AuthEvent {
-  final UserModel user;
+  final UserEntity user;
 
   Login({this.user});
 

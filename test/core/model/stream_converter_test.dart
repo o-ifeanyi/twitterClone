@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fc_twitter/core/model/stream_converter.dart';
-import 'package:fc_twitter/features/timeline/data/model/tweet_model.dart';
+import 'package:fc_twitter/features/timeline/domain/entity/tweet_entity.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
@@ -33,7 +33,7 @@ void main() {
       expect(streamConverter.collection, isA<CollectionReference>());
     });
 
-    test('Should return a stream of type TweetModel when toTweetModel is called', () async {
+    test('Should return a stream of type TweetEntity when toTweetModel is called', () async {
       when(firebaseFirestore.collection(any)).thenReturn(collection);
       when(collection.snapshots()).thenAnswer((_) => streamController.stream);
 
@@ -43,9 +43,9 @@ void main() {
 
       expect(streamConverter.collection, isA<CollectionReference>());
 
-      final converted = streamConverter.toTweetModel(collection);
+      final converted = streamConverter.toTweetEntity(collection);
 
-      expect(converted, isA<Stream<List<TweetModel>>>());
+      expect(converted, isA<Stream<List<TweetEntity>>>());
     });
   });
 }

@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fc_twitter/core/util/config.dart';
-import 'package:fc_twitter/features/timeline/data/model/tweet_model.dart';
+import 'package:fc_twitter/features/timeline/domain/entity/tweet_entity.dart';
 import 'package:fc_twitter/features/timeline/representation/bloc/bloc.dart';
 import 'package:fc_twitter/features/timeline/representation/widgets/media_preview.dart';
 import 'package:flutter/material.dart';
@@ -42,7 +42,7 @@ class _TweetScreenState extends State<TweetScreen> {
             onTap: _tweet.isEmpty
                 ? null
                 : () {
-                    context.read<TimeLineBloc>().add(SendTweet(tweet: TweetModel(
+                    context.read<TimeLineBloc>().add(SendTweet(tweet: TweetEntity(
                           name: 'ifeanyi',
                           userName: '@ifeanyi_onuoha',
                           message: _tweet,

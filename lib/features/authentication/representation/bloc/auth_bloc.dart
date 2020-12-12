@@ -1,13 +1,23 @@
-import 'package:fc_twitter/features/authentication/data/model/user_model.dart';
-import 'package:fc_twitter/features/authentication/data/repository/user_repository.dart';
+import 'package:fc_twitter/core/usecase/usecase.dart';
+import 'package:fc_twitter/features/authentication/domain/usecase/use_cases.dart';
+import 'package:fc_twitter/features/authentication/domain/user_entity/user_entity.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'auth_event.dart';
 import 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  final UserRepositoryImpl repositoryImpl;
-  AuthBloc({AuthState initialState, this.repositoryImpl}) : super(initialState);
+  final SignUpNewUser signUpNewUser;
+  final SaveUserDetail saveUserDetail;
+  final LogInUser logInUser;
+  final LogOutUser logOutUser;
+  AuthBloc({
+    AuthState initialState,
+    this.signUpNewUser,
+    this.saveUserDetail,
+    this.logInUser,
+    this.logOutUser,
+  }) : super(initialState);
 
   @override
   Stream<AuthState> mapEventToState(AuthEvent event) async* {
@@ -18,20 +28,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       yield* _mapLoginToState(event.user);
     }
     if (event is LogOut) {
-      repositoryImpl.logOutUser();
+      logOutUser(NoParams());
     }
   }
 
-  Stream<AuthState> _mapSignupToState(UserModel user) async* {
+  Stream<AuthState> _mapSignupToState(UserEntity user) async* {
     yield AuthInProgress();
     try {
-      final response = await repositoryImpl.signUpNewUser(user);
+      final response = await signUpNewUser(Params(user: user));
       yield* response.fold((failure) async* {
-        yield AuthFailed(message:failure.message);
+        yield AuthFailed(message: failure.message);
       }, (credentials) async* {
-        final savedEither = await repositoryImpl.saveUserDetail(credentials);
+        final savedEither = await saveUserDetail(Params(credential: credentials));
         yield* savedEither.fold((failure) async* {
-          yield AuthFailed(message:failure.message);
+          yield AuthFailed(message: failure.message);
         }, (success) async* {
           yield AuthComplete();
         });
@@ -42,12 +52,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-  Stream<AuthState> _mapLoginToState(UserModel user) async* {
+  Stream<AuthState> _mapLoginToState(UserEntity user) async* {
     yield AuthInProgress();
     try {
-      final response = await repositoryImpl.logInUser(user);
+      final response = await logInUser(Params(user: user));
       yield* response.fold((failure) async* {
-        yield AuthFailed(message:failure.message);
+        yield AuthFailed(message: failure.message);
       }, (credentials) async* {
         yield AuthComplete();
       });

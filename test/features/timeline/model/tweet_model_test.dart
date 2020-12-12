@@ -14,13 +14,35 @@ void main() {
     message: 'hello world',
     timeStamp: '0s',
   );
+
+  final tweetEntity = TweetEntity(
+    name: 'ifeanyi',
+    userName: 'onuoha',
+    message: 'hello world',
+    timeStamp: '0s',
+  );
   group('tweetModel', () {
     test('should be a sub type of TweetEntity', () async {
       expect(tweetModel, isA<TweetEntity>());
     });
 
-    test('should return a valid model wwhen converting from snapshot',
+    test('should return a valid model wwhen converting from entity',
         () async {
+
+      final result = TweetModel.fromEntity(tweetEntity);
+
+      expect(result, equals(tweetModel));
+    });
+
+    test('should return a valid model wwhen converting to entity',
+        () async {
+
+      final result = tweetModel.toEntity();
+
+      expect(result, equals(tweetEntity));
+    });
+
+    test('should return a valid model wwhen converting from snapshot', () async {
       final snapshot = (json.decode(tweetFixture()));
 
       snapshot['timeStamp'] = Timestamp.now();
@@ -30,7 +52,9 @@ void main() {
       expect(result, equals(tweetModel));
     });
 
-    test('should return a JSON map containing proper data when converting to document', () async {
+    test(
+        'should return a JSON map containing proper data when converting to document',
+        () async {
       final result = tweetModel.toDocument();
 
       final expected = {

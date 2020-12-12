@@ -1,4 +1,4 @@
-import 'package:fc_twitter/features/timeline/data/model/tweet_model.dart';
+import 'package:fc_twitter/features/timeline/domain/entity/tweet_entity.dart';
 import 'package:fc_twitter/features/timeline/representation/bloc/bloc.dart';
 import 'package:fc_twitter/features/timeline/representation/widgets/tweet_item.dart';
 import 'package:flutter/material.dart';
@@ -39,31 +39,28 @@ class HomeScreen extends StatelessWidget {
         centerTitle: true,
       ),
       body: BlocBuilder<TimeLineBloc, TimeLineState>(
-        buildWhen: (prevState, currentState) {
+        buildWhen: (_, currentState) {
           return currentState is FetchingComplete;
-          // sending tweet changes the state making it return a loading indicator
         },
         builder: (context, state) {
-          return state is FetchingComplete
-              ? StreamBuilder<List<TweetModel>>(
-                  stream: state.tweetStream,
-                  builder: (context, snapshot) {
-                    return snapshot.hasData
-                        ? ListView.separated(
-                            padding: const EdgeInsets.all(10),
-                            itemCount: snapshot.data.length,
-                            separatorBuilder:
-                                (BuildContext context, int index) =>
-                                    Divider(thickness: 1, height: 15),
-                            itemBuilder: (ctx, index) =>
-                                TweetItem(snapshot.data[index]),
-                          )
-                        : Center(child: Text('Nothing to show'));
-                  },
-                )
-              : Center(
-                  child: CircularProgressIndicator(),
-                );
+          if (state is FetchingComplete) {
+            return StreamBuilder<List<TweetEntity>>(
+              stream: state.tweetStream,
+              builder: (context, snapshot) {
+                return snapshot.hasData
+                    ? ListView.separated(
+                        padding: const EdgeInsets.all(10),
+                        itemCount: snapshot.data.length,
+                        separatorBuilder: (BuildContext context, int index) =>
+                            Divider(thickness: 1, height: 15),
+                        itemBuilder: (ctx, index) =>
+                            TweetItem(snapshot.data[index]),
+                      )
+                    : Center(child: CircularProgressIndicator());
+              },
+            );
+          }
+          return Center(child: CircularProgressIndicator());
         },
       ),
     );

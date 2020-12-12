@@ -3,6 +3,7 @@ import 'package:dartz/dartz.dart';
 import 'package:fc_twitter/core/error/failure.dart';
 import 'package:fc_twitter/core/model/stream_converter.dart';
 import 'package:fc_twitter/features/timeline/data/model/tweet_model.dart';
+import 'package:fc_twitter/features/timeline/domain/entity/tweet_entity.dart';
 import 'package:fc_twitter/features/timeline/domain/repository/timeline_repository.dart.dart';
 
 class TimeLineRepositoryImpl implements TimeLineRepository {
@@ -22,9 +23,9 @@ class TimeLineRepositoryImpl implements TimeLineRepository {
   }
 
   @override
-  Future<Either<TimeLineFailure, bool>> sendTweet(TweetModel tweet) async {
+  Future<Either<TimeLineFailure, bool>> sendTweet(TweetEntity tweet) async {
     try {
-      await firebaseFirestore.collection('tweets').add(tweet.toDocument());
+      await firebaseFirestore.collection('tweets').add(TweetModel.fromEntity(tweet).toDocument());
       return Right(true);
     } catch (error) {
       return Left(TimeLineFailure(message: 'Failed to send tweet'));

@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:fc_twitter/features/authentication/data/repository/user_repository.dart';
 import 'package:fc_twitter/features/settings/representation/bloc/bloc.dart';
 import 'package:fc_twitter/features/timeline/data/repository/timeline_repository.dart';
+import 'package:fc_twitter/injection_container.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +18,7 @@ import 'navigation_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await init();
   await Firebase.initializeApp();
   SharedPreferences.getInstance().then((pref) {
     int index = pref.getInt('theme') ?? 0;
@@ -25,26 +26,11 @@ void main() async {
     runApp(
       MultiBlocProvider(
         providers: [
-          BlocProvider<AuthBloc>(
-            create: (BuildContext context) => AuthBloc(
-              initialState: InitialAuthState(),
-              repositoryImpl: UserRepositoryImpl(
-                firebaseAuth: FirebaseAuth.instance,
-                firebaseFirestore: FirebaseFirestore.instance,
-              ),
-            ),
-          ),
-          BlocProvider<TimeLineBloc>(
-            create: (BuildContext context) => TimeLineBloc(
-              initialState: InitialTimeLineState(),
-              repositoryImpl: TimeLineRepositoryImpl(
-                firebaseFirestore: FirebaseFirestore.instance,
-              ),
-            )..add(FetchTweet()),
-          ),
+          BlocProvider<AuthBloc>(create: (_) => sl<AuthBloc>()),
+          BlocProvider<TimeLineBloc>(create: (_) => sl<TimeLineBloc>()),
           BlocProvider<SettingsBloc>(
             create: (BuildContext context) => SettingsBloc(
-              AppTheme(index == 0
+              appTheme: AppTheme(index == 0
                   ? lightThemeData[index]
                   : darkThemeData[darkIndex]),
             ),

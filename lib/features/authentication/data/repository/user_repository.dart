@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:fc_twitter/core/error/failure.dart';
-import 'package:fc_twitter/features/authentication/data/model/user_model.dart';
 import 'package:fc_twitter/features/authentication/domain/repository/user_repository.dart';
+import 'package:fc_twitter/features/authentication/domain/user_entity/user_entity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -14,7 +14,7 @@ class UserRepositoryImpl extends UserRepository {
         assert(firebaseFirestore != null);
 
   @override
-  Future<Either<AuthFailure, UserCredential>> logInUser(UserModel user) async {
+  Future<Either<AuthFailure, UserCredential>> logInUser(UserEntity user) async {
     UserCredential userCredential;
     try {
       userCredential = await firebaseAuth.signInWithEmailAndPassword(
@@ -28,13 +28,14 @@ class UserRepositoryImpl extends UserRepository {
   }
 
   @override
-  void logOutUser() {
-    firebaseAuth.signOut();
+  Future<Either<AuthFailure, bool>> logOutUser() async{
+    await firebaseAuth.signOut();
+    return Right(true);
   }
 
   @override
   Future<Either<AuthFailure, UserCredential>> signUpNewUser(
-      UserModel user) async {
+      UserEntity user) async {
     UserCredential userCredential;
     try {
       userCredential = await firebaseAuth.createUserWithEmailAndPassword(

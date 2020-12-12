@@ -1,10 +1,10 @@
 import 'package:fc_twitter/core/util/config.dart';
-import 'package:fc_twitter/features/timeline/data/model/tweet_model.dart';
+import 'package:fc_twitter/features/timeline/domain/entity/tweet_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 
 class TweetItem extends StatelessWidget {
-  final TweetModel _tweet;
+  final TweetEntity _tweet;
 
   TweetItem(this._tweet);
 
