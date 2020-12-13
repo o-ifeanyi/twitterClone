@@ -37,7 +37,7 @@ void main() {
         (_) => Future.value(Right(userCredential)),
       );
 
-      final result = await signUpNewUser(Params(user: userEntity));
+      final result = await signUpNewUser(AParams(user: userEntity));
 
       expect(result, Right(userCredential));
       verify(userRepository.signUpNewUser(any));
@@ -48,7 +48,7 @@ void main() {
         (_) => Future.value(Right(userCredential)),
       );
 
-      final result = await logInUser(Params(user: userEntity));
+      final result = await logInUser(AParams(user: userEntity));
 
       expect(result, Right(userCredential));
       verify(userRepository.logInUser(any));
@@ -59,7 +59,7 @@ void main() {
         (_) => Future.value(Right(true)),
       );
 
-      final result = await saveUserDetail(Params(credential: userCredential));
+      final result = await saveUserDetail(AParams(credential: userCredential));
 
       expect(result, Right(true));
       verify(userRepository.saveUserDetail(any));
@@ -70,7 +70,7 @@ void main() {
         (_) => Future.value(Left(AuthFailure())),
       );
 
-      final result = await signUpNewUser(Params(user: userEntity));
+      final result = await signUpNewUser(AParams(user: userEntity));
 
       expect(result, Left(AuthFailure()));
       verify(userRepository.signUpNewUser(any));
@@ -81,7 +81,7 @@ void main() {
         (_) => Future.value(Left(AuthFailure())),
       );
 
-      final result = await logInUser(Params(user: userEntity));
+      final result = await logInUser(AParams(user: userEntity));
 
       expect(result, Left(AuthFailure()));
       verify(userRepository.logInUser(any));
@@ -92,7 +92,7 @@ void main() {
         (_) => Future.value(Left(AuthFailure())),
       );
 
-      final result = await saveUserDetail(Params(credential: userCredential));
+      final result = await saveUserDetail(AParams(credential: userCredential));
 
       expect(result, Left(AuthFailure()));
       verify(userRepository.saveUserDetail(any));

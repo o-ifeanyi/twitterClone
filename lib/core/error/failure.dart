@@ -23,3 +23,12 @@ class TimeLineFailure extends Failure {
   @override
   List<Object> get props => [message];
 }
+
+class SettingsFailure extends Failure {
+  final String message;
+
+  SettingsFailure({this.message});
+
+  @override
+  List<Object> get props => [message];
+}

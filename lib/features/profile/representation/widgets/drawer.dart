@@ -1,8 +1,8 @@
 import 'package:fc_twitter/core/util/config.dart';
 import 'package:fc_twitter/features/authentication/representation/bloc/bloc.dart';
-import 'package:fc_twitter/features/profile/representation/widgets/theme_handler.dart';
 import 'package:fc_twitter/features/settings/representation/bloc/bloc.dart';
 import 'package:fc_twitter/features/settings/representation/bloc/settings_bloc.dart';
+import 'package:fc_twitter/features/settings/representation/widgets/theme_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_icons/flutter_icons.dart';

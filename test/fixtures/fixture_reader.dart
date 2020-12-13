@@ -6,3 +6,9 @@ String tweetFixture() => json.encode({
       "message": "hello world",
       "timeStamp": "0s"
     });
+
+String themeFixture() => json.encode({
+      "isLight": true,
+      "isDi": false,
+      "isLightsOut": true,
+    });

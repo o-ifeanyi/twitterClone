@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
+import 'package:fc_twitter/features/settings/domain/entity/theme_entity.dart';
 
 class SettingsEvent extends Equatable {
   @override
@@ -8,7 +8,7 @@ class SettingsEvent extends Equatable {
 }
 
 class ChangeTheme extends SettingsEvent {
-  final ThemeData theme;
+  final ThemeEntity theme;
 
   ChangeTheme(this.theme);
 

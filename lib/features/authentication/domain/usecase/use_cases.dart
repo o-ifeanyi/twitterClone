@@ -4,22 +4,22 @@ import 'package:fc_twitter/core/usecase/usecase.dart';
 import 'package:fc_twitter/features/authentication/domain/repository/user_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class SignUpNewUser implements UseCase<UserCredential, Params> {
+class SignUpNewUser implements UseCase<UserCredential, AParams> {
   final UserRepository userRepository;
 
   SignUpNewUser({this.userRepository});
   @override
-  Future<Either<AuthFailure, UserCredential>> call(Params params) async{
+  Future<Either<AuthFailure, UserCredential>> call(AParams params) async{
     return await userRepository.signUpNewUser(params.user);
   }
 }
 
-class LogInUser implements UseCase<UserCredential, Params> {
+class LogInUser implements UseCase<UserCredential, AParams> {
   final UserRepository userRepository;
 
   LogInUser({this.userRepository});
   @override
-  Future<Either<AuthFailure, UserCredential>> call(Params params) async{
+  Future<Either<AuthFailure, UserCredential>> call(AParams params) async{
     return await userRepository.logInUser(params.user);
   }
 }
@@ -34,12 +34,12 @@ class LogOutUser implements UseCase<bool, NoParams> {
   }
 }
 
-class SaveUserDetail implements UseCase<bool, Params> {
+class SaveUserDetail implements UseCase<bool, AParams> {
   final UserRepository userRepository;
 
   SaveUserDetail({this.userRepository});
   @override
-  Future<Either<AuthFailure, bool>> call(Params params) async{
+  Future<Either<AuthFailure, bool>> call(AParams params) async{
     return await userRepository.saveUserDetail(params.credential);
   }
 }

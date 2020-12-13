@@ -59,7 +59,7 @@ void main() {
         (_) => Future.value(Right(true)),
       );
 
-      final result = await sendTweet(Params(tweet: tweetEntity));
+      final result = await sendTweet(TParams(tweet: tweetEntity));
 
       expect(result, Right(true));
       verify(timeLineRepository.sendTweet(any));
@@ -70,7 +70,7 @@ void main() {
         (_) => Future.value(Left(TimeLineFailure())),
       );
 
-      final result = await sendTweet(Params(tweet: tweetEntity));
+      final result = await sendTweet(TParams(tweet: tweetEntity));
 
       expect(result, Left(TimeLineFailure()));
       verify(timeLineRepository.sendTweet(any));

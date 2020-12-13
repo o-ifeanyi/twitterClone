@@ -1,19 +1,13 @@
+import 'dart:convert';
+
 import 'package:fc_twitter/core/util/config.dart';
 import 'package:fc_twitter/core/util/themes.dart';
+import 'package:fc_twitter/features/settings/data/model/theme_model.dart';
+import 'package:fc_twitter/features/settings/domain/entity/theme_entity.dart';
 import 'package:fc_twitter/features/settings/representation/bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-enum ThemeOptions {
-  Light,
-  Dark,
-}
-
-enum DarkThemeOptions {
-  Dim,
-  LightsOut,
-}
 
 class ThemeHandler extends StatefulWidget {
   @override
@@ -21,32 +15,27 @@ class ThemeHandler extends StatefulWidget {
 }
 
 class _ThemeHandlerState extends State<ThemeHandler> {
-  int _themeIndex;
-  int _darkThemeIndex;
   ThemeOptions _appTheme;
   DarkThemeOptions _darkAppTheme;
-
-  void _saveTheme(ThemeOptions option) {
-    SharedPreferences.getInstance().then((pref) {
-      pref.setInt('theme', option.index);
-    });
-  }
-
-  void _saveDarkTheme(DarkThemeOptions option) {
-    SharedPreferences.getInstance().then((pref) {
-      pref.setInt('darktheme', option.index);
-    });
-  }
+  ThemeEntity currentTheme;
+  ThemeEntity themeEntity = ThemeEntity(
+    isDim: false,
+    isLight: false,
+    isLightsOut: false,
+  );
 
   @override
   void initState() {
     super.initState();
     SharedPreferences.getInstance().then((pref) {
+      final theme = json.decode(pref.getString('theme') ??
+          json.encode({'isLight': true, 'isDim': false, 'isLightsOut': true}));
+      currentTheme = ThemeModel.fromJson(theme).toEntity();
       setState(() {
-        _themeIndex = pref.getInt('theme') ?? 0;
-        _darkThemeIndex = pref.getInt('darktheme') ?? 0;
-        _appTheme = _themeIndex == 0 ? ThemeOptions.Light : ThemeOptions.Dark;
-        _darkAppTheme = _darkThemeIndex == 0
+        themeEntity = currentTheme;
+        _appTheme =
+            currentTheme.isLight ? ThemeOptions.Light : ThemeOptions.Dark;
+        _darkAppTheme = currentTheme.isDim
             ? DarkThemeOptions.Dim
             : DarkThemeOptions.LightsOut;
       });
@@ -68,10 +57,7 @@ class _ThemeHandlerState extends State<ThemeHandler> {
         children: [
           SizedBox(
             width: 40,
-            child: Divider(
-              thickness: 6,
-              height: 25,
-            ),
+            child: Divider(thickness: 6, height: 25),
           ),
           Text(
             'Dark mode',
@@ -89,10 +75,13 @@ class _ThemeHandlerState extends State<ThemeHandler> {
             onChanged: (newTheme) {
               setState(() {
                 _appTheme = newTheme;
-                _themeIndex = ThemeOptions.Light.index;
               });
-              context.read<SettingsBloc>().add(ChangeTheme(lightThemeData[_themeIndex]));
-              _saveTheme(newTheme);
+              themeEntity = ThemeEntity(
+                isLight: true,
+                isDim: themeEntity.isDim,
+                isLightsOut: themeEntity.isLightsOut,
+              );
+              context.read<SettingsBloc>().add(ChangeTheme(themeEntity));
             },
           ),
           RadioListTile<ThemeOptions>(
@@ -104,10 +93,13 @@ class _ThemeHandlerState extends State<ThemeHandler> {
             onChanged: (newTheme) {
               setState(() {
                 _appTheme = newTheme;
-                _themeIndex = ThemeOptions.Dark.index;
               });
-              context.read<SettingsBloc>().add(ChangeTheme(darkThemeData[_darkThemeIndex]));
-              _saveTheme(newTheme);
+              themeEntity = ThemeEntity(
+                isLight: false,
+                isDim: themeEntity.isDim,
+                isLightsOut: themeEntity.isLightsOut,
+              );
+              context.read<SettingsBloc>().add(ChangeTheme(themeEntity));
             },
           ),
           Container(
@@ -125,12 +117,12 @@ class _ThemeHandlerState extends State<ThemeHandler> {
               setState(() {
                 _darkAppTheme = newTheme;
               });
-              if (_themeIndex == 0) {
-                _darkThemeIndex = 0;
-              } else {
-                context.read<SettingsBloc>().add(ChangeTheme(darkThemeData[newTheme.index]));
-              }
-              _saveDarkTheme(newTheme);
+              themeEntity = ThemeEntity(
+                isLight: themeEntity.isLight,
+                isDim: true,
+                isLightsOut: false,
+              );
+              context.read<SettingsBloc>().add(ChangeTheme(themeEntity));
             },
           ),
           RadioListTile<DarkThemeOptions>(
@@ -143,12 +135,12 @@ class _ThemeHandlerState extends State<ThemeHandler> {
               setState(() {
                 _darkAppTheme = newTheme;
               });
-              if (_themeIndex == 0) {
-                _darkThemeIndex = 1;
-              } else {
-                context.read<SettingsBloc>().add(ChangeTheme(darkThemeData[newTheme.index]));
-              }
-              _saveDarkTheme(newTheme);
+              themeEntity = ThemeEntity(
+                isLight: themeEntity.isLight,
+                isDim: false,
+                isLightsOut: true,
+              );
+              context.read<SettingsBloc>().add(ChangeTheme(themeEntity));
             },
           ),
         ],

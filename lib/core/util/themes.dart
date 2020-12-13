@@ -1,7 +1,17 @@
 import 'package:flutter/material.dart';
 
-final List<ThemeData> lightThemeData = [
-  ThemeData(
+enum ThemeOptions {
+  Light,
+  Dark,
+}
+
+enum DarkThemeOptions {
+  Dim,
+  LightsOut,
+}
+
+final themeOptions = {
+  ThemeOptions.Light: ThemeData(
     brightness: Brightness.light,
     primarySwatch: Colors.blue,
     primaryColor: Colors.blue,
@@ -10,10 +20,7 @@ final List<ThemeData> lightThemeData = [
     scaffoldBackgroundColor: Colors.white,
     visualDensity: VisualDensity.adaptivePlatformDensity,
   ),
-];
-
-final List<ThemeData> darkThemeData = [
-  ThemeData(
+  DarkThemeOptions.Dim: ThemeData(
     brightness: Brightness.dark,
     primarySwatch: Colors.blue,
     primaryColor: Colors.blue,
@@ -22,7 +29,7 @@ final List<ThemeData> darkThemeData = [
     scaffoldBackgroundColor: Color(0xFF15202B),
     visualDensity: VisualDensity.adaptivePlatformDensity,
   ),
-  ThemeData(
+  DarkThemeOptions.LightsOut: ThemeData(
     brightness: Brightness.dark,
     primaryColor: Colors.blue,
     primarySwatch: Colors.blue,
@@ -31,4 +38,9 @@ final List<ThemeData> darkThemeData = [
     scaffoldBackgroundColor: Colors.black,
     visualDensity: VisualDensity.adaptivePlatformDensity,
   ),
-];
+};
+// final List<ThemeData> lightThemeData = [];
+
+// final List<ThemeData> darkThemeData = [
+  
+// ];

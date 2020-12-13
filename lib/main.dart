@@ -1,6 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fc_twitter/features/settings/representation/bloc/bloc.dart';
-import 'package:fc_twitter/features/timeline/data/repository/timeline_repository.dart';
 import 'package:fc_twitter/injection_container.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -20,51 +18,46 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await init();
   await Firebase.initializeApp();
-  SharedPreferences.getInstance().then((pref) {
-    int index = pref.getInt('theme') ?? 0;
-    final darkIndex = pref.getInt('darktheme') ?? 1;
-    runApp(
-      MultiBlocProvider(
-        providers: [
-          BlocProvider<AuthBloc>(create: (_) => sl<AuthBloc>()),
-          BlocProvider<TimeLineBloc>(create: (_) => sl<TimeLineBloc>()),
-          BlocProvider<SettingsBloc>(
-            create: (BuildContext context) => SettingsBloc(
-              appTheme: AppTheme(index == 0
-                  ? lightThemeData[index]
-                  : darkThemeData[darkIndex]),
-            ),
-          ),
-        ],
-        child: MyApp(),
-      ),
-    );
-  });
+  runApp(
+    MultiBlocProvider(
+      providers: [
+        BlocProvider<AuthBloc>(create: (_) => sl<AuthBloc>()),
+        BlocProvider<TimeLineBloc>(create: (_) => sl<TimeLineBloc>()),
+        BlocProvider<SettingsBloc>(create: (_) => sl<SettingsBloc>()),
+      ],
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<SettingsBloc, SettingsState>(builder: (context, state) {
-      return MaterialApp(
-        title: 'Flutter Demo',
-        theme: (state as AppTheme).theme,
-        home: StreamBuilder<User>(
-            stream: FirebaseAuth.instance.authStateChanges(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return NavigationScreen();
-              } else {
-                return AuthScreen();
-              }
-            }),
-        routes: {
-          TweetScreen.pageId: (ctx) => TweetScreen(),
-          AuthForm.pageId: (ctx) => AuthForm(),
-          NavigationScreen.pageId: (ctx) => NavigationScreen(),
-        },
-      );
-    });
+    return BlocBuilder<SettingsBloc, SettingsState>(
+      buildWhen: (_, currentState) {
+        return currentState is AppTheme;
+      },
+      builder: (context, state) {
+        return MaterialApp(
+          title: 'Flutter Demo',
+          theme: (state as AppTheme).theme,
+          home: StreamBuilder<User>(
+              stream: FirebaseAuth.instance.authStateChanges(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return NavigationScreen();
+                } else {
+                  return AuthScreen();
+                }
+              }),
+          routes: {
+            TweetScreen.pageId: (ctx) => TweetScreen(),
+            AuthForm.pageId: (ctx) => AuthForm(),
+            NavigationScreen.pageId: (ctx) => NavigationScreen(),
+          },
+        );
+      },
+    );
   }
 }

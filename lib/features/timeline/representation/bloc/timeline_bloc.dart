@@ -24,7 +24,7 @@ class TimeLineBloc extends Bloc<TimeLineEvent, TimeLineState> {
   }
 
   Stream<TimeLineState> _mapSendTweetToState(TweetEntity tweet) async* {
-    final sendEither = await sendTweet(Params(tweet: tweet));
+    final sendEither = await sendTweet(TParams(tweet: tweet));
     yield* sendEither.fold(
       (failure) async* {
         yield SendingError(message: failure.message);

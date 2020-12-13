@@ -35,11 +35,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Stream<AuthState> _mapSignupToState(UserEntity user) async* {
     yield AuthInProgress();
     try {
-      final response = await signUpNewUser(Params(user: user));
+      final response = await signUpNewUser(AParams(user: user));
       yield* response.fold((failure) async* {
         yield AuthFailed(message: failure.message);
       }, (credentials) async* {
-        final savedEither = await saveUserDetail(Params(credential: credentials));
+        final savedEither = await saveUserDetail(AParams(credential: credentials));
         yield* savedEither.fold((failure) async* {
           yield AuthFailed(message: failure.message);
         }, (success) async* {
@@ -55,7 +55,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Stream<AuthState> _mapLoginToState(UserEntity user) async* {
     yield AuthInProgress();
     try {
-      final response = await logInUser(Params(user: user));
+      final response = await logInUser(AParams(user: user));
       yield* response.fold((failure) async* {
         yield AuthFailed(message: failure.message);
       }, (credentials) async* {
