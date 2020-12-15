@@ -24,6 +24,15 @@ class TimeLineFailure extends Failure {
   List<Object> get props => [message];
 }
 
+class TweetingFailure extends Failure {
+  final String message;
+
+  TweetingFailure({this.message});
+
+  @override
+  List<Object> get props => [message];
+}
+
 class SettingsFailure extends Failure {
   final String message;
 

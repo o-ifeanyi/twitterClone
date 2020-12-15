@@ -1,10 +1,9 @@
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:fc_twitter/core/error/failure.dart';
-import 'package:fc_twitter/core/util/themes.dart';
 import 'package:fc_twitter/features/authentication/domain/user_entity/user_entity.dart';
 import 'package:fc_twitter/features/settings/domain/entity/theme_entity.dart';
-import 'package:fc_twitter/features/timeline/domain/entity/tweet_entity.dart';
+import 'package:fc_twitter/features/tweeting/domain/entity/tweet_entity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 abstract class UseCase<Type, Params> {

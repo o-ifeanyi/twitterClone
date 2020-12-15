@@ -1,8 +1,7 @@
 import 'package:equatable/equatable.dart';
-import 'package:fc_twitter/features/tweeting/domain/entity/tweet_entity.dart';
 import 'package:flutter/material.dart';
 
-class TimeLineState extends Equatable {
+class TweetingState extends Equatable {
   @override
   List<Object> get props => [];
 
@@ -29,21 +28,15 @@ class TimeLineState extends Equatable {
   }
 }
 
-class InitialTimeLineState extends TimeLineState {}
+class InitialTweetingState extends TweetingState {}
 
-class FetchingTweet extends TimeLineState {}
-
-class FetchingError extends TimeLineState {
+class SendingError extends TweetingState {
   final String message;
 
-  FetchingError({this.message});
+  SendingError({this.message});
 
   @override
   List<Object> get props => [message];
 }
 
-class FetchingComplete extends TimeLineState {
-  final Stream<List<TweetEntity>> tweetStream;
-
-  FetchingComplete({this.tweetStream});
-}
+class SendingComplete extends TweetingState {}

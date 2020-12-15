@@ -1,16 +1,14 @@
 import 'package:dartz/dartz.dart';
 import 'package:fc_twitter/core/error/failure.dart';
 import 'package:fc_twitter/core/usecase/usecase.dart';
-import 'package:fc_twitter/features/authentication/domain/repository/user_repository.dart';
 import 'package:fc_twitter/features/authentication/domain/usecase/use_cases.dart';
 import 'package:fc_twitter/features/authentication/domain/user_entity/user_entity.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
-class MockUserRepository extends Mock implements UserRepository {}
+import '../../../mocks/mocks.dart';
 
-class MockUserCredential extends Mock implements UserCredential {}
+
 
 void main() {
   SignUpNewUser signUpNewUser;

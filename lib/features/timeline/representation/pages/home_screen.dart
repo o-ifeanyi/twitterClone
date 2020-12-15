@@ -1,6 +1,6 @@
-import 'package:fc_twitter/features/timeline/domain/entity/tweet_entity.dart';
 import 'package:fc_twitter/features/timeline/representation/bloc/bloc.dart';
-import 'package:fc_twitter/features/timeline/representation/widgets/tweet_item.dart';
+import 'package:fc_twitter/features/tweeting/domain/entity/tweet_entity.dart';
+import 'package:fc_twitter/features/tweeting/representation/widgets/tweet_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_icons/flutter_icons.dart';

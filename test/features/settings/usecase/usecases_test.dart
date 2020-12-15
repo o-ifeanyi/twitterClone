@@ -1,12 +1,12 @@
 import 'package:dartz/dartz.dart';
+import 'package:fc_twitter/core/error/failure.dart';
 import 'package:fc_twitter/core/usecase/usecase.dart';
 import 'package:fc_twitter/features/settings/domain/entity/theme_entity.dart';
-import 'package:fc_twitter/features/settings/domain/repository/settings_repository.dart';
 import 'package:fc_twitter/features/settings/domain/usecase/usecases.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
-class MockSettingsRepository extends Mock implements SettingsRepository {}
+import '../../../mocks/mocks.dart';
 
 void main() {
   ThemeEntity themeEntity;
@@ -33,6 +33,17 @@ void main() {
       final result = await changeThemeUseCase(SParams(themeEntity: themeEntity));
 
       expect(result, Right(themeEntity));
+      verify(settingsRepository.changeTheme(any));
+    });
+
+    test('should return a SettingsFailure when error occurs', () async {
+      when(settingsRepository.changeTheme(any)).thenAnswer(
+        (_) => Future.value(Left(SettingsFailure())),
+      );
+
+      final result = await changeThemeUseCase(SParams(themeEntity: themeEntity));
+
+      expect(result, Left(SettingsFailure()));
       verify(settingsRepository.changeTheme(any));
     });
   });

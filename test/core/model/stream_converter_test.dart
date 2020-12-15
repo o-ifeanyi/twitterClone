@@ -2,13 +2,11 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fc_twitter/core/model/stream_converter.dart';
-import 'package:fc_twitter/features/timeline/domain/entity/tweet_entity.dart';
+import 'package:fc_twitter/features/tweeting/domain/entity/tweet_entity.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
-class MockCollectionReference extends Mock implements CollectionReference {}
-
-class MockFirestore extends Mock implements FirebaseFirestore {}
+import '../../mocks/mocks.dart';
 
 void main() {
   CollectionReference collection;
@@ -18,7 +16,7 @@ void main() {
   StreamController streamController;
 
   setUp(() {
-    firebaseFirestore = MockFirestore();
+    firebaseFirestore = MockFirebaseFirestore();
     collection = MockCollectionReference();
     streamController = StreamController<QuerySnapshot>();
   });

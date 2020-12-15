@@ -2,22 +2,11 @@ import 'package:dartz/dartz.dart';
 import 'package:fc_twitter/core/error/failure.dart';
 import 'package:fc_twitter/features/authentication/data/model/user_model.dart';
 import 'package:fc_twitter/features/authentication/data/repository/user_repository.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
-class MockFireBaseAuth extends Mock implements FirebaseAuth {}
-
-class MockFireBaseUser extends Mock implements User {}
-
-class MockUserCredential extends Mock implements UserCredential {}
-
-class MockFirestore extends Mock implements FirebaseFirestore {}
-
-class MockCollectionReference extends Mock implements CollectionReference {}
-
-class MockDocumentReference extends Mock implements DocumentReference {}
+import '../../../mocks/mocks.dart';
 
 void main() {
   UserModel userModel;
@@ -34,7 +23,7 @@ void main() {
     mockUser = MockFireBaseUser();
     mockFireBaseAuth = MockFireBaseAuth();
     mockUserCredential = MockUserCredential();
-    mockFirebaseFirestore = MockFirestore();
+    mockFirebaseFirestore = MockFirebaseFirestore();
     collectionReference = MockCollectionReference();
     documentReference = MockDocumentReference();
     fireBaseUserRepositoryImpl = UserRepositoryImpl(

@@ -1,22 +1,12 @@
 import 'package:dartz/dartz.dart';
 import 'package:fc_twitter/core/error/failure.dart';
 import 'package:fc_twitter/core/usecase/usecase.dart';
-import 'package:fc_twitter/features/authentication/domain/usecase/use_cases.dart';
 import 'package:fc_twitter/features/authentication/domain/user_entity/user_entity.dart';
 import 'package:fc_twitter/features/authentication/representation/bloc/bloc.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
-class MockUserCredential extends Mock implements UserCredential {}
-
-class MockSignUpNewUser extends Mock implements SignUpNewUser {}
-
-class MockSaveUserDetail extends Mock implements SaveUserDetail {}
-
-class MockLogInUser extends Mock implements LogInUser {}
-
-class MockLogOutUser extends Mock implements LogOutUser {}
+import '../../../mocks/mocks.dart';
 
 void main() {
   UserEntity user;

@@ -1,6 +1,4 @@
 import 'package:fc_twitter/core/usecase/usecase.dart';
-import 'package:fc_twitter/features/timeline/data/repository/timeline_repository.dart';
-import 'package:fc_twitter/features/timeline/domain/entity/tweet_entity.dart';
 import 'package:fc_twitter/features/timeline/domain/usecase/usecases.dart';
 import 'package:fc_twitter/features/timeline/representation/bloc/bloc.dart';
 import 'package:fc_twitter/features/timeline/representation/bloc/timeline_event.dart';
@@ -9,8 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class TimeLineBloc extends Bloc<TimeLineEvent, TimeLineState> {
   final FetchTweetUseCase fetchTweets;
-  final SendTweetUseCase sendTweet;
-  TimeLineBloc({TimeLineState initialState, this.fetchTweets, this.sendTweet})
+  TimeLineBloc({TimeLineState initialState, this.fetchTweets})
       : super(initialState);
 
   @override
@@ -18,22 +15,6 @@ class TimeLineBloc extends Bloc<TimeLineEvent, TimeLineState> {
     if (event is FetchTweet) {
       yield* _mapFetchTweetToState();
     }
-    if (event is SendTweet) {
-      yield* _mapSendTweetToState(event.tweet);
-    }
-  }
-
-  Stream<TimeLineState> _mapSendTweetToState(TweetEntity tweet) async* {
-    final sendEither = await sendTweet(TParams(tweet: tweet));
-    yield* sendEither.fold(
-      (failure) async* {
-        yield SendingError(message: failure.message);
-      },
-      (success) async* {
-        yield SendingComplete();
-      },
-    );
-    yield* _mapFetchTweetToState();
   }
 
   Stream<TimeLineState> _mapFetchTweetToState() async* {

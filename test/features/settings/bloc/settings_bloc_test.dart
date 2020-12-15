@@ -2,13 +2,12 @@ import 'package:dartz/dartz.dart';
 import 'package:fc_twitter/core/usecase/usecase.dart';
 import 'package:fc_twitter/core/util/themes.dart';
 import 'package:fc_twitter/features/settings/domain/entity/theme_entity.dart';
-import 'package:fc_twitter/features/settings/domain/usecase/usecases.dart';
 import 'package:fc_twitter/features/settings/representation/bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
-class MockChangeTheme extends Mock implements ChangeThemeUseCase {}
+import '../../../mocks/mocks.dart';
 
 void main() {
   MockChangeTheme changeTheme;

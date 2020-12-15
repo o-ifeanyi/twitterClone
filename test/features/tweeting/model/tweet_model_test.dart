@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:fc_twitter/features/timeline/data/model/tweet_model.dart';
-import 'package:fc_twitter/features/timeline/domain/entity/tweet_entity.dart';
+import 'package:fc_twitter/features/tweeting/data/model/tweet_model.dart';
+import 'package:fc_twitter/features/tweeting/domain/entity/tweet_entity.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../../fixtures/fixture_reader.dart';

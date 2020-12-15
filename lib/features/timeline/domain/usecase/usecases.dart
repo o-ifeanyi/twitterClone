@@ -14,13 +14,3 @@ class FetchTweetUseCase implements UseCase<StreamConverter, NoParams> {
     return await timeLineRepository.fetchTweets();
   }
 }
-
-class SendTweetUseCase implements UseCase<bool, TParams> {
-  final TimeLineRepository timeLineRepository;
-
-  SendTweetUseCase({this.timeLineRepository});
-  @override
-  Future<Either<TimeLineFailure, bool>> call(TParams params) async{
-    return await timeLineRepository.sendTweet(params.tweet);
-  }
-}

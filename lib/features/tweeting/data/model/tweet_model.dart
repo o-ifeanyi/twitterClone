@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:fc_twitter/features/timeline/domain/entity/tweet_entity.dart';
+import 'package:fc_twitter/features/tweeting/domain/entity/tweet_entity.dart';
 import 'package:flutter/cupertino.dart';
 
 class TweetModel extends TweetEntity {

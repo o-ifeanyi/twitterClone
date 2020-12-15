@@ -1,4 +1,4 @@
-import 'package:fc_twitter/features/timeline/representation/pages/tweet_screen.dart';
+import 'package:fc_twitter/features/tweeting/representation/pages/tweet_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 

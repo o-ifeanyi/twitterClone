@@ -1,5 +1,5 @@
 import 'package:fc_twitter/core/util/config.dart';
-import 'package:fc_twitter/features/timeline/domain/entity/tweet_entity.dart';
+import 'package:fc_twitter/features/tweeting/domain/entity/tweet_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 

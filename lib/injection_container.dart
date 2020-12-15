@@ -10,6 +10,9 @@ import 'package:fc_twitter/features/settings/representation/bloc/bloc.dart';
 import 'package:fc_twitter/features/timeline/data/repository/timeline_repository.dart';
 import 'package:fc_twitter/features/timeline/domain/usecase/usecases.dart';
 import 'package:fc_twitter/features/timeline/representation/bloc/bloc.dart';
+import 'package:fc_twitter/features/tweeting/data/repository/tweeting_repository.dart';
+import 'package:fc_twitter/features/tweeting/domain/repository/tweeting_repository.dart';
+import 'package:fc_twitter/features/tweeting/representation/bloc/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,11 +22,12 @@ import 'features/settings/data/model/theme_model.dart';
 import 'features/settings/data/repository/settings_repository.dart';
 import 'features/settings/domain/repository/settings_repository.dart';
 import 'features/timeline/domain/repository/timeline_repository.dart.dart';
+import 'features/tweeting/domain/usecase/usecases.dart';
 
 final sl = GetIt.instance;
 Future<void> init() async {
   final sharedPreferences = await SharedPreferences.getInstance();
-  // Features Auth
+  // Feature Auth
   // Bloc
   sl.registerFactory(() => AuthBloc(
         initialState: sl(),
@@ -47,12 +51,11 @@ Future<void> init() async {
         firebaseFirestore: sl(),
       ));
 
-  // Features TimeLine
+  // Feature TimeLine
   // Bloc
   sl.registerFactory(() => TimeLineBloc(
         initialState: sl(),
         fetchTweets: sl(),
-        sendTweet: sl(),
       )..add(FetchTweet()));
 
   // State
@@ -60,20 +63,39 @@ Future<void> init() async {
 
   // Use cases
   sl.registerLazySingleton(() => FetchTweetUseCase(timeLineRepository: sl()));
-  sl.registerLazySingleton(() => SendTweetUseCase(timeLineRepository: sl()));
 
   // Repository
   sl.registerLazySingleton<TimeLineRepository>(() => TimeLineRepositoryImpl(
         firebaseFirestore: sl(),
       ));
 
+      // Feature TimeLine
+  // Bloc
+  sl.registerFactory(() => TweetingBloc(
+        initialState: sl(),
+        sendTweet: sl()
+      ));
+
+  // State
+  sl.registerLazySingleton<TweetingState>(() => InitialTweetingState());
+
+  // Use cases
+  sl.registerLazySingleton(() => SendTweetUseCase(tweetingRepository: sl()));
+
+  // Repository
+  sl.registerLazySingleton<TweetingRepository>(() => TweetingRepositoryImpl(
+        firebaseFirestore: sl(),
+      ));
+
+  // Feature Settings
+  // Bloc
   sl.registerFactory(
     () => SettingsBloc(
       appTheme: sl(),
       changeTheme: sl(),
     ),
   );
-
+  // State
   sl.registerLazySingleton<AppTheme>(() {
     final theme = json.decode(sharedPreferences.getString('theme') ??
         json.encode({'isLight': true, 'isDim': false, 'isLightsOut': true}));
@@ -85,18 +107,6 @@ Future<void> init() async {
     } else
       return AppTheme(themeOptions[DarkThemeOptions.LightsOut]);
   });
-  // sl.registerLazySingletonAsync<AppTheme>(() async {
-  //   final pref = await SharedPreferences.getInstance();
-  //   final theme = json.decode(pref.getString('theme')) ??
-  //       {'isLight': true, 'isDim': false, 'isLightsOut': true};
-  //   final currentTheme = ThemeModel.fromJson(theme).toEntity();
-  //   if (currentTheme.isLight) {
-  //     return AppTheme(themeOptions[ThemeOptions.Light]);
-  //   } else if (currentTheme.isDim) {
-  //     return AppTheme(themeOptions[DarkThemeOptions.Dim]);
-  //   } else
-  //     return AppTheme(themeOptions[DarkThemeOptions.LightsOut]);
-  // });
 
   // Use cases
   sl.registerLazySingleton(() => ChangeThemeUseCase(settingsRepository: sl()));
