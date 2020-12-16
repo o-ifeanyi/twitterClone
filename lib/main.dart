@@ -1,3 +1,4 @@
+import 'package:fc_twitter/features/profile/representation/bloc/bloc.dart';
 import 'package:fc_twitter/features/settings/representation/bloc/bloc.dart';
 import 'package:fc_twitter/features/tweeting/representation/bloc/bloc.dart';
 import 'package:fc_twitter/injection_container.dart';
@@ -22,6 +23,7 @@ void main() async {
         BlocProvider<AuthBloc>(create: (_) => sl<AuthBloc>()),
         BlocProvider<TimeLineBloc>(create: (_) => sl<TimeLineBloc>()),
         BlocProvider<TweetingBloc>(create: (_) => sl<TweetingBloc>()),
+        BlocProvider<ProfileBloc>(create: (_) => sl<ProfileBloc>()),
         BlocProvider<SettingsBloc>(create: (_) => sl<SettingsBloc>()),
       ],
       child: MyApp(),

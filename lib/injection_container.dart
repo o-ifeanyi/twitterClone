@@ -5,6 +5,8 @@ import 'package:fc_twitter/core/util/themes.dart';
 import 'package:fc_twitter/features/authentication/data/repository/user_repository.dart';
 import 'package:fc_twitter/features/authentication/domain/usecase/use_cases.dart';
 import 'package:fc_twitter/features/authentication/representation/bloc/bloc.dart';
+import 'package:fc_twitter/features/profile/data/repository/profile_repository.dart.dart';
+import 'package:fc_twitter/features/profile/representation/bloc/bloc.dart';
 import 'package:fc_twitter/features/settings/domain/usecase/usecases.dart';
 import 'package:fc_twitter/features/settings/representation/bloc/bloc.dart';
 import 'package:fc_twitter/features/timeline/data/repository/timeline_repository.dart';
@@ -18,6 +20,8 @@ import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'features/authentication/domain/repository/user_repository.dart';
+import 'features/profile/domain/repository/profile_repository.dart.dart';
+import 'features/profile/domain/usecase/usecases.dart';
 import 'features/settings/data/model/theme_model.dart';
 import 'features/settings/data/repository/settings_repository.dart';
 import 'features/settings/domain/repository/settings_repository.dart';
@@ -27,7 +31,7 @@ import 'features/tweeting/domain/usecase/usecases.dart';
 final sl = GetIt.instance;
 Future<void> init() async {
   final sharedPreferences = await SharedPreferences.getInstance();
-  // Feature Auth
+  // Feature Autheentication
   // Bloc
   sl.registerFactory(() => AuthBloc(
         initialState: sl(),
@@ -69,7 +73,25 @@ Future<void> init() async {
         firebaseFirestore: sl(),
       ));
 
-      // Feature TimeLine
+  // Feature Profile
+  // Bloc
+  sl.registerFactory(() => ProfileBloc(
+        initialState: sl(),
+        getUserProfile: sl(),
+      ));
+
+  // State
+  sl.registerLazySingleton<ProfileState >(() => ProfileInitialState());
+
+  // Use cases
+  sl.registerLazySingleton(() => GetUserProfileUseCase (profileRepository: sl()));
+
+  // Repository
+  sl.registerLazySingleton<ProfileRepository >(() => ProfileRepositoryImpl(
+        firebaseFirestore: sl(),
+      ));
+
+  // Feature Tweeting
   // Bloc
   sl.registerFactory(() => TweetingBloc(
         initialState: sl(),
