@@ -2,6 +2,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fc_twitter/features/authentication/domain/repository/user_repository.dart';
 import 'package:fc_twitter/features/authentication/domain/usecase/use_cases.dart';
+import 'package:fc_twitter/features/profile/domain/repository/profile_repository.dart.dart';
+import 'package:fc_twitter/features/profile/domain/usecase/usecases.dart';
 import 'package:fc_twitter/features/settings/domain/repository/settings_repository.dart';
 import 'package:fc_twitter/features/settings/domain/usecase/usecases.dart';
 import 'package:fc_twitter/features/timeline/domain/repository/timeline_repository.dart.dart';
@@ -20,6 +22,8 @@ class MockTimeLineRepository extends Mock implements TimeLineRepository {}
 
 class MockTweetingRepository extends Mock implements TweetingRepository {}
 
+class MockProfileRepository extends Mock implements ProfileRepository {}
+
 // Use cases
 class MockSignUpNewUser extends Mock implements SignUpNewUser {}
 
@@ -35,6 +39,8 @@ class MockSendTweet extends Mock implements SendTweetUseCase {}
 
 class MockFetchTweets extends Mock implements FetchTweetUseCase {}
 
+class MockGetUserProfile extends Mock implements GetUserProfileUseCase {}
+
 // Externals
 class MockCollectionReference extends Mock implements CollectionReference {}
 
@@ -42,6 +48,7 @@ class MockFirebaseFirestore extends Mock implements FirebaseFirestore {}
 
 class MockUserCredential extends Mock implements UserCredential {}
 
+class MockDocumentSnapshot extends Mock implements DocumentSnapshot {}
 
 class MockFireBaseAuth extends Mock implements FirebaseAuth {}
 

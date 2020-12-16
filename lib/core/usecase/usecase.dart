@@ -34,6 +34,15 @@ class TParams extends Equatable {
   List<Object> get props => [tweet];
 }
 
+class PParams extends Equatable {
+  final String userId;
+
+  PParams({this.userId});
+
+  @override
+  List<Object> get props => [userId];
+}
+
 class SParams extends Equatable {
   final ThemeEntity themeEntity;
 

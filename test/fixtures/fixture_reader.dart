@@ -7,6 +7,12 @@ String tweetFixture() => json.encode({
       "timeStamp": "0s"
     });
 
+String userFixture() => json.encode({
+      "id": "001",
+      "name": "ifeanyi",
+      "userName": "onuoha",
+    });
+
 String themeFixture() => json.encode({
       "isLight": true,
       "isDi": false,

@@ -34,35 +34,29 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   Stream<AuthState> _mapSignupToState(UserEntity user) async* {
     yield AuthInProgress();
-    try {
-      final response = await signUpNewUser(AParams(user: user));
-      yield* response.fold((failure) async* {
+
+    final response = await signUpNewUser(AParams(user: user));
+    yield* response.fold((failure) async* {
+      yield AuthFailed(message: failure.message);
+    }, (credentials) async* {
+      final savedEither =
+          await saveUserDetail(AParams(credential: credentials));
+      yield* savedEither.fold((failure) async* {
         yield AuthFailed(message: failure.message);
-      }, (credentials) async* {
-        final savedEither = await saveUserDetail(AParams(credential: credentials));
-        yield* savedEither.fold((failure) async* {
-          yield AuthFailed(message: failure.message);
-        }, (success) async* {
-          yield AuthComplete();
-        });
+      }, (success) async* {
+        yield AuthComplete();
       });
-      // if signup is successful and saving fails the newly created user should probably be deleted
-    } catch (error) {
-      print(error);
-    }
+    });
+    // if signup is successful and saving fails the newly created user should probably be deleted
   }
 
   Stream<AuthState> _mapLoginToState(UserEntity user) async* {
     yield AuthInProgress();
-    try {
-      final response = await logInUser(AParams(user: user));
-      yield* response.fold((failure) async* {
-        yield AuthFailed(message: failure.message);
-      }, (credentials) async* {
-        yield AuthComplete();
-      });
-    } catch (error) {
-      print(error);
-    }
+    final response = await logInUser(AParams(user: user));
+    yield* response.fold((failure) async* {
+      yield AuthFailed(message: failure.message);
+    }, (credentials) async* {
+      yield AuthComplete();
+    });
   }
 }
