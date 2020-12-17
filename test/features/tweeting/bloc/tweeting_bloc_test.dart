@@ -43,14 +43,10 @@ void main() {
   void setUpFetchSuccess() {
     when(collectionReference.snapshots())
         .thenAnswer((_) => streamController.stream);
-    // when(fetchTweets(NoParams())).thenAnswer(
-    //   (_) =>
-    //       Future.value(Right(StreamConverter(collection: collectionReference))),
-    // );
   }
 
-  group('timeline bloc test', () {
-    test('should emit [SendingComplete] first when tweet is sent successfully',
+  group('tweeting bloc sendTweet', () {
+    test('should emit [SendingComplete] when successful',
         () async {
       when(sendTweet(any)).thenAnswer(
         (_) => Future.value(Right(true)),
@@ -65,7 +61,7 @@ void main() {
       tweetingBloc.add(SendTweet(tweet: tweetEntity));
     });
 
-    test('should emit [SendingError] first when sending tweet fails', () async {
+    test('should emit [SendingError] when sending tweet fails', () async {
       when(sendTweet(any)).thenAnswer(
         (_) => Future.value(
             Left(TweetingFailure(message: 'Failed to send tweet'))),
@@ -79,40 +75,5 @@ void main() {
 
       tweetingBloc.add(SendTweet(tweet: tweetEntity));
     });
-
-    // test(
-    //     'should emit [FetchingTweet, FetchingComplete] when fetching tweet is successful',
-    //     () async {
-    //   when(collectionReference.snapshots())
-    //       .thenAnswer((_) => streamController.stream);
-    //   when(fetchTweets(NoParams())).thenAnswer(
-    //     (_) => Future.value(
-    //         Right(StreamConverter(collection: collectionReference))),
-    //   );
-
-    //   final expectations = [
-    //     FetchingTweet(),
-    //     FetchingComplete(),
-    //   ];
-    //   expectLater(tweetingBloc, emitsInOrder(expectations));
-
-    //   tweetingBloc.add(FetchTweet());
-    // });
-
-    // test(
-    //     'should emit [FetchingTweet, FetchingFailed] when fetching tweet fails',
-    //     () async {
-    //   when(fetchTweets(NoParams())).thenAnswer(
-    //     (_) => Future.value(
-    //         Left(TimeLineFailure(message: 'Failed to load tweets'))),
-    //   );
-    //   final expectations = [
-    //     FetchingTweet(),
-    //     FetchingError(message: 'Failed to load tweets'),
-    //   ];
-    //   expectLater(tweetingBloc, emitsInOrder(expectations));
-
-    //   tweetingBloc.add(FetchTweet());
-    // });
   });
 }

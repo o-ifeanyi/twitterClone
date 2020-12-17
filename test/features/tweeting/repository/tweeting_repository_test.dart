@@ -29,9 +29,9 @@ void main() {
         TweetingRepositoryImpl(firebaseFirestore: mockFirebaseFirestore);
   });
 
-  group('timeline test', () {
+  group('tweeting repository sendTeet', () {
     test(
-        'should return a true when sentTweet is called successfully',
+        'should return a true when successful',
         () async {
       when(mockFirebaseFirestore.collection(any))
           .thenReturn(collectionReference);
@@ -44,7 +44,7 @@ void main() {
       expect(response, Right(true));
     });
 
-    test('should return a TweetingFailure when sendTweet fails', () async {
+    test('should return a TweetingFailure when it fails', () async {
       when(mockFirebaseFirestore.collection(any)).thenThrow(Error());
 
       final response = await tweetingRepositoryImpl.sendTweet(tweetEntity);

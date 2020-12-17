@@ -14,7 +14,6 @@ import '../../../mocks/mocks.dart';
 void main() {
   TweetEntity tweetEntity;
   TweetingRepository  tweetingRepository;
-  // FetchTweetUseCase fetchTweet;
   SendTweetUseCase sendTweet;
 
   setUp(() {
@@ -25,35 +24,11 @@ void main() {
       timeStamp: Timestamp.now(),
     );
     tweetingRepository = MockTweetingRepository();
-    // fetchTweet =
-    //     FetchTweetUseCase(tweetingRepository: tweetingRepository);
     sendTweet = SendTweetUseCase(tweetingRepository: tweetingRepository);
   });
 
-  group('use case', () {
-
-    // test('should return a StreamConverter when tweet fetched successfully', () async {
-    //   when(tweetingRepository.fetchTweets()).thenAnswer(
-    //     (_) => Future.value(Right(StreamConverter())),
-    //   );
-
-    //   final result = await fetchTweet(NoParams());
-
-    //   expect(result, Right(StreamConverter()));
-    //   verify(tweetingRepository.fetchTweets());
-    // });
-
-    // test('should return TimelineFailure when tweet is not sent successfully', () async {
-    //   when(tweetingRepository.fetchTweets()).thenAnswer(
-    //     (_) => Future.value(Left(TweetingFailure())),
-    //   );
-
-    //   final result = await fetchTweet(NoParams());
-
-    //   expect(result, Left(TweetingFailure()));
-    //   verify(tweetingRepository.fetchTweets());
-    // });
-
+  group('sentTweet use case', () {
+    
     test('should return true when tweet is sent successfully', () async {
       when(tweetingRepository.sendTweet(any)).thenAnswer(
         (_) => Future.value(Right(true)),

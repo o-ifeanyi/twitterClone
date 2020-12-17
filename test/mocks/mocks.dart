@@ -41,6 +41,8 @@ class MockFetchTweets extends Mock implements FetchTweetUseCase {}
 
 class MockGetUserProfile extends Mock implements GetUserProfileUseCase {}
 
+class MockUpdateUserProfile extends Mock implements UpdateUserProfileUseCase {}
+
 // Externals
 class MockCollectionReference extends Mock implements CollectionReference {}
 

@@ -16,9 +16,7 @@ class DrawerUserInfo extends StatelessWidget {
       child: BlocBuilder<ProfileBloc, ProfileState>(
         builder: (context, state) {
           if (state is FetchingComplete) {
-            final user = state.userProfile;
-            print(user.name);
-            print(user.userName);
+            final profile = state.userProfile;
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -28,21 +26,21 @@ class DrawerUserInfo extends StatelessWidget {
                 ),
                 SizedBox(height: 8),
                 Text(
-                  user.name,
+                  profile.name,
                   style: TextStyle(
                       fontSize: Config.xMargin(context, 5),
                       fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 5),
                 Text(
-                  user.userName,
+                  profile.userName,
                   style: _customLightStyle,
                 ),
                 SizedBox(height: 8),
                 Row(
                   children: [
                     Text(
-                      '${user.following}',
+                      '${profile.following}',
                       style: TextStyle(
                           fontSize: Config.xMargin(context, 4),
                           fontWeight: FontWeight.bold),
@@ -53,7 +51,7 @@ class DrawerUserInfo extends StatelessWidget {
                     ),
                     SizedBox(width: 10),
                     Text(
-                      '${user.followers}',
+                      '${profile.followers}',
                       style: TextStyle(
                           fontSize: Config.xMargin(context, 4),
                           fontWeight: FontWeight.bold),

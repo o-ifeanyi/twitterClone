@@ -20,4 +20,15 @@ class ProfileRepositoryImpl implements ProfileRepository {
     }
   }
 
+  @override
+  Future<Either<ProfileFilure, bool>> updateUserProfile(UserProfileEntity userProfile) async{
+    try{
+      final data = UserProfileModel.fromEntity(userProfile).toMap();
+      await firebaseFirestore.collection('users').doc(userProfile.id).set(data);
+      return Right(true);
+    } catch (_) {
+      return Left(ProfileFilure());
+    }
+  }
+
 }

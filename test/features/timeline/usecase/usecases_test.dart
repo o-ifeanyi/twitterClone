@@ -12,18 +12,16 @@ import '../../../mocks/mocks.dart';
 void main() {
   MockTimeLineRepository timeLineRepository;
   FetchTweetUseCase fetchTweet;
-  // SendTweetUseCase sendTweet;
 
   setUp(() {
     timeLineRepository = MockTimeLineRepository();
     fetchTweet =
         FetchTweetUseCase(timeLineRepository: timeLineRepository);
-    // sendTweet = SendTweetUseCase(timeLineRepository: timeLineRepository);
   });
 
-  group('use case', () {
+  group('fetchTweet use case', () {
 
-    test('should return a StreamConverter when tweet fetched successfully', () async {
+    test('should return a StreamConverter when successful', () async {
       when(timeLineRepository.fetchTweets()).thenAnswer(
         (_) => Future.value(Right(StreamConverter())),
       );
@@ -34,7 +32,7 @@ void main() {
       verify(timeLineRepository.fetchTweets());
     });
 
-    test('should return TimelineFailure when tweet is not sent successfully', () async {
+    test('should return TimelineFailure when un-successfully', () async {
       when(timeLineRepository.fetchTweets()).thenAnswer(
         (_) => Future.value(Left(TimeLineFailure())),
       );
@@ -44,27 +42,5 @@ void main() {
       expect(result, Left(TimeLineFailure()));
       verify(timeLineRepository.fetchTweets());
     });
-
-    // test('should return true when tweet is sent successfully', () async {
-    //   when(timeLineRepository.sendTweet(any)).thenAnswer(
-    //     (_) => Future.value(Right(true)),
-    //   );
-
-    //   final result = await sendTweet(TParams(tweet: tweetEntity));
-
-    //   expect(result, Right(true));
-    //   verify(timeLineRepository.sendTweet(any));
-    // });
-
-    // test('should return TimelineFailure when tweet is not sent successfully', () async {
-    //   when(timeLineRepository.sendTweet(any)).thenAnswer(
-    //     (_) => Future.value(Left(TimeLineFailure())),
-    //   );
-
-    //   final result = await sendTweet(TParams(tweet: tweetEntity));
-
-    //   expect(result, Left(TimeLineFailure()));
-    //   verify(timeLineRepository.sendTweet(any));
-    // });
   });
 }

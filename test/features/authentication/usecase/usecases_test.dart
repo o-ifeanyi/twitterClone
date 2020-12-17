@@ -32,8 +32,8 @@ void main() {
     logOutUser = LogOutUser(userRepository: userRepository);
   });
 
-  group('use case', () {
-    test('should return usercredential from repository on signup', () async{
+  group('signUpNewUser use case', () {
+    test('should return usercredential from repository when successful', () async{
       when(userRepository.signUpNewUser(userEntity)).thenAnswer(
         (_) => Future.value(Right(userCredential)),
       );
@@ -44,7 +44,20 @@ void main() {
       verify(userRepository.signUpNewUser(any));
     });
 
-     test('should return usercredential from repository on login', () async{
+    test('should return AuthFailure from repository when it fails', () async{
+     when(userRepository.signUpNewUser(userEntity)).thenAnswer(
+        (_) => Future.value(Left(AuthFailure())),
+      );
+
+      final result = await signUpNewUser(AParams(user: userEntity));
+
+      expect(result, Left(AuthFailure()));
+      verify(userRepository.signUpNewUser(any));
+    });
+  });
+
+  group('logInUser use case', () {
+    test('should return usercredential from repository when successful', () async{
       when(userRepository.logInUser(userEntity)).thenAnswer(
         (_) => Future.value(Right(userCredential)),
       );
@@ -55,29 +68,7 @@ void main() {
       verify(userRepository.logInUser(any));
     });
 
-    test('should return true from repository on saving user detail', () async{
-      when(userRepository.saveUserDetail(userProfileModel)).thenAnswer(
-        (_) => Future.value(Right(true)),
-      );
-
-      final result = await saveUserDetail(AParams(userProfile: userProfileModel));
-
-      expect(result, Right(true));
-      verify(userRepository.saveUserDetail(any));
-    });
-
-    test('should return AuthFailure from repository on signup fail', () async{
-     when(userRepository.signUpNewUser(userEntity)).thenAnswer(
-        (_) => Future.value(Left(AuthFailure())),
-      );
-
-      final result = await signUpNewUser(AParams(user: userEntity));
-
-      expect(result, Left(AuthFailure()));
-      verify(userRepository.signUpNewUser(any));
-    });
-
-    test('should return AuthFailure from repository on login fail', () async{
+    test('should return AuthFailure from repository when it fails', () async{
      when(userRepository.logInUser(userEntity)).thenAnswer(
         (_) => Future.value(Left(AuthFailure())),
       );
@@ -86,17 +77,6 @@ void main() {
 
       expect(result, Left(AuthFailure()));
       verify(userRepository.logInUser(any));
-    });
-
-    test('should return AuthFailure from repository on saving detail fail', () async{
-     when(userRepository.saveUserDetail(userProfileModel)).thenAnswer(
-        (_) => Future.value(Left(AuthFailure())),
-      );
-
-      final result = await saveUserDetail(AParams(userProfile: userProfileModel));
-
-      expect(result, Left(AuthFailure()));
-      verify(userRepository.saveUserDetail(any));
     });
 
     test('should return true from repository on log out success', () async{
@@ -109,16 +89,29 @@ void main() {
       expect(result, Right(true));
       verify(userRepository.logOutUser());
     });
+  });
 
-    test('should return AuthFailure from repository on logot fail', () async{
-     when(userRepository.logOutUser()).thenAnswer(
+  group('saveUserDetail use case', () {
+    test('should return true from repository when successful', () async{
+      when(userRepository.saveUserDetail(userProfileModel)).thenAnswer(
+        (_) => Future.value(Right(true)),
+      );
+
+      final result = await saveUserDetail(AParams(userProfile: userProfileModel));
+
+      expect(result, Right(true));
+      verify(userRepository.saveUserDetail(any));
+    });
+  });
+
+  test('should return AuthFailure from repository when it fails', () async{
+     when(userRepository.saveUserDetail(userProfileModel)).thenAnswer(
         (_) => Future.value(Left(AuthFailure())),
       );
 
-      final result = await logOutUser(NoParams());
+      final result = await saveUserDetail(AParams(userProfile: userProfileModel));
 
       expect(result, Left(AuthFailure()));
-      verify(userRepository.logOutUser());
+      verify(userRepository.saveUserDetail(any));
     });
-  });
 }

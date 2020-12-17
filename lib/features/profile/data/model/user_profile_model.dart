@@ -37,7 +37,7 @@ class UserProfileModel extends UserProfileEntity {
       location: data['location'] ?? '',
       website: data['website'] ?? '',
       dateOfBirth: data['dateOfBirth'] ?? '',
-      dateJoined: data['dateJoined'] ?? '',
+      dateJoined: data['dateJoined'],
       following: data['following'] ?? 0,
       followers: data['followers'] ?? 0,
     );

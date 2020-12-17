@@ -21,9 +21,9 @@ void main() {
         TimeLineRepositoryImpl(firebaseFirestore: mockFirebaseFirestore);
   });
 
-  group('timeline test', () {
+  group('timeline repository fetchTweets', () {
 
-    test('should return a StreamConverter when fetch tweet is called successfully',
+    test('should return a StreamConverter when fetch tweet successful',
         () async {
       when(mockFirebaseFirestore.collection(any))
           .thenReturn(collectionReference);

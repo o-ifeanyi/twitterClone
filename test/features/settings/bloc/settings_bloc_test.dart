@@ -22,7 +22,7 @@ void main() {
     );
   });
 
-  group('change theme', () {
+  group('change theme event', () {
     test('should emit AppTheme with light theme option', () {
       themeEntity = ThemeEntity(isLight: true, isDim: false, isLightsOut: true);
       when(changeTheme(SParams(themeEntity: themeEntity))).thenAnswer(

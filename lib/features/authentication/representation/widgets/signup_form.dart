@@ -38,7 +38,7 @@ class _SignupFormState extends State<SignupForm> {
             controller: _signupUsernameController,
             maxLength: 50,
             decoration: InputDecoration(
-              labelText: 'Name',
+              labelText: 'Username',
             ),
             validator: (val) {
               if (val.isEmpty) {
@@ -103,7 +103,7 @@ class _SignupFormState extends State<SignupForm> {
                       SignUp(
                           user: UserModel(
                         email: _signupEmailController.text,
-                        name: _signupUsernameController.text,
+                        userName: _signupUsernameController.text,
                         password: _signupPasswordController.text,
                       )),
                     );

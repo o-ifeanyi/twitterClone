@@ -22,7 +22,8 @@ void main() {
 
   setUp(() {
     userModel = UserModel(email: 'ifeanyi@email.com', password: '123456');
-    userProfileModel = UserProfileModel(id: '001', name: 'ifeanyi', userName: 'onuoha');
+    userProfileModel =
+        UserProfileModel(id: '001', name: 'ifeanyi', userName: 'onuoha');
     mockUser = MockFireBaseUser();
     mockFireBaseAuth = MockFireBaseAuth();
     mockUserCredential = MockUserCredential();
@@ -34,8 +35,8 @@ void main() {
         firebaseFirestore: mockFirebaseFirestore);
   });
 
-  group('user authentication', () {
-    test('should return a new user when signing up is successful', () async {
+  group('user repository signUpNewUser', () {
+    test('should return a new user when successful', () async {
       when(mockFireBaseAuth.createUserWithEmailAndPassword(
               email: anyNamed('email'), password: anyNamed('password')))
           .thenAnswer(
@@ -46,8 +47,7 @@ void main() {
       expect(user, equals(Right(mockUserCredential)));
     });
 
-    test('should return a signup failure when error occurs during sign up',
-        () async {
+    test('should return a AuthFailure when error occurs', () async {
       when(mockFireBaseAuth.createUserWithEmailAndPassword(
               email: anyNamed('email'), password: anyNamed('password')))
           .thenThrow(Error());
@@ -56,29 +56,15 @@ void main() {
       expect(user, equals(Left(AuthFailure(message: 'Sign up failed'))));
     });
 
-    test('should return true when saving user detail occurs successfully',
-        () async {
-      when(mockUserCredential.user).thenReturn(mockUser);
-      when(mockUser.uid).thenReturn('user-id');
-      when(mockFirebaseFirestore.collection(any)).thenReturn(collectionReference);
-      when(collectionReference.doc(any)).thenReturn(documentReference);
-      when(documentReference.set(any)).thenAnswer((realInvocation) => null);
+    test('should verify sign out is called', () async {
+      fireBaseUserRepositoryImpl.logOutUser();
 
-      final user = await fireBaseUserRepositoryImpl.saveUserDetail(userProfileModel);
-
-      expect(user, equals(Right(true)));
+      verify(mockFireBaseAuth.signOut());
     });
+  });
 
-    test('should return an AuthFailure when saving user detail fails',
-        () async {
-      when(mockFirebaseFirestore.collection(any)).thenThrow(Error());
-
-      final user = await fireBaseUserRepositoryImpl.saveUserDetail(userProfileModel);
-
-      expect(user, equals(Left(AuthFailure(message: 'Saving failed'))));
-    });
-
-    test('should return a new user when loging in succesful', () async {
+  group('user repository logInUser', () {
+    test('should return a new user when succesful', () async {
       when(mockFireBaseAuth.signInWithEmailAndPassword(
               email: anyNamed('email'), password: anyNamed('password')))
           .thenAnswer(
@@ -89,7 +75,7 @@ void main() {
       expect(user, equals(Right(mockUserCredential)));
     });
 
-    test('should return a login failure when error occurs during login',
+    test('should return an AuthFailure when error occurs during login',
         () async {
       when(mockFireBaseAuth.signInWithEmailAndPassword(
               email: anyNamed('email'), password: anyNamed('password')))
@@ -99,11 +85,30 @@ void main() {
 
       expect(user, equals(Left(AuthFailure(message: 'Login failed'))));
     });
+  });
 
-    test('should verify sign out is called', () async {
-      fireBaseUserRepositoryImpl.logOutUser();
+  group('user repository saveUserDetail', () {
+    test('should return true when successful', () async {
+      when(mockUserCredential.user).thenReturn(mockUser);
+      when(mockUser.uid).thenReturn('user-id');
+      when(mockFirebaseFirestore.collection(any))
+          .thenReturn(collectionReference);
+      when(collectionReference.doc(any)).thenReturn(documentReference);
+      when(documentReference.set(any)).thenAnswer((realInvocation) => null);
 
-      verify(mockFireBaseAuth.signOut());
+      final user =
+          await fireBaseUserRepositoryImpl.saveUserDetail(userProfileModel);
+
+      expect(user, equals(Right(true)));
+    });
+
+    test('should return an AuthFailure when it fails', () async {
+      when(mockFirebaseFirestore.collection(any)).thenThrow(Error());
+
+      final user =
+          await fireBaseUserRepositoryImpl.saveUserDetail(userProfileModel);
+
+      expect(user, equals(Left(AuthFailure(message: 'Saving failed'))));
     });
   });
 }

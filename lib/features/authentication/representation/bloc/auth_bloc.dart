@@ -42,8 +42,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }, (credentials) async* {
       final userProfile = UserProfileModel(
         id: credentials.user.uid,
-        name: user.name,
-        userName: '@' + user.email.split('@').first,
+        name: user.email.split('@').first,
+        userName: '@' + user.userName,
+        dateJoined: _getDate(),
       );
       final savedEither =
           await saveUserDetail(AParams(userProfile: userProfile));
@@ -64,5 +65,24 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }, (credentials) async* {
       yield AuthComplete();
     });
+  }
+
+  static String _getDate() {
+    final date = DateTime.now();
+    final months = [
+      'January',
+      'Februrary',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ];
+    return 'Joined ${months[date.month - 1]} ${date.year}';
   }
 }

@@ -14,3 +14,13 @@ class GetUserProfileUseCase implements UseCase<UserProfileEntity, PParams>{
     return await profileRepository.getUserProfile(params.userId);
   }
 }
+
+class UpdateUserProfileUseCase implements UseCase<bool, PParams>{
+  final ProfileRepository profileRepository;
+
+  UpdateUserProfileUseCase({this.profileRepository});
+  @override
+  Future<Either<Failure, bool>> call(PParams params) async{
+    return await profileRepository.updateUserProfile(params.userEntity);
+  }
+}

@@ -19,7 +19,7 @@ void main() {
   MockFireBaseUser fireBaseUser;
 
   setUp(() {
-    user = UserEntity(email: 'ifeanyi@email.com', password: '123456');
+    user = UserEntity(email: 'ifeanyi@email.com', password: '123456', userName: 'onuoha');
     fireBaseUser = MockFireBaseUser();
     signUpNewUser = MockSignUpNewUser();
     saveUserDetail = MockSaveUserDetail();
@@ -35,7 +35,7 @@ void main() {
     );
   });
 
-  group('Sign up event', () {
+  group('Auth bloc Sign up event', () {
     test(
         'should emit [Authinprogress] and [Authcomplete] when sign up and save is successful',
         () async {
@@ -92,7 +92,7 @@ void main() {
     });
   });
 
-  group('Log in event', () {
+  group('Auth bloc Log in event', () {
     test(
         'should emit [Authinprogress] and [Authcomplete] when log in is successful',
         () async {

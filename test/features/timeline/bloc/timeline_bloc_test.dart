@@ -31,10 +31,10 @@ void main() {
   test(('confirm inistial bloc state'), () {
     expect(timeLineBloc.state, equals(InitialTimeLineState()));
   });
-  group('timeline bloc test', () {
+  group('timeline bloc fetchTweets event', () {
 
     test(
-        'should emit [FetchingTweet, FetchingComplete] when fetching tweet is successful',
+        'should emit [FetchingTweet, FetchingComplete] when successful',
         () async {
       when(collectionReference.snapshots())
           .thenAnswer((_) => streamController.stream);
@@ -53,7 +53,7 @@ void main() {
     });
 
     test(
-        'should emit [FetchingTweet, FetchingFailed] when fetching tweet fails',
+        'should emit [FetchingTweet, FetchingFailed] when it fails',
         () async {
       when(fetchTweets(NoParams())).thenAnswer(
         (_) => Future.value(

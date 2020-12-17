@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
+import 'package:fc_twitter/core/error/failure.dart';
 import 'package:fc_twitter/features/profile/data/repository/profile_repository.dart.dart';
 import 'package:fc_twitter/features/profile/domain/entity/user_profile_entity.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -19,11 +20,8 @@ void main() {
   UserProfileEntity userEntity;
 
   setUp(() {
-    userEntity = UserProfileEntity(
-      id: '001',
-      name: 'ifeanyi',
-      userName: 'onuoha',
-    );
+    userEntity =
+        UserProfileEntity(id: '001', name: 'ifeanyi', userName: 'onuoha');
     firebaseFirestore = MockFirebaseFirestore();
     collectionReference = MockCollectionReference();
     documentReference = MockDocumentReference();
@@ -33,9 +31,8 @@ void main() {
     );
   });
 
-  group('profile repository', () {
-    test('should return UserProfileEntity when getUserProfile is successful',
-        () async {
+  group('profile repository getUserProfile', () {
+    test('should return UserProfileEntity when successful', () async {
       when(firebaseFirestore.collection(any)).thenReturn(collectionReference);
       when(collectionReference.doc(any)).thenReturn(documentReference);
       when(documentReference.get())
@@ -46,6 +43,38 @@ void main() {
       final result = await profileRepositoryImpl.getUserProfile('test');
 
       expect(result, Right(userEntity));
+    });
+
+    test('should return ProfileFailure when it fails', () async {
+      when(firebaseFirestore.collection(any)).thenReturn(collectionReference);
+      when(collectionReference.doc(any)).thenReturn(documentReference);
+      when(documentReference.get()).thenThrow(Error());
+
+      final result = await profileRepositoryImpl.getUserProfile('test');
+
+      expect(result, Left(ProfileFilure()));
+    });
+  });
+
+  group('profile repository updateUserProfile', () {
+    test('should return true when successful', () async {
+      when(firebaseFirestore.collection(any)).thenReturn(collectionReference);
+      when(collectionReference.doc(any)).thenReturn(documentReference);
+      when(documentReference.set(any)).thenAnswer((_) => Future.value(null));
+
+      final result = await profileRepositoryImpl.updateUserProfile(userEntity);
+
+      expect(result, Right(true));
+    });
+
+    test('should return ProfileFailure when it fails', () async {
+      when(firebaseFirestore.collection(any)).thenReturn(collectionReference);
+      when(collectionReference.doc(any)).thenReturn(documentReference);
+      when(documentReference.set(any)).thenThrow(Error());
+
+      final result = await profileRepositoryImpl.updateUserProfile(userEntity);
+
+      expect(result, Left(ProfileFilure()));
     });
   });
 }

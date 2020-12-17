@@ -5,4 +5,6 @@ import 'package:fc_twitter/features/profile/domain/entity/user_profile_entity.da
 
 abstract class ProfileRepository {
   Future<Either<ProfileFilure, UserProfileEntity>> getUserProfile(String userId);
+
+  Future<Either<ProfileFilure, bool>> updateUserProfile(UserProfileEntity userProfile);
 }

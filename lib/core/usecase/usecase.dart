@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:fc_twitter/core/error/failure.dart';
 import 'package:fc_twitter/features/authentication/domain/user_entity/user_entity.dart';
 import 'package:fc_twitter/features/profile/data/model/user_profile_model.dart';
+import 'package:fc_twitter/features/profile/domain/entity/user_profile_entity.dart';
 import 'package:fc_twitter/features/settings/domain/entity/theme_entity.dart';
 import 'package:fc_twitter/features/tweeting/domain/entity/tweet_entity.dart';
 
@@ -36,11 +37,12 @@ class TParams extends Equatable {
 
 class PParams extends Equatable {
   final String userId;
+  final UserProfileEntity userEntity;
 
-  PParams({this.userId});
+  PParams({this.userId, this.userEntity});
 
   @override
-  List<Object> get props => [userId];
+  List<Object> get props => [userId, userEntity];
 }
 
 class SParams extends Equatable {

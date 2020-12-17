@@ -23,4 +23,6 @@ class FetchingComplete extends ProfileState {
   List<Object> get props => [userProfile];
 }
 
+class UpdateFailed extends ProfileState {}
+
 

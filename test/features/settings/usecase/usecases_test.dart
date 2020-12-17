@@ -24,7 +24,7 @@ void main() {
         ChangeThemeUseCase(settingsRepository: settingsRepository);
   });
 
-  group('use case', () {
+  group('changeTheme use case', () {
     test('should return a Theme entity when theme is changed', () async {
       when(settingsRepository.changeTheme(any)).thenAnswer(
         (_) => Future.value(Right(themeEntity)),
