@@ -1,6 +1,7 @@
 import 'package:fc_twitter/core/usecase/usecase.dart';
 import 'package:fc_twitter/features/authentication/domain/usecase/use_cases.dart';
 import 'package:fc_twitter/features/authentication/domain/user_entity/user_entity.dart';
+import 'package:fc_twitter/features/profile/data/model/user_profile_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'auth_event.dart';
@@ -39,8 +40,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     yield* response.fold((failure) async* {
       yield AuthFailed(message: failure.message);
     }, (credentials) async* {
+      final userProfile = UserProfileModel(
+        id: credentials.user.uid,
+        name: user.name,
+        userName: '@' + user.email.split('@').first,
+      );
       final savedEither =
-          await saveUserDetail(AParams(credential: credentials));
+          await saveUserDetail(AParams(userProfile: userProfile));
       yield* savedEither.fold((failure) async* {
         yield AuthFailed(message: failure.message);
       }, (success) async* {

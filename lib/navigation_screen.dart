@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'features/messaging/representation/pages/message_screen.dart';
 import 'features/messaging/representation/widgets/new_message_icon.dart';
 import 'features/notification/representation/pages/notification_screen.dart';
-import 'features/profile/representation/widgets/drawer.dart';
+import 'features/profile/representation/pages/drawer.dart';
 import 'features/searching/representation/pages/search_screen.dart';
 import 'features/timeline/representation/pages/home_screen.dart';
 import 'features/tweeting/representation/widgets/new_tweet_icon.dart';

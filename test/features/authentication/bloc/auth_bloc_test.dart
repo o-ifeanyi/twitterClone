@@ -16,9 +16,11 @@ void main() {
   MockLogInUser logInUser;
   MockLogOutUser logOutUser;
   MockUserCredential mockUserCredential;
+  MockFireBaseUser fireBaseUser;
 
   setUp(() {
     user = UserEntity(email: 'ifeanyi@email.com', password: '123456');
+    fireBaseUser = MockFireBaseUser();
     signUpNewUser = MockSignUpNewUser();
     saveUserDetail = MockSaveUserDetail();
     logInUser = MockLogInUser();
@@ -40,6 +42,8 @@ void main() {
       when(signUpNewUser(any)).thenAnswer(
         (_) => Future.value(Right(mockUserCredential)),
       );
+      when(mockUserCredential.user).thenReturn(fireBaseUser);
+      when(fireBaseUser.uid).thenReturn('userId');
       when(saveUserDetail(any))
           .thenAnswer(
         (_) => Future.value(Right(true)),
@@ -71,6 +75,8 @@ void main() {
       when(signUpNewUser(any)).thenAnswer(
         (_) => Future.value(Right(mockUserCredential)),
       );
+      when(mockUserCredential.user).thenReturn(fireBaseUser);
+      when(fireBaseUser.uid).thenReturn('userId');
       when(saveUserDetail(any))
           .thenAnswer(
         (_) =>

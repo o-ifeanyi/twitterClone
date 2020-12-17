@@ -1,4 +1,5 @@
 import 'package:fc_twitter/features/profile/representation/bloc/bloc.dart';
+import 'package:fc_twitter/features/profile/representation/pages/profile_screen.dart';
 import 'package:fc_twitter/features/settings/representation/bloc/bloc.dart';
 import 'package:fc_twitter/features/tweeting/representation/bloc/bloc.dart';
 import 'package:fc_twitter/injection_container.dart';
@@ -15,8 +16,8 @@ import 'navigation_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await init();
   await Firebase.initializeApp();
+  await init();
   runApp(
     MultiBlocProvider(
       providers: [
@@ -35,6 +36,8 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    // ignore: close_sinks
+    final profileBloc = BlocProvider.of<ProfileBloc>(context);
     return BlocBuilder<SettingsBloc, SettingsState>(
       builder: (context, state) {
         return MaterialApp(
@@ -44,6 +47,7 @@ class MyApp extends StatelessWidget {
               stream: FirebaseAuth.instance.authStateChanges(),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
+                  profileBloc.add(FetchUserProfile(snapshot.data.uid));
                   return NavigationScreen();
                 } else {
                   return AuthScreen();
@@ -53,6 +57,7 @@ class MyApp extends StatelessWidget {
             TweetScreen.pageId: (ctx) => TweetScreen(),
             AuthForm.pageId: (ctx) => AuthForm(),
             NavigationScreen.pageId: (ctx) => NavigationScreen(),
+            ProfileScreen.pageId: (ctx) => ProfileScreen(),
           },
         );
       },

@@ -3,6 +3,7 @@ import 'package:fc_twitter/core/error/failure.dart';
 import 'package:fc_twitter/core/usecase/usecase.dart';
 import 'package:fc_twitter/features/authentication/domain/usecase/use_cases.dart';
 import 'package:fc_twitter/features/authentication/domain/user_entity/user_entity.dart';
+import 'package:fc_twitter/features/profile/data/model/user_profile_model.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
@@ -11,6 +12,7 @@ import '../../../mocks/mocks.dart';
 
 
 void main() {
+  UserProfileModel userProfileModel;
   SignUpNewUser signUpNewUser;
   SaveUserDetail saveUserDetail;
   LogInUser logInUser;
@@ -21,6 +23,7 @@ void main() {
 
   setUp(() {
     userEntity = UserEntity(email: 'ifeanyi@email.com', password: '123456');
+    userProfileModel = UserProfileModel(id: '001', name: 'ifeanyi', userName: 'onuoha');
     userCredential = MockUserCredential();
     userRepository = MockUserRepository();
     signUpNewUser = SignUpNewUser(userRepository: userRepository);
@@ -53,11 +56,11 @@ void main() {
     });
 
     test('should return true from repository on saving user detail', () async{
-      when(userRepository.saveUserDetail(userCredential)).thenAnswer(
+      when(userRepository.saveUserDetail(userProfileModel)).thenAnswer(
         (_) => Future.value(Right(true)),
       );
 
-      final result = await saveUserDetail(AParams(credential: userCredential));
+      final result = await saveUserDetail(AParams(userProfile: userProfileModel));
 
       expect(result, Right(true));
       verify(userRepository.saveUserDetail(any));
@@ -86,11 +89,11 @@ void main() {
     });
 
     test('should return AuthFailure from repository on saving detail fail', () async{
-     when(userRepository.saveUserDetail(userCredential)).thenAnswer(
+     when(userRepository.saveUserDetail(userProfileModel)).thenAnswer(
         (_) => Future.value(Left(AuthFailure())),
       );
 
-      final result = await saveUserDetail(AParams(credential: userCredential));
+      final result = await saveUserDetail(AParams(userProfile: userProfileModel));
 
       expect(result, Left(AuthFailure()));
       verify(userRepository.saveUserDetail(any));

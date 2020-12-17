@@ -40,6 +40,6 @@ class SaveUserDetail implements UseCase<bool, AParams> {
   SaveUserDetail({this.userRepository});
   @override
   Future<Either<AuthFailure, bool>> call(AParams params) async{
-    return await userRepository.saveUserDetail(params.credential);
+    return await userRepository.saveUserDetail(params.userProfile);
   }
 }

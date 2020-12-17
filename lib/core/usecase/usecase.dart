@@ -2,9 +2,9 @@ import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:fc_twitter/core/error/failure.dart';
 import 'package:fc_twitter/features/authentication/domain/user_entity/user_entity.dart';
+import 'package:fc_twitter/features/profile/data/model/user_profile_model.dart';
 import 'package:fc_twitter/features/settings/domain/entity/theme_entity.dart';
 import 'package:fc_twitter/features/tweeting/domain/entity/tweet_entity.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 abstract class UseCase<Type, Params> {
   Future<Either<Failure, Type>> call(Params params);
@@ -17,12 +17,12 @@ class NoParams extends Equatable {
 
 class AParams extends Equatable {
   final UserEntity user;
-  final UserCredential credential;
+  final UserProfileModel userProfile;
 
-  AParams({this.user, this.credential});
+  AParams({this.user, this.userProfile});
 
   @override
-  List<Object> get props => [user, credential];
+  List<Object> get props => [user, userProfile];
 }
 
 class TParams extends Equatable {

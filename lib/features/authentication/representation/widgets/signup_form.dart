@@ -103,7 +103,7 @@ class _SignupFormState extends State<SignupForm> {
                       SignUp(
                           user: UserModel(
                         email: _signupEmailController.text,
-                        userName: _signupUsernameController.text,
+                        name: _signupUsernameController.text,
                         password: _signupPasswordController.text,
                       )),
                     );

@@ -3,6 +3,7 @@ import 'package:fc_twitter/core/error/failure.dart';
 import 'package:fc_twitter/features/authentication/data/model/user_model.dart';
 import 'package:fc_twitter/features/authentication/data/repository/user_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fc_twitter/features/profile/data/model/user_profile_model.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
@@ -10,6 +11,7 @@ import '../../../mocks/mocks.dart';
 
 void main() {
   UserModel userModel;
+  UserProfileModel userProfileModel;
   MockFireBaseAuth mockFireBaseAuth;
   FirebaseFirestore mockFirebaseFirestore;
   MockUserCredential mockUserCredential;
@@ -20,6 +22,7 @@ void main() {
 
   setUp(() {
     userModel = UserModel(email: 'ifeanyi@email.com', password: '123456');
+    userProfileModel = UserProfileModel(id: '001', name: 'ifeanyi', userName: 'onuoha');
     mockUser = MockFireBaseUser();
     mockFireBaseAuth = MockFireBaseAuth();
     mockUserCredential = MockUserCredential();
@@ -61,8 +64,7 @@ void main() {
       when(collectionReference.doc(any)).thenReturn(documentReference);
       when(documentReference.set(any)).thenAnswer((realInvocation) => null);
 
-      final user = await fireBaseUserRepositoryImpl.saveUserDetail(mockUserCredential);
-      print(mockUserCredential.user.uid);
+      final user = await fireBaseUserRepositoryImpl.saveUserDetail(userProfileModel);
 
       expect(user, equals(Right(true)));
     });
@@ -71,7 +73,7 @@ void main() {
         () async {
       when(mockFirebaseFirestore.collection(any)).thenThrow(Error());
 
-      final user = await fireBaseUserRepositoryImpl.saveUserDetail(mockUserCredential);
+      final user = await fireBaseUserRepositoryImpl.saveUserDetail(userProfileModel);
 
       expect(user, equals(Left(AuthFailure(message: 'Saving failed'))));
     });

@@ -1,5 +1,6 @@
 import 'package:fc_twitter/core/util/config.dart';
 import 'package:fc_twitter/features/authentication/representation/bloc/bloc.dart';
+import 'package:fc_twitter/features/profile/representation/pages/profile_screen.dart';
 import 'package:fc_twitter/features/settings/representation/bloc/bloc.dart';
 import 'package:fc_twitter/features/settings/representation/bloc/settings_bloc.dart';
 import 'package:fc_twitter/features/settings/representation/widgets/theme_handler.dart';
@@ -7,16 +8,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 
+import '../widgets/drawer_user_info.dart';
+
 class CustomDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final _customLightStyle = TextStyle(
-      color: Theme.of(context).accentColor,
-      fontSize: Config.xMargin(context, 4),
-    );
-
     final List<Map<String, dynamic>> _drawerItems = [
-      {'label': 'Profile', 'icon': Icons.person_outline_rounded},
+      {
+        'label': 'Profile',
+        'icon': Icons.person_outline_rounded,
+        'pageId': ProfileScreen.pageId
+      },
       {'label': 'List', 'icon': Icons.list_alt_outlined},
       {'label': 'Topics', 'icon': MaterialCommunityIcons.comment_text_outline},
       {'label': 'Bookmarks', 'icon': Icons.bookmark_border_outlined},
@@ -28,58 +30,7 @@ class CustomDrawer extends StatelessWidget {
         child: SafeArea(
           child: Column(
             children: [
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                width: double.infinity,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CircleAvatar(
-                      radius: 25,
-                      backgroundColor: Theme.of(context).primaryColor,
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      'Ifeanyi',
-                      style: TextStyle(
-                          fontSize: Config.xMargin(context, 5),
-                          fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(height: 5),
-                    Text(
-                      '@onuoha_ifeanyi',
-                      style: _customLightStyle,
-                    ),
-                    SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Text(
-                          '982',
-                          style: TextStyle(
-                              fontSize: Config.xMargin(context, 4),
-                              fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          ' Followng',
-                          style: _customLightStyle,
-                        ),
-                        SizedBox(width: 10),
-                        Text(
-                          '1,180',
-                          style: TextStyle(
-                              fontSize: Config.xMargin(context, 4),
-                              fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          ' Followers',
-                          style: _customLightStyle,
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-              ),
+              DrawerUserInfo(),
               SizedBox(height: 10),
               Divider(
                 thickness: 1,
@@ -90,6 +41,10 @@ class CustomDrawer extends StatelessWidget {
                   children: [
                     ..._drawerItems.map(
                       (e) => ListTile(
+                        onTap: () {
+                          Scaffold.of(context).openEndDrawer();
+                          Navigator.pushNamed(context, e['pageId']);
+                        },
                         leading: Icon(e['icon']),
                         title: Text(
                           e['label'],
@@ -132,10 +87,9 @@ class CustomDrawer extends StatelessWidget {
                       title: Text(
                         'Log out',
                         style: TextStyle(
-                          fontSize: Config.xMargin(context, 4.5),
-                          fontWeight: FontWeight.w400,
-                          color: Theme.of(context).errorColor
-                        ),
+                            fontSize: Config.xMargin(context, 4.5),
+                            fontWeight: FontWeight.w400,
+                            color: Theme.of(context).errorColor),
                       ),
                     ),
                   ],
@@ -150,7 +104,8 @@ class CustomDrawer extends StatelessWidget {
                 children: [
                   BlocBuilder<SettingsBloc, SettingsState>(
                     builder: (context, state) {
-                      bool isDark = (state as AppTheme).theme.brightness == Brightness.dark;
+                      bool isDark = (state as AppTheme).theme.brightness ==
+                          Brightness.dark;
                       return IconButton(
                         icon: Icon(
                           isDark

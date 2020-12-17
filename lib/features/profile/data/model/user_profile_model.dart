@@ -33,13 +33,13 @@ class UserProfileModel extends UserProfileEntity {
       id: userDoc.id,
       name: data['name'],
       userName: data['userName'],
-      bio: data['bio'],
-      location: data['location'],
-      website: data['website'],
-      dateOfBirth: data['dateOfBirth'],
-      dateJoined: data['dateJoined'],
-      following: data['following'],
-      followers: data['followers'],
+      bio: data['bio'] ?? '',
+      location: data['location'] ?? '',
+      website: data['website'] ?? '',
+      dateOfBirth: data['dateOfBirth'] ?? '',
+      dateJoined: data['dateJoined'] ?? '',
+      following: data['following'] ?? 0,
+      followers: data['followers'] ?? 0,
     );
   }
 
