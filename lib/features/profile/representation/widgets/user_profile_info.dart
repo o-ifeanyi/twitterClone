@@ -1,5 +1,7 @@
 import 'package:fc_twitter/core/util/config.dart';
+import 'package:fc_twitter/features/profile/domain/entity/user_profile_entity.dart';
 import 'package:fc_twitter/features/profile/representation/bloc/bloc.dart';
+import 'package:fc_twitter/features/profile/representation/pages/edit_profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_icons/flutter_icons.dart';
@@ -19,8 +21,7 @@ class UserProfileInfo extends StatelessWidget {
       return BlocBuilder<ProfileBloc, ProfileState>(
         builder: (context, state) {
           if (state is FetchingComplete) {
-            final profile = state.userProfile;
-            print(profile.id);
+            UserProfileEntity profile = state.userProfile;
             return Stack(
               children: [
                 Container(
@@ -31,9 +32,8 @@ class UserProfileInfo extends StatelessWidget {
                   top: Config.yMargin(context, 13),
                   child: Container(
                     height: constraints.maxHeight * 0.65,
-                    // color: Colors.green,
                     width: MediaQuery.of(context).size.width,
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -46,88 +46,97 @@ class UserProfileInfo extends StatelessWidget {
                               radius: 30,
                               backgroundColor: theme.accentColor,
                             ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 15, vertical: 5),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(
-                                  color: theme.accentColor,
-                                ),
+                            GestureDetector(
+                              onTap: () => Navigator.pushNamed(
+                                context,
+                                EditProfileScreen.pageId,
+                                arguments: profile,
                               ),
-                              child: Text(
-                                'Edit profile',
-                                style: _customGreyText,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 15, vertical: 5),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(
+                                    color: theme.accentColor,
+                                  ),
+                                ),
+                                child: Text(
+                                  'Edit profile',
+                                  style: _customGreyText,
+                                ),
                               ),
                             ),
                           ],
                         ),
-                        // SizedBox(height: 8),
                         Text(
                           profile.name,
                           style: TextStyle(
                               fontSize: Config.xMargin(context, 5),
                               fontWeight: FontWeight.bold),
                         ),
-                        // SizedBox(height: 5),
                         Text(
                           profile.userName,
                           style: _customGreyText,
                         ),
-                        // SizedBox(height: 8),
                         if (profile.bio.isNotEmpty)
                           Text(profile.bio, style: _customWhiteText),
-                        // SizedBox(height: 8),
-                        if (profile.location.isNotEmpty &&
-                            profile.website.isNotEmpty)
-                          Row(
-                            children: [
-                              if (profile.location.isNotEmpty) ...[
+                        Wrap(
+                          spacing: 15,
+                          runSpacing: 5,
+                          children: [
+                            if (profile.location.isNotEmpty)
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    EvilIcons.location,
+                                    size: 18,
+                                    color: theme.accentColor,
+                                  ),
+                                  SizedBox(width: 5),
+                                  Text(
+                                    profile.location,
+                                    style: _customGreyText,
+                                  ),
+                                ],
+                              ),
+                            if (profile.website.isNotEmpty)
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    MaterialCommunityIcons.link_variant,
+                                    size: 18,
+                                    color: theme.accentColor,
+                                  ),
+                                  SizedBox(width: 5),
+                                  Text(
+                                    profile.website,
+                                    style: TextStyle(
+                                      color: theme.primaryColor,
+                                      fontSize: Config.xMargin(context, 3.5),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
                                 Icon(
-                                  EvilIcons.location,
-                                  size: 18,
+                                  MaterialCommunityIcons.calendar_month,
+                                  size: 16,
                                   color: theme.accentColor,
                                 ),
                                 SizedBox(width: 5),
                                 Text(
-                                  'Abuja | Kaduna, Nigeria',
+                                  profile.dateJoined,
                                   style: _customGreyText,
                                 ),
-                                SizedBox(width: 10),
                               ],
-                              if (profile.website.isNotEmpty) ...[
-                                Icon(
-                                  MaterialCommunityIcons.link_variant,
-                                  size: 18,
-                                  color: theme.accentColor,
-                                ),
-                                SizedBox(width: 5),
-                                Text(
-                                  'ifeanyi.web.app',
-                                  style: TextStyle(
-                                    color: theme.primaryColor,
-                                    fontSize: Config.xMargin(context, 3.5),
-                                  ),
-                                ),
-                              ]
-                            ],
-                          ),
-                        // SizedBox(height: 8),
-                        Row(
-                          children: [
-                            Icon(
-                              MaterialCommunityIcons.calendar_month,
-                              size: 16,
-                              color: theme.accentColor,
-                            ),
-                            SizedBox(width: 5),
-                            Text(
-                              profile.dateJoined,
-                              style: _customGreyText,
                             ),
                           ],
                         ),
-                        // SizedBox(height: 8),
                         Row(
                           children: [
                             Text(
@@ -153,7 +162,6 @@ class UserProfileInfo extends StatelessWidget {
                             ),
                           ],
                         ),
-                        // SizedBox(height: 8),
                       ],
                     ),
                   ),
@@ -161,11 +169,7 @@ class UserProfileInfo extends StatelessWidget {
               ],
             );
           }
-          return Expanded(
-            child: Container(
-              child: Center(child: Text('no prfile')),
-            ),
-          );
+          return Container();
         },
       );
     });

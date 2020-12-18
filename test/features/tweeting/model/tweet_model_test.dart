@@ -8,19 +8,9 @@ import 'package:flutter_test/flutter_test.dart';
 import '../../../fixtures/fixture_reader.dart';
 
 void main() {
-  final tweetModel = TweetModel(
-    name: 'ifeanyi',
-    userName: 'onuoha',
-    message: 'hello world',
-    timeStamp: '0s',
-  );
+  final tweetModel = tweetModelFixture();
 
-  final tweetEntity = TweetEntity(
-    name: 'ifeanyi',
-    userName: 'onuoha',
-    message: 'hello world',
-    timeStamp: '0s',
-  );
+  final tweetEntity = tweetEntityFixture();
   group('tweetModel', () {
     test('should be a sub type of TweetEntity', () async {
       expect(tweetModel, isA<TweetEntity>());
@@ -43,7 +33,7 @@ void main() {
     });
 
     test('should return a valid model wwhen converting from snapshot', () async {
-      final snapshot = (json.decode(tweetFixture()));
+      final snapshot = (json.decode(jsonTweetFixture()));
 
       snapshot['timeStamp'] = Timestamp.now();
 

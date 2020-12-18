@@ -6,6 +6,7 @@ import 'package:fc_twitter/features/tweeting/domain/entity/tweet_entity.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
+import '../../../fixtures/fixture_reader.dart';
 import '../../../mocks/mocks.dart';
 
 void main() {
@@ -16,12 +17,7 @@ void main() {
   MockDocumentReference documentReference;
 
   setUp(() {
-    tweetEntity = TweetEntity(
-      name: 'ifeanyi',
-      userName: 'onuoha',
-      message: 'hello world',
-      timeStamp: Timestamp.now(),
-    );
+    tweetEntity = tweetEntityFixture();
     mockFirebaseFirestore = MockFirebaseFirestore();
     collectionReference = MockCollectionReference();
     documentReference = MockDocumentReference();

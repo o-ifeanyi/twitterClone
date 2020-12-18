@@ -7,6 +7,7 @@ import 'package:fc_twitter/features/profile/data/model/user_profile_model.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
+import '../../../fixtures/fixture_reader.dart';
 import '../../../mocks/mocks.dart';
 
 void main() {
@@ -21,9 +22,8 @@ void main() {
   MockFireBaseUser mockUser;
 
   setUp(() {
-    userModel = UserModel(email: 'ifeanyi@email.com', password: '123456');
-    userProfileModel =
-        UserProfileModel(id: '001', name: 'ifeanyi', userName: 'onuoha');
+    userModel = userModelFixture();
+    userProfileModel = userProfileModelFixture();
     mockUser = MockFireBaseUser();
     mockFireBaseAuth = MockFireBaseAuth();
     mockUserCredential = MockUserCredential();

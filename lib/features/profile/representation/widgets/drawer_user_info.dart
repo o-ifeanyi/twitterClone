@@ -65,7 +65,9 @@ class DrawerUserInfo extends StatelessWidget {
               ],
             );
           }
-          return Center(child: CircularProgressIndicator());
+          return Container(
+            height: Config.yMargin(context, 16.5),
+          );
         },
       ),
     );

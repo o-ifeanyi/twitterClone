@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:fc_twitter/core/error/failure.dart';
 import 'package:fc_twitter/core/usecase/usecase.dart';
@@ -8,6 +7,7 @@ import 'package:fc_twitter/features/tweeting/domain/usecase/usecases.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
+import '../../../fixtures/fixture_reader.dart';
 import '../../../mocks/mocks.dart';
 
 
@@ -17,12 +17,7 @@ void main() {
   SendTweetUseCase sendTweet;
 
   setUp(() {
-    tweetEntity = TweetEntity(
-      name: 'ifeanyi',
-      userName: 'onuoha',
-      message: 'hello world, testing',
-      timeStamp: Timestamp.now(),
-    );
+    tweetEntity = tweetEntityFixture();
     tweetingRepository = MockTweetingRepository();
     sendTweet = SendTweetUseCase(tweetingRepository: tweetingRepository);
   });

@@ -20,8 +20,7 @@ void main() {
   UserProfileEntity userEntity;
 
   setUp(() {
-    userEntity =
-        UserProfileEntity(id: '001', name: 'ifeanyi', userName: 'onuoha');
+    userEntity = userProfileEntityFixture();
     firebaseFirestore = MockFirebaseFirestore();
     collectionReference = MockCollectionReference();
     documentReference = MockDocumentReference();
@@ -38,7 +37,7 @@ void main() {
       when(documentReference.get())
           .thenAnswer((_) => Future.value(documentSnapshot));
       when(documentSnapshot.id).thenReturn('001');
-      when(documentSnapshot.data()).thenReturn(json.decode(userFixture()));
+      when(documentSnapshot.data()).thenReturn(json.decode(jsonUserProfileFixture()));
 
       final result = await profileRepositoryImpl.getUserProfile('test');
 

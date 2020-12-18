@@ -78,16 +78,18 @@ Future<void> init() async {
   sl.registerFactory(() => ProfileBloc(
         initialState: sl(),
         getUserProfile: sl(),
+        updateUserProfile: sl(),
       ));
 
   // State
-  sl.registerLazySingleton<ProfileState >(() => ProfileInitialState());
+  sl.registerLazySingleton<ProfileState>(() => ProfileInitialState());
 
   // Use cases
   sl.registerLazySingleton(() => GetUserProfileUseCase (profileRepository: sl()));
+  sl.registerLazySingleton(() => UpdateUserProfileUseCase (profileRepository: sl()));
 
   // Repository
-  sl.registerLazySingleton<ProfileRepository >(() => ProfileRepositoryImpl(
+  sl.registerLazySingleton<ProfileRepository>(() => ProfileRepositoryImpl(
         firebaseFirestore: sl(),
       ));
 

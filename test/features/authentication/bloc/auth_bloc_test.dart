@@ -6,10 +6,11 @@ import 'package:fc_twitter/features/authentication/representation/bloc/bloc.dart
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
+import '../../../fixtures/fixture_reader.dart';
 import '../../../mocks/mocks.dart';
 
 void main() {
-  UserEntity user;
+  UserEntity userEntity;
   AuthBloc authBloc;
   MockSignUpNewUser signUpNewUser;
   MockSaveUserDetail saveUserDetail;
@@ -19,7 +20,7 @@ void main() {
   MockFireBaseUser fireBaseUser;
 
   setUp(() {
-    user = UserEntity(email: 'ifeanyi@email.com', password: '123456', userName: 'onuoha');
+    userEntity = userEntityFixture();
     fireBaseUser = MockFireBaseUser();
     signUpNewUser = MockSignUpNewUser();
     saveUserDetail = MockSaveUserDetail();
@@ -54,7 +55,7 @@ void main() {
       ];
       expectLater(authBloc, emitsInOrder(expected));
 
-      authBloc.add(SignUp(user: user));
+      authBloc.add(SignUp(user: userEntity));
     });
 
     test('should emit [Authinprogress] and [Authfailed] when sign up fails',
@@ -68,7 +69,7 @@ void main() {
       ];
       expectLater(authBloc, emitsInOrder(expected));
 
-      authBloc.add(SignUp(user: user));
+      authBloc.add(SignUp(user: userEntity));
     });
 
     test('should emit [AuthFailed] when user details fails to save', () async {
@@ -88,7 +89,7 @@ void main() {
       ];
       expectLater(authBloc, emitsInOrder(expected));
 
-      authBloc.add(SignUp(user: user));
+      authBloc.add(SignUp(user: userEntity));
     });
   });
 
@@ -105,7 +106,7 @@ void main() {
       ];
       expectLater(authBloc, emitsInOrder(expected));
 
-      authBloc.add(Login(user: user));
+      authBloc.add(Login(user: userEntity));
     });
 
     test('should emit [Authinprogress] and [Authfailed] when log in fails',
@@ -119,7 +120,7 @@ void main() {
       ];
       expectLater(authBloc, emitsInOrder(expected));
 
-      authBloc.add(Login(user: user));
+      authBloc.add(Login(user: userEntity));
     });
   });
 

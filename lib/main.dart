@@ -1,4 +1,5 @@
 import 'package:fc_twitter/features/profile/representation/bloc/bloc.dart';
+import 'package:fc_twitter/features/profile/representation/pages/edit_profile_screen.dart';
 import 'package:fc_twitter/features/profile/representation/pages/profile_screen.dart';
 import 'package:fc_twitter/features/settings/representation/bloc/bloc.dart';
 import 'package:fc_twitter/features/tweeting/representation/bloc/bloc.dart';
@@ -58,6 +59,7 @@ class MyApp extends StatelessWidget {
             AuthForm.pageId: (ctx) => AuthForm(),
             NavigationScreen.pageId: (ctx) => NavigationScreen(),
             ProfileScreen.pageId: (ctx) => ProfileScreen(),
+            EditProfileScreen.pageId: (ctx) => EditProfileScreen(),
           },
         );
       },

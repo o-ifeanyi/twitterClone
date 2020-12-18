@@ -6,6 +6,7 @@ import 'package:fc_twitter/features/profile/representation/bloc/bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
+import '../../../fixtures/fixture_reader.dart';
 import '../../../mocks/mocks.dart';
 
 void main() {
@@ -15,8 +16,7 @@ void main() {
   ProfileBloc profileBloc;
 
   setUp(() {
-    userEntity =
-        UserProfileEntity(id: '001', name: 'ifeanyi', userName: 'onuoha');
+    userEntity = userProfileEntityFixture();
     getUserProfile = MockGetUserProfile();
     updateUserProfile = MockUpdateUserProfile();
     profileBloc = ProfileBloc(

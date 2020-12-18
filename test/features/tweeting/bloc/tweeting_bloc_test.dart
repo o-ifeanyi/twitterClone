@@ -8,6 +8,7 @@ import 'package:fc_twitter/features/tweeting/representation/bloc/bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
+import '../../../fixtures/fixture_reader.dart';
 import '../../../mocks/mocks.dart';
 
 void main() {
@@ -20,12 +21,7 @@ void main() {
   TweetingBloc tweetingBloc;
 
   setUp(() {
-    tweetEntity = TweetEntity(
-      name: 'ifeanyi',
-      userName: 'onuoha',
-      message: 'hello world, testing',
-      timeStamp: Timestamp.now(),
-    );
+    tweetEntity = tweetEntityFixture();
     sendTweet = MockSendTweet();
     // fetchTweets = MockFetchTweets();
     collectionReference = MockCollectionReference();

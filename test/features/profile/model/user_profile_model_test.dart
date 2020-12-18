@@ -14,21 +14,25 @@ void main() {
   UserProfileEntity userEntity;
 
   setUp(() {
-documentSnapshot = MockDocumentSnapshot();
-userModel = UserProfileModel(
-    id: '001',
-    name: 'ifeanyi',
-    userName: 'onuoha',
-  );
-
-  userEntity = UserProfileEntity(
-    id: '001',
-    name: 'ifeanyi',
-    userName: 'onuoha',
-  );
+    documentSnapshot = MockDocumentSnapshot();
+    userModel = userProfileModelFixture();
+    userEntity = userProfileEntityFixture();
   });
-  
-  group('userModel', () {
+
+  group('UserProfileEntity', () {
+    test('should return an updated entity with copyWith', () {
+      UserProfileEntity user = userEntity;
+      expect(user.name, equals('ifeanyi'));
+      expect(user.location, equals('Abuja'));
+
+      user = user.copyWith(name: 'onuoha', location: 'Kaduna');
+
+      expect(user.name, equals('onuoha'));
+      expect(user.location, equals('Kaduna'));
+    });
+  });
+
+  group('UserProfileModel', () {
     test('should be a sub type of UserProfileEntity', () async {
       expect(userModel, isA<UserProfileEntity>());
     });
@@ -48,7 +52,7 @@ userModel = UserProfileModel(
     test('should return a valid model wwhen converting from documentSnapshot',
         () async {
       when(documentSnapshot.id).thenReturn('001');
-      when(documentSnapshot.data()).thenReturn(json.decode(userFixture()));
+      when(documentSnapshot.data()).thenReturn(json.decode(jsonUserProfileFixture()));
 
       final result = UserProfileModel.fromDoc(documentSnapshot);
 
@@ -64,8 +68,8 @@ userModel = UserProfileModel(
         'id': '001',
         'name': 'ifeanyi',
         'userName': 'onuoha',
+        'location': 'Abuja',
         'bio': null,
-        'location': null,
         'website': null,
         'dateOfBirth': null,
         'dateJoined': null,

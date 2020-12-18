@@ -6,6 +6,7 @@ import 'package:fc_twitter/features/settings/domain/usecase/usecases.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
+import '../../../fixtures/fixture_reader.dart';
 import '../../../mocks/mocks.dart';
 
 void main() {
@@ -14,11 +15,7 @@ void main() {
   ChangeThemeUseCase changeThemeUseCase;
 
   setUp(() {
-    themeEntity = ThemeEntity(
-      isLight: true,
-      isDim: false,
-      isLightsOut: true,
-    );
+    themeEntity = themeEntityFixture();
     settingsRepository = MockSettingsRepository();
     changeThemeUseCase =
         ChangeThemeUseCase(settingsRepository: settingsRepository);
