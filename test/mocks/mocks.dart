@@ -11,6 +11,7 @@ import 'package:fc_twitter/features/timeline/domain/usecase/usecases.dart';
 import 'package:fc_twitter/features/tweeting/domain/repository/tweeting_repository.dart';
 import 'package:fc_twitter/features/tweeting/domain/usecase/usecases.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:mockito/mockito.dart';
 
 // Repositories
@@ -43,10 +44,16 @@ class MockGetUserProfile extends Mock implements GetUserProfileUseCase {}
 
 class MockUpdateUserProfile extends Mock implements UpdateUserProfileUseCase {}
 
+class MockPickImage extends Mock implements PickImageUseCase {}
+
 // Externals
 class MockCollectionReference extends Mock implements CollectionReference {}
 
 class MockFirebaseFirestore extends Mock implements FirebaseFirestore {}
+
+class MockFirebaseStorage  extends Mock implements FirebaseStorage {}
+
+class MockReference  extends Mock implements Reference {}
 
 class MockUserCredential extends Mock implements UserCredential {}
 

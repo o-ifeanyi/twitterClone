@@ -12,6 +12,8 @@ class UserProfileModel extends UserProfileEntity {
     website,
     dateOfBirth,
     dateJoined,
+    profilePhoto,
+    coverPhoto,
     following,
     followers,
   }) : super(
@@ -23,6 +25,8 @@ class UserProfileModel extends UserProfileEntity {
           website: website,
           dateOfBirth: dateOfBirth,
           dateJoined: dateJoined,
+          profilePhoto: profilePhoto,
+          coverPhoto: coverPhoto,
           following: following,
           followers: followers,
         );
@@ -38,6 +42,8 @@ class UserProfileModel extends UserProfileEntity {
       website: data['website'] ?? '',
       dateOfBirth: data['dateOfBirth'] ?? '',
       dateJoined: data['dateJoined'],
+      profilePhoto: data['profilePhoto'] ?? '',
+      coverPhoto: data['coverPhoto'] ?? '',
       following: data['following'] ?? 0,
       followers: data['followers'] ?? 0,
     );
@@ -53,6 +59,8 @@ class UserProfileModel extends UserProfileEntity {
       website: entity.website,
       dateOfBirth: entity.dateOfBirth,
       dateJoined: entity.dateJoined,
+      profilePhoto: entity.profilePhoto,
+      coverPhoto: entity.coverPhoto,
       following: entity.following,
       followers: entity.followers,
     );
@@ -68,6 +76,8 @@ class UserProfileModel extends UserProfileEntity {
       website: this.website,
       dateOfBirth: this.dateOfBirth,
       dateJoined: this.dateJoined,
+      profilePhoto: this.profilePhoto,
+      coverPhoto: this.coverPhoto,
       following: this.following,
       followers: this.followers,
     );
@@ -83,6 +93,8 @@ class UserProfileModel extends UserProfileEntity {
       'website': this.website,
       'dateOfBirth': this.dateOfBirth,
       'dateJoined': this.dateJoined,
+      'profilePhoto': this.profilePhoto,
+      'coverPhoto': this.coverPhoto,
       'following': this.following,
       'followers': this.followers,
     };

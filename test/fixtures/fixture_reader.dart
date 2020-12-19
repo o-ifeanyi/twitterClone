@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:fc_twitter/features/authentication/data/model/user_model.dart';
 import 'package:fc_twitter/features/authentication/domain/user_entity/user_entity.dart';
@@ -51,6 +52,7 @@ UserProfileEntity userProfileEntityFixture() => UserProfileEntity(
       name: 'ifeanyi',
       userName: 'onuoha',
       location: 'Abuja',
+      profilePhoto: File('test'),
     );
 
 String jsonUserProfileFixture() => json.encode({

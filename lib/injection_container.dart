@@ -16,6 +16,7 @@ import 'package:fc_twitter/features/tweeting/data/repository/tweeting_repository
 import 'package:fc_twitter/features/tweeting/domain/repository/tweeting_repository.dart';
 import 'package:fc_twitter/features/tweeting/representation/bloc/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -79,18 +80,21 @@ Future<void> init() async {
         initialState: sl(),
         getUserProfile: sl(),
         updateUserProfile: sl(),
+        pickImageUseCase: sl(),
       ));
 
   // State
   sl.registerLazySingleton<ProfileState>(() => ProfileInitialState());
 
   // Use cases
-  sl.registerLazySingleton(() => GetUserProfileUseCase (profileRepository: sl()));
-  sl.registerLazySingleton(() => UpdateUserProfileUseCase (profileRepository: sl()));
+  sl.registerLazySingleton(() => GetUserProfileUseCase(profileRepository: sl()));
+  sl.registerLazySingleton(() => UpdateUserProfileUseCase(profileRepository: sl()));
+  sl.registerLazySingleton(() => PickImageUseCase(profileRepository: sl()));
 
   // Repository
   sl.registerLazySingleton<ProfileRepository>(() => ProfileRepositoryImpl(
         firebaseFirestore: sl(),
+        firebaseStorage: sl(),
       ));
 
   // Feature Tweeting
@@ -143,5 +147,6 @@ Future<void> init() async {
   // Externals
   sl.registerLazySingleton(() => FirebaseAuth.instance);
   sl.registerLazySingleton(() => FirebaseFirestore.instance);
+  sl.registerLazySingleton(() => FirebaseStorage.instance);
   sl.registerLazySingleton(() => sharedPreferences);
 }

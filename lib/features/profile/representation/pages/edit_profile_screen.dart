@@ -1,6 +1,8 @@
 import 'package:fc_twitter/core/util/config.dart';
 import 'package:fc_twitter/features/profile/domain/entity/user_profile_entity.dart';
 import 'package:fc_twitter/features/profile/representation/bloc/bloc.dart';
+import 'package:fc_twitter/features/profile/representation/widgets/cover_image.dart';
+import 'package:fc_twitter/features/profile/representation/widgets/profile_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -16,24 +18,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final _bioController = TextEditingController();
   final _locationController = TextEditingController();
   final _websiteController = TextEditingController();
+  String profileImage;
+  String coverImage;
   UserProfileEntity profile;
   bool nameIsEmpty = false;
 
   @override
-  void initState() {
-    super.initState();
-    Future.delayed(Duration.zero).then((_) {
-      profile = ModalRoute.of(context).settings.arguments;
-      _nameController.text = profile.name;
-      _bioController.text = profile.bio;
-      _locationController.text = profile.location;
-      _websiteController.text = profile.website;
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
+    profile = ModalRoute.of(context).settings.arguments;
+    _nameController.text = profile.name;
+    _bioController.text = profile.bio;
+    _locationController.text = profile.location;
+    _websiteController.text = profile.website;
+    profileImage = profile.profilePhoto;
+    coverImage = profile.coverPhoto;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -71,11 +70,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         child: Container(
           height: mediaQuery.size.height + 150,
           child: Stack(
-            // crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                height: Config.yMargin(context, 18),
-                color: Colors.blue,
+              BlocListener<ProfileBloc, ProfileState>(
+                listener: (context, state) {
+                  if (state is PickedCoverImage) {
+                    print('setting photo');
+                    profile =
+                        profile.copyWith(coverPhoto: state.pickedCoverImage);
+                  }
+                },
+                child: CoverImage(imageUrl: coverImage),
               ),
               Positioned(
                 top: Config.yMargin(context, 14),
@@ -85,9 +89,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      CircleAvatar(
-                        radius: 35,
-                        backgroundColor: Colors.green,
+                      BlocListener<ProfileBloc, ProfileState>(
+                        listener: (context, state) {
+                          if (state is PickedProfileImage) {
+                            print('setting photo');
+                            profile = profile.copyWith(
+                                profilePhoto: state.pickedProfileImage);
+                          }
+                        },
+                        child: ProfileImage(imageUrl: profileImage),
                       ),
                       SizedBox(height: 10),
                       TextField(

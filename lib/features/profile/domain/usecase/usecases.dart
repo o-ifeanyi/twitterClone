@@ -1,4 +1,6 @@
 
+import 'dart:io';
+
 import 'package:fc_twitter/core/error/failure.dart';
 import 'package:dartz/dartz.dart';
 import 'package:fc_twitter/core/usecase/usecase.dart';
@@ -22,5 +24,15 @@ class UpdateUserProfileUseCase implements UseCase<bool, PParams>{
   @override
   Future<Either<Failure, bool>> call(PParams params) async{
     return await profileRepository.updateUserProfile(params.userEntity);
+  }
+}
+
+class PickImageUseCase implements UseCase<File, PParams>{
+  final ProfileRepository profileRepository;
+
+  PickImageUseCase({this.profileRepository});
+  @override
+  Future<Either<Failure, File>> call(PParams params) async{
+    return await profileRepository.pickImage(params.source, params.isCoverPhoto);
   }
 }

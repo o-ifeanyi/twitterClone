@@ -22,11 +22,13 @@ void main() {
   group('UserProfileEntity', () {
     test('should return an updated entity with copyWith', () {
       UserProfileEntity user = userEntity;
+      expect(user.id, equals('001'));
       expect(user.name, equals('ifeanyi'));
       expect(user.location, equals('Abuja'));
 
       user = user.copyWith(name: 'onuoha', location: 'Kaduna');
 
+      expect(user.id, equals('001'));
       expect(user.name, equals('onuoha'));
       expect(user.location, equals('Kaduna'));
     });
@@ -52,7 +54,8 @@ void main() {
     test('should return a valid model wwhen converting from documentSnapshot',
         () async {
       when(documentSnapshot.id).thenReturn('001');
-      when(documentSnapshot.data()).thenReturn(json.decode(jsonUserProfileFixture()));
+      when(documentSnapshot.data())
+          .thenReturn(json.decode(jsonUserProfileFixture()));
 
       final result = UserProfileModel.fromDoc(documentSnapshot);
 
@@ -73,6 +76,8 @@ void main() {
         'website': null,
         'dateOfBirth': null,
         'dateJoined': null,
+        'profilePhoto': null,
+        'coverPhoto': null,
         'following': null,
         'followers': null
       };

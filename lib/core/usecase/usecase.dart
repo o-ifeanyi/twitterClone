@@ -6,6 +6,7 @@ import 'package:fc_twitter/features/profile/data/model/user_profile_model.dart';
 import 'package:fc_twitter/features/profile/domain/entity/user_profile_entity.dart';
 import 'package:fc_twitter/features/settings/domain/entity/theme_entity.dart';
 import 'package:fc_twitter/features/tweeting/domain/entity/tweet_entity.dart';
+import 'package:image_picker/image_picker.dart';
 
 abstract class UseCase<Type, Params> {
   Future<Either<Failure, Type>> call(Params params);
@@ -38,8 +39,10 @@ class TParams extends Equatable {
 class PParams extends Equatable {
   final String userId;
   final UserProfileEntity userEntity;
+  final ImageSource source;
+  final bool isCoverPhoto;
 
-  PParams({this.userId, this.userEntity});
+  PParams({this.userId, this.userEntity, this.source, this.isCoverPhoto});
 
   @override
   List<Object> get props => [userId, userEntity];

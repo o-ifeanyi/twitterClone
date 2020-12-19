@@ -15,58 +15,58 @@ class DrawerUserInfo extends StatelessWidget {
       width: double.infinity,
       child: BlocBuilder<ProfileBloc, ProfileState>(
         builder: (context, state) {
-          if (state is FetchingComplete) {
-            final profile = state.userProfile;
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CircleAvatar(
-                  radius: 25,
-                  backgroundColor: Theme.of(context).primaryColor,
-                ),
-                SizedBox(height: 8),
-                Text(
-                  profile.name,
-                  style: TextStyle(
-                      fontSize: Config.xMargin(context, 5),
-                      fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 5),
-                Text(
-                  profile.userName,
-                  style: _customLightStyle,
-                ),
-                SizedBox(height: 8),
-                Row(
-                  children: [
-                    Text(
-                      '${profile.following}',
-                      style: TextStyle(
-                          fontSize: Config.xMargin(context, 4),
-                          fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      ' Followng',
-                      style: _customLightStyle,
-                    ),
-                    SizedBox(width: 10),
-                    Text(
-                      '${profile.followers}',
-                      style: TextStyle(
-                          fontSize: Config.xMargin(context, 4),
-                          fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      ' Followers',
-                      style: _customLightStyle,
-                    ),
-                  ],
-                )
-              ],
+          if (state.userProfile == null) {
+            return Container(
+              height: Config.yMargin(context, 16.5),
             );
           }
-          return Container(
-            height: Config.yMargin(context, 16.5),
+          final profile = state.userProfile;
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CircleAvatar(
+                radius: 25,
+                backgroundColor: Theme.of(context).primaryColor,
+              ),
+              SizedBox(height: 8),
+              Text(
+                profile.name,
+                style: TextStyle(
+                    fontSize: Config.xMargin(context, 5),
+                    fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 5),
+              Text(
+                profile.userName,
+                style: _customLightStyle,
+              ),
+              SizedBox(height: 8),
+              Row(
+                children: [
+                  Text(
+                    '${profile.following}',
+                    style: TextStyle(
+                        fontSize: Config.xMargin(context, 4),
+                        fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    ' Followng',
+                    style: _customLightStyle,
+                  ),
+                  SizedBox(width: 10),
+                  Text(
+                    '${profile.followers}',
+                    style: TextStyle(
+                        fontSize: Config.xMargin(context, 4),
+                        fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    ' Followers',
+                    style: _customLightStyle,
+                  ),
+                ],
+              )
+            ],
           );
         },
       ),
