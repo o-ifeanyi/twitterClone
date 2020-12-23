@@ -3,14 +3,11 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fc_twitter/core/util/themes.dart';
 import 'package:fc_twitter/features/authentication/data/repository/user_repository.dart';
-import 'package:fc_twitter/features/authentication/domain/usecase/use_cases.dart';
 import 'package:fc_twitter/features/authentication/representation/bloc/bloc.dart';
 import 'package:fc_twitter/features/profile/data/repository/profile_repository.dart.dart';
 import 'package:fc_twitter/features/profile/representation/bloc/bloc.dart';
-import 'package:fc_twitter/features/settings/domain/usecase/usecases.dart';
-import 'package:fc_twitter/features/settings/representation/bloc/bloc.dart';
+import 'package:fc_twitter/features/settings/representation/bloc/theme_bloc.dart';
 import 'package:fc_twitter/features/timeline/data/repository/timeline_repository.dart';
-import 'package:fc_twitter/features/timeline/domain/usecase/usecases.dart';
 import 'package:fc_twitter/features/timeline/representation/bloc/bloc.dart';
 import 'package:fc_twitter/features/tweeting/data/repository/tweeting_repository.dart';
 import 'package:fc_twitter/features/tweeting/domain/repository/tweeting_repository.dart';
@@ -22,12 +19,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'features/authentication/domain/repository/user_repository.dart';
 import 'features/profile/domain/repository/profile_repository.dart.dart';
-import 'features/profile/domain/usecase/usecases.dart';
 import 'features/settings/data/model/theme_model.dart';
 import 'features/settings/data/repository/settings_repository.dart';
 import 'features/settings/domain/repository/settings_repository.dart';
 import 'features/timeline/domain/repository/timeline_repository.dart.dart';
-import 'features/tweeting/domain/usecase/usecases.dart';
 
 final sl = GetIt.instance;
 Future<void> init() async {
@@ -36,19 +31,10 @@ Future<void> init() async {
   // Bloc
   sl.registerFactory(() => AuthBloc(
         initialState: sl(),
-        signUpNewUser: sl(),
-        saveUserDetail: sl(),
-        logInUser: sl(),
-        logOutUser: sl(),
+        userRepository: sl(),
       ));
   // State
   sl.registerLazySingleton<AuthState>(() => InitialAuthState());
-
-  // Use cases
-  sl.registerLazySingleton(() => SignUpNewUser(userRepository: sl()));
-  sl.registerLazySingleton(() => SaveUserDetail(userRepository: sl()));
-  sl.registerLazySingleton(() => LogInUser(userRepository: sl()));
-  sl.registerLazySingleton(() => LogOutUser(userRepository: sl()));
 
   // Repository
   sl.registerLazySingleton<UserRepository>(() => UserRepositoryImpl(
@@ -60,14 +46,11 @@ Future<void> init() async {
   // Bloc
   sl.registerFactory(() => TimeLineBloc(
         initialState: sl(),
-        fetchTweets: sl(),
+        timeLineRepository: sl(),
       )..add(FetchTweet()));
 
   // State
   sl.registerLazySingleton<TimeLineState>(() => InitialTimeLineState());
-
-  // Use cases
-  sl.registerLazySingleton(() => FetchTweetUseCase(timeLineRepository: sl()));
 
   // Repository
   sl.registerLazySingleton<TimeLineRepository>(() => TimeLineRepositoryImpl(
@@ -78,18 +61,11 @@ Future<void> init() async {
   // Bloc
   sl.registerFactory(() => ProfileBloc(
         initialState: sl(),
-        getUserProfile: sl(),
-        updateUserProfile: sl(),
-        pickImageUseCase: sl(),
+        profileRepository: sl(),
       ));
 
   // State
   sl.registerLazySingleton<ProfileState>(() => ProfileInitialState());
-
-  // Use cases
-  sl.registerLazySingleton(() => GetUserProfileUseCase(profileRepository: sl()));
-  sl.registerLazySingleton(() => UpdateUserProfileUseCase(profileRepository: sl()));
-  sl.registerLazySingleton(() => PickImageUseCase(profileRepository: sl()));
 
   // Repository
   sl.registerLazySingleton<ProfileRepository>(() => ProfileRepositoryImpl(
@@ -101,14 +77,11 @@ Future<void> init() async {
   // Bloc
   sl.registerFactory(() => TweetingBloc(
         initialState: sl(),
-        sendTweet: sl()
+        tweetingRepository: sl()
       ));
 
   // State
   sl.registerLazySingleton<TweetingState>(() => InitialTweetingState());
-
-  // Use cases
-  sl.registerLazySingleton(() => SendTweetUseCase(tweetingRepository: sl()));
 
   // Repository
   sl.registerLazySingleton<TweetingRepository>(() => TweetingRepositoryImpl(
@@ -118,9 +91,9 @@ Future<void> init() async {
   // Feature Settings
   // Bloc
   sl.registerFactory(
-    () => SettingsBloc(
+    () => ThemeBloc(
       appTheme: sl(),
-      changeTheme: sl(),
+      settingsRepository: sl(),
     ),
   );
   // State
@@ -136,17 +109,14 @@ Future<void> init() async {
       return AppTheme(themeOptions[DarkThemeOptions.LightsOut]);
   });
 
-  // Use cases
-  sl.registerLazySingleton(() => ChangeThemeUseCase(settingsRepository: sl()));
-
   // Repository
   sl.registerLazySingleton<SettingsRepository>(() => SettingsRepositoryImpl(
         sharedPreferences: sl(),
       ));
 
   // Externals
-  sl.registerLazySingleton(() => FirebaseAuth.instance);
-  sl.registerLazySingleton(() => FirebaseFirestore.instance);
-  sl.registerLazySingleton(() => FirebaseStorage.instance);
-  sl.registerLazySingleton(() => sharedPreferences);
+  sl.registerLazySingleton<FirebaseAuth>(() => FirebaseAuth.instance);
+  sl.registerLazySingleton<FirebaseFirestore>(() => FirebaseFirestore.instance);
+  sl.registerLazySingleton<FirebaseStorage>(() => FirebaseStorage.instance);
+  sl.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
 }

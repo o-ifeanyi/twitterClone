@@ -24,6 +24,7 @@ class CoverImage extends StatelessWidget {
                   ? BoxDecoration(
                       image: DecorationImage(
                         image: FileImage(state.pickedCoverImage),
+                        fit: BoxFit.fitWidth,
                       ),
                     )
                   : BoxDecoration(

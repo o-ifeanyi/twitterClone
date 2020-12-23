@@ -1,19 +1,12 @@
-import 'package:fc_twitter/core/usecase/usecase.dart';
 import 'package:fc_twitter/features/profile/domain/entity/user_profile_entity.dart';
-import 'package:fc_twitter/features/profile/domain/usecase/usecases.dart';
+import 'package:fc_twitter/features/profile/domain/repository/profile_repository.dart.dart';
 import 'package:fc_twitter/features/profile/representation/bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
-  final GetUserProfileUseCase getUserProfile;
-  final UpdateUserProfileUseCase updateUserProfile;
-  final PickImageUseCase pickImageUseCase;
-  ProfileBloc(
-      {ProfileState initialState,
-      this.getUserProfile,
-      this.updateUserProfile,
-      this.pickImageUseCase})
+  final ProfileRepository profileRepository;
+  ProfileBloc({ProfileState initialState, this.profileRepository})
       : super(initialState);
 
   @override
@@ -31,7 +24,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
   Stream<ProfileState> _mapFetchUserProfileToEvent(String id) async* {
     yield FetchingUserProfile();
-    final userProfileEither = await getUserProfile(PParams(userId: id));
+    final userProfileEither = await profileRepository.getUserProfile(id);
     yield* userProfileEither.fold(
       (failure) async* {
         yield FetchingFailed();
@@ -44,7 +37,15 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
   Stream<ProfileState> _mapUpdateUserProfileToEvent(
       UserProfileEntity entity) async* {
-    final successEither = await updateUserProfile(PParams(userEntity: entity));
+    if (entity.profilePhoto.runtimeType != String || entity.coverPhoto.runtimeType != String) {
+      final uploadEither = await profileRepository.uploadImage(entity);
+      yield* uploadEither.fold((failure) async* {
+        yield UpdateFailed();
+      }, (newProfile) async* {
+        entity = newProfile;
+      });
+    }
+    final successEither = await profileRepository.updateUserProfile(entity);
     yield* successEither.fold((failure) async* {
       yield UpdateFailed();
     }, (success) async* {
@@ -54,9 +55,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
   Stream<ProfileState> _mapPickImageToEvent(
       ImageSource source, bool isCoverPhoto) async* {
-        print(isCoverPhoto);
-    final imageEither = await pickImageUseCase(
-        PParams(source: source, isCoverPhoto: isCoverPhoto));
+    print(isCoverPhoto);
+    final imageEither = await profileRepository.pickImage(source, isCoverPhoto);
     yield* imageEither.fold((failure) async* {
       print('nothing');
     }, (image) async* {

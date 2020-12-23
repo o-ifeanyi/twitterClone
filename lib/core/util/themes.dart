@@ -39,8 +39,3 @@ final themeOptions = {
     visualDensity: VisualDensity.adaptivePlatformDensity,
   ),
 };
-// final List<ThemeData> lightThemeData = [];
-
-// final List<ThemeData> darkThemeData = [
-  
-// ];

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
@@ -58,21 +59,20 @@ void main() {
 
       final result = await profileRepositoryImpl.getUserProfile('test');
 
-      expect(result, Left(ProfileFilure()));
+      expect(result, Left(ProfileFailure()));
     });
   });
 
   group('profile repository updateUserProfile', () {
-    test('should verify upload functionality when neew image is selected', () async {
-      when(firebaseStorage.ref(any)).thenReturn(reference);
-      when(reference.child(any)).thenReturn(reference);
+    test('should verify upload functionality when neew image is selected',
+        () async {
+      when(firebaseFirestore.collection(any)).thenReturn(collectionReference);
+      when(collectionReference.doc(any)).thenReturn(documentReference);
+      when(documentReference.set(any)).thenAnswer((realInvocation) => null);
 
-      // userEntity photo property holds a File object (new image was selected)
-      await profileRepositoryImpl.updateUserProfile(userEntity);
+      final result = await profileRepositoryImpl.updateUserProfile(userEntity);
 
-      verify(firebaseStorage.ref(any));
-      verify(reference.child(any));
-      verify(reference.putFile(any));
+      expect(result, Right(true));
     });
 
     test('should return ProfileFailure when it fails', () async {
@@ -82,7 +82,39 @@ void main() {
 
       final result = await profileRepositoryImpl.updateUserProfile(userEntity);
 
-      expect(result, Left(ProfileFilure()));
+      expect(result, Left(ProfileFailure()));
+    });
+  });
+
+  group('profile repository uploadImage', () {
+    test('should verify upload functionality when new image is selected',
+        () async {
+      // when userEntity photo property holds a File object (new image was selected)
+      final profileWithNewImage =
+          userEntity.copyWith(profilePhoto: File('imagePath'), coverPhoto: File('imagePath'));
+      when(firebaseStorage.ref(any)).thenReturn(reference);
+      when(reference.child(any)).thenReturn(reference);
+
+      await profileRepositoryImpl.uploadImage(profileWithNewImage);
+
+      verify(firebaseStorage.ref(any));
+      verify(reference.child(any));
+      verify(reference.putFile(any));
+    });
+
+    test('should verify no upload functionality when no new image is selected',
+        () async {
+      // when userEntity photo property holds a File object (new image was selected)
+      final profileWithOutNewImage =
+          userEntity.copyWith(profilePhoto: 'urlPath', coverPhoto: 'urlPath');
+      when(firebaseStorage.ref(any)).thenReturn(reference);
+      when(reference.child(any)).thenReturn(reference);
+
+      await profileRepositoryImpl.uploadImage(profileWithOutNewImage);
+
+      verifyNever(firebaseStorage.ref(any));
+      verifyNever(reference.child(any));
+      verifyNever(reference.putFile(any));
     });
   });
 }

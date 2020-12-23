@@ -4,7 +4,7 @@ import 'package:fc_twitter/core/util/config.dart';
 import 'package:fc_twitter/core/util/themes.dart';
 import 'package:fc_twitter/features/settings/data/model/theme_model.dart';
 import 'package:fc_twitter/features/settings/domain/entity/theme_entity.dart';
-import 'package:fc_twitter/features/settings/representation/bloc/bloc.dart';
+import 'package:fc_twitter/features/settings/representation/bloc/theme_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -81,7 +81,7 @@ class _ThemeHandlerState extends State<ThemeHandler> {
                 isDim: themeEntity.isDim,
                 isLightsOut: themeEntity.isLightsOut,
               );
-              context.read<SettingsBloc>().add(ChangeTheme(themeEntity));
+              context.read<ThemeBloc>().add(ChangeTheme(themeEntity));
             },
           ),
           RadioListTile<ThemeOptions>(
@@ -99,7 +99,7 @@ class _ThemeHandlerState extends State<ThemeHandler> {
                 isDim: themeEntity.isDim,
                 isLightsOut: themeEntity.isLightsOut,
               );
-              context.read<SettingsBloc>().add(ChangeTheme(themeEntity));
+              context.read<ThemeBloc>().add(ChangeTheme(themeEntity));
             },
           ),
           Container(
@@ -122,7 +122,7 @@ class _ThemeHandlerState extends State<ThemeHandler> {
                 isDim: true,
                 isLightsOut: false,
               );
-              context.read<SettingsBloc>().add(ChangeTheme(themeEntity));
+              context.read<ThemeBloc>().add(ChangeTheme(themeEntity));
             },
           ),
           RadioListTile<DarkThemeOptions>(
@@ -140,7 +140,7 @@ class _ThemeHandlerState extends State<ThemeHandler> {
                 isDim: false,
                 isLightsOut: true,
               );
-              context.read<SettingsBloc>().add(ChangeTheme(themeEntity));
+              context.read<ThemeBloc>().add(ChangeTheme(themeEntity));
             },
           ),
         ],

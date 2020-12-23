@@ -15,19 +15,45 @@ class ProfileRepositoryImpl implements ProfileRepository {
 
   ProfileRepositoryImpl({this.firebaseFirestore, this.firebaseStorage});
   @override
-  Future<Either<ProfileFilure, UserProfileEntity>> getUserProfile(
+  Future<Either<ProfileFailure, UserProfileEntity>> getUserProfile(
       String userId) async {
     try {
       final userProfile =
           await firebaseFirestore.collection('users').doc(userId).get();
       return Right(UserProfileModel.fromDoc(userProfile).toEntity());
     } catch (_) {
-      return Left(ProfileFilure());
+      return Left(ProfileFailure());
     }
   }
 
   @override
-  Future<Either<ProfileFilure, bool>> updateUserProfile(
+  Future<Either<ProfileFailure, bool>> updateUserProfile(
+      UserProfileEntity userProfile) async {
+    try {
+      final data = UserProfileModel.fromEntity(userProfile).toMap();
+      await firebaseFirestore.collection('users').doc(userProfile.id).set(data);
+      return Right(true);
+    } catch (_) {
+      return Left(ProfileFailure());
+    }
+  }
+
+  @override
+  Future<Either<ProfileFailure, File>> pickImage(
+      ImageSource source, bool isCoverPhoto) async {
+    final pickedFile = await ImagePicker().getImage(
+      source: source,
+      imageQuality: isCoverPhoto ? null : 50,
+      maxWidth: isCoverPhoto ? null : 150,
+    );
+    if (pickedFile == null) {
+      return Left(ProfileFailure());
+    }
+    return Right(File(pickedFile.path));
+  }
+
+  @override
+  Future<Either<ProfileFailure, UserProfileEntity>> uploadImage(
       UserProfileEntity userProfile) async {
     try {
       if (userProfile.profilePhoto.runtimeType != String) {
@@ -47,27 +73,12 @@ class ProfileRepositoryImpl implements ProfileRepository {
         await ref.putFile(userProfile.coverPhoto).whenComplete(() async {
           final imageUrl = await ref.getDownloadURL();
           userProfile = userProfile.copyWith(coverPhoto: imageUrl);
-          print('image url gotten => ${userProfile.profilePhoto}');
+          print('image url gotten => ${userProfile.coverPhoto}');
         });
       }
-      final data = UserProfileModel.fromEntity(userProfile).toMap();
-      await firebaseFirestore.collection('users').doc(userProfile.id).set(data);
-      return Right(true);
+      return Right(userProfile);
     } catch (_) {
-      return Left(ProfileFilure());
+      return Left(ProfileFailure());
     }
-  }
-
-  @override
-  Future<Either<ProfileFilure, File>> pickImage(ImageSource source, bool isCoverPhoto) async {
-    final pickedFile = await ImagePicker().getImage(
-      source: source,
-      imageQuality: isCoverPhoto ? null : 50,
-      maxWidth: isCoverPhoto ? null : 150,
-    );
-    if (pickedFile == null) {
-      return Left(ProfileFilure());
-    }
-    return Right(File(pickedFile.path));
   }
 }

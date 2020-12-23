@@ -1,8 +1,7 @@
 import 'package:dartz/dartz.dart';
-import 'package:fc_twitter/core/usecase/usecase.dart';
 import 'package:fc_twitter/core/util/themes.dart';
 import 'package:fc_twitter/features/settings/domain/entity/theme_entity.dart';
-import 'package:fc_twitter/features/settings/representation/bloc/bloc.dart';
+import 'package:fc_twitter/features/settings/representation/bloc/theme_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
@@ -10,22 +9,22 @@ import 'package:mockito/mockito.dart';
 import '../../../mocks/mocks.dart';
 
 void main() {
-  MockChangeTheme changeTheme;
-  SettingsBloc settingsBloc;
+  ThemeBloc settingsBloc;
   ThemeEntity themeEntity;
+  MockSettingsRepository mockSettingsRepository;
 
   setUp(() {
-    changeTheme = MockChangeTheme();
-    settingsBloc = SettingsBloc(
+    mockSettingsRepository = MockSettingsRepository();
+    settingsBloc = ThemeBloc(
       appTheme: AppTheme(ThemeData()),
-      changeTheme: changeTheme,
+      settingsRepository: mockSettingsRepository,
     );
   });
 
   group('change theme event', () {
     test('should emit AppTheme with light theme option', () {
       themeEntity = ThemeEntity(isLight: true, isDim: false, isLightsOut: true);
-      when(changeTheme(SParams(themeEntity: themeEntity))).thenAnswer(
+      when(mockSettingsRepository.changeTheme(themeEntity)).thenAnswer(
         (_) => Future.value(Right(themeEntity)),
       );
 
@@ -37,7 +36,7 @@ void main() {
 
     test('should emit AppTheme with dim theme option', () {
       themeEntity = ThemeEntity(isLight: false, isDim: true, isLightsOut: false);
-      when(changeTheme(SParams(themeEntity: themeEntity))).thenAnswer(
+      when(mockSettingsRepository.changeTheme(themeEntity)).thenAnswer(
         (_) => Future.value(Right(themeEntity)),
       );
 
@@ -49,7 +48,7 @@ void main() {
 
     test('should emit AppTheme with lightsOut theme option', () {
       themeEntity = ThemeEntity(isLight: false, isDim: false, isLightsOut: true);
-      when(changeTheme(SParams(themeEntity: themeEntity))).thenAnswer(
+      when(mockSettingsRepository.changeTheme(themeEntity)).thenAnswer(
         (_) => Future.value(Right(themeEntity)),
       );
 

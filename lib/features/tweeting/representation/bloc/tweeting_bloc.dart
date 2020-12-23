@@ -1,13 +1,12 @@
-import 'package:fc_twitter/core/usecase/usecase.dart';
 import 'package:fc_twitter/features/tweeting/domain/entity/tweet_entity.dart';
-import 'package:fc_twitter/features/tweeting/domain/usecase/usecases.dart';
+import 'package:fc_twitter/features/tweeting/domain/repository/tweeting_repository.dart';
 import 'package:fc_twitter/features/tweeting/representation/bloc/tweeting_event.dart';
 import 'package:fc_twitter/features/tweeting/representation/bloc/tweeting_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class TweetingBloc extends Bloc<TweetingEvent, TweetingState> {
-  final SendTweetUseCase sendTweet;
-  TweetingBloc({TweetingState initialState, this.sendTweet})
+  final TweetingRepository tweetingRepository;
+  TweetingBloc({TweetingState initialState, this.tweetingRepository})
       : super(initialState);
 
   @override
@@ -18,7 +17,7 @@ class TweetingBloc extends Bloc<TweetingEvent, TweetingState> {
   }
 
   Stream<TweetingState> _mapSendTweetToState(TweetEntity tweet) async* {
-    final sendEither = await sendTweet(TParams(tweet: tweet));
+    final sendEither = await tweetingRepository.sendTweet(tweet);
     yield* sendEither.fold(
       (failure) async* {
         yield SendingError(message: failure.message);

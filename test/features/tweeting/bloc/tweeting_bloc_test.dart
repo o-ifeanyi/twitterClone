@@ -13,22 +13,20 @@ import '../../../mocks/mocks.dart';
 
 void main() {
   TweetEntity tweetEntity;
-  MockSendTweet sendTweet;
-  // MockFetchTweets fetchTweets;
   MockCollectionReference collectionReference;
   // ignore: close_sinks
   StreamController streamController;
   TweetingBloc tweetingBloc;
+  MockTweetingRepository mockTweetingRepository;
 
   setUp(() {
     tweetEntity = tweetEntityFixture();
-    sendTweet = MockSendTweet();
-    // fetchTweets = MockFetchTweets();
+    mockTweetingRepository = MockTweetingRepository();
     collectionReference = MockCollectionReference();
     streamController = StreamController<QuerySnapshot>();
     tweetingBloc = TweetingBloc(
       initialState: InitialTweetingState(),
-      sendTweet: sendTweet,
+      tweetingRepository: mockTweetingRepository,
     );
   });
 
@@ -44,7 +42,7 @@ void main() {
   group('tweeting bloc sendTweet', () {
     test('should emit [SendingComplete] when successful',
         () async {
-      when(sendTweet(any)).thenAnswer(
+      when(mockTweetingRepository.sendTweet(any)).thenAnswer(
         (_) => Future.value(Right(true)),
       );
       setUpFetchSuccess();
@@ -58,7 +56,7 @@ void main() {
     });
 
     test('should emit [SendingError] when sending tweet fails', () async {
-      when(sendTweet(any)).thenAnswer(
+      when(mockTweetingRepository.sendTweet(any)).thenAnswer(
         (_) => Future.value(
             Left(TweetingFailure(message: 'Failed to send tweet'))),
       );

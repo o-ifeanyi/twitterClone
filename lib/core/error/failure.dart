@@ -33,10 +33,10 @@ class TweetingFailure extends Failure {
   List<Object> get props => [message];
 }
 
-class ProfileFilure extends Failure {
+class ProfileFailure extends Failure {
   final String message;
 
-  ProfileFilure({this.message});
+  ProfileFailure({this.message});
 
   @override
   List<Object> get props => [message];

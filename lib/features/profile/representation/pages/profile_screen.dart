@@ -1,6 +1,8 @@
 import 'package:fc_twitter/core/util/config.dart';
+import 'package:fc_twitter/features/profile/representation/bloc/bloc.dart';
 import 'package:fc_twitter/features/profile/representation/widgets/user_profile_info.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ProfileScreen extends StatelessWidget {
   static const String pageId = '/profileScreen';
@@ -11,7 +13,7 @@ class ProfileScreen extends StatelessWidget {
       length: 4,
       child: Scaffold(
         body: SafeArea(
-                  child: CustomScrollView(
+          child: CustomScrollView(
             slivers: [
               SliverAppBar(
                 stretch: true,
@@ -21,7 +23,15 @@ class ProfileScreen extends StatelessWidget {
                 flexibleSpace: FlexibleSpaceBar(
                   background: Container(
                     color: theme.scaffoldBackgroundColor,
-                    child: UserProfileInfo(),
+                    child: BlocBuilder<ProfileBloc, ProfileState>(
+                        builder: (context, state) {
+                      if (state is FetchingComplete) {
+                        return UserProfileInfo(
+                          profileEntity: state.userProfile,
+                        );
+                      }
+                      return SizedBox.expand();
+                    }),
                   ),
                 ),
                 bottom: TabBar(

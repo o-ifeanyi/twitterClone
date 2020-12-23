@@ -1,8 +1,7 @@
 import 'package:fc_twitter/core/util/config.dart';
 import 'package:fc_twitter/features/authentication/representation/bloc/bloc.dart';
 import 'package:fc_twitter/features/profile/representation/pages/profile_screen.dart';
-import 'package:fc_twitter/features/settings/representation/bloc/bloc.dart';
-import 'package:fc_twitter/features/settings/representation/bloc/settings_bloc.dart';
+import 'package:fc_twitter/features/settings/representation/bloc/theme_bloc.dart';
 import 'package:fc_twitter/features/settings/representation/widgets/theme_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -102,9 +101,9 @@ class CustomDrawer extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  BlocBuilder<SettingsBloc, SettingsState>(
+                  BlocBuilder<ThemeBloc, ThemeState>(
                     builder: (context, state) {
-                      bool isDark = (state as AppTheme).theme.brightness ==
+                      bool isDark = state.theme.brightness ==
                           Brightness.dark;
                       return IconButton(
                         icon: Icon(

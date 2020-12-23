@@ -1,12 +1,14 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fc_twitter/core/util/config.dart';
 import 'package:fc_twitter/features/profile/domain/entity/user_profile_entity.dart';
-import 'package:fc_twitter/features/profile/representation/bloc/bloc.dart';
 import 'package:fc_twitter/features/profile/representation/pages/edit_profile_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 
 class UserProfileInfo extends StatelessWidget {
+  final UserProfileEntity profileEntity;
+
+  UserProfileInfo({@required this.profileEntity});
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -18,24 +20,19 @@ class UserProfileInfo extends StatelessWidget {
       fontSize: Config.xMargin(context, 3.5),
     );
     return LayoutBuilder(builder: (context, constraints) {
-      return BlocBuilder<ProfileBloc, ProfileState>(
-        builder: (context, state) {
-          if (state.userProfile == null) {
-            return Container();
-          }
-          UserProfileEntity profile = state.userProfile;
-          return Stack(
+      return Stack(
             children: [
               Container(
                 height: constraints.maxHeight * 0.35,
+                width: double.infinity,
                 decoration: BoxDecoration(
                   color: theme.primaryColor,
-                  image: DecorationImage(
-                    fit: BoxFit.fitWidth,
-                    image: (profile.coverPhoto as String).isNotEmpty
-                        ? NetworkImage(profile.coverPhoto)
-                        : null,
-                  ),
+                ),
+                child: CachedNetworkImage(
+                  imageUrl: profileEntity.coverPhoto,
+                  placeholder: (_, __) => SizedBox.expand(),
+                  errorWidget: (_, __, ___) => SizedBox.expand(),
+                  fit: BoxFit.fitWidth,
                 ),
               ),
               Positioned(
@@ -53,19 +50,26 @@ class UserProfileInfo extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          CircleAvatar(
-                            radius: 30,
-                            backgroundColor: theme.accentColor,
-                            backgroundImage:
-                                (profile.profilePhoto as String).isNotEmpty
-                                    ? NetworkImage(profile.profilePhoto)
-                                    : null,
+                          CachedNetworkImage(
+                            imageUrl: profileEntity.profilePhoto,
+                            imageBuilder: (_, imageProvider) => CircleAvatar(
+                              radius: 30,
+                              backgroundColor: theme.accentColor,
+                              backgroundImage: imageProvider,
+                            ),
+                            placeholder: (_, __) => CircleAvatar(
+                              radius: 30,
+                              backgroundColor: theme.accentColor,
+                              child: Icon(Icons.person,
+                                  size: Config.xMargin(context, 12)),
+                            ),
+                            fit: BoxFit.contain,
                           ),
                           GestureDetector(
                             onTap: () => Navigator.pushNamed(
                               context,
                               EditProfileScreen.pageId,
-                              arguments: profile,
+                              arguments: profileEntity,
                             ),
                             child: Container(
                               padding: const EdgeInsets.symmetric(
@@ -85,22 +89,22 @@ class UserProfileInfo extends StatelessWidget {
                         ],
                       ),
                       Text(
-                        profile.name,
+                        profileEntity.name,
                         style: TextStyle(
                             fontSize: Config.xMargin(context, 5),
                             fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        profile.userName,
+                        profileEntity.userName,
                         style: _customGreyText,
                       ),
-                      if (profile.bio.isNotEmpty)
-                        Text(profile.bio, style: _customWhiteText),
+                      if (profileEntity.bio.isNotEmpty)
+                        Text(profileEntity.bio, style: _customWhiteText),
                       Wrap(
                         spacing: 15,
                         runSpacing: 5,
                         children: [
-                          if (profile.location.isNotEmpty)
+                          if (profileEntity.location.isNotEmpty)
                             Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
@@ -111,12 +115,12 @@ class UserProfileInfo extends StatelessWidget {
                                 ),
                                 SizedBox(width: 5),
                                 Text(
-                                  profile.location,
+                                  profileEntity.location,
                                   style: _customGreyText,
                                 ),
                               ],
                             ),
-                          if (profile.website.isNotEmpty)
+                          if (profileEntity.website.isNotEmpty)
                             Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
@@ -127,7 +131,7 @@ class UserProfileInfo extends StatelessWidget {
                                 ),
                                 SizedBox(width: 5),
                                 Text(
-                                  profile.website,
+                                  profileEntity.website,
                                   style: TextStyle(
                                     color: theme.primaryColor,
                                     fontSize: Config.xMargin(context, 3.5),
@@ -145,7 +149,7 @@ class UserProfileInfo extends StatelessWidget {
                               ),
                               SizedBox(width: 5),
                               Text(
-                                profile.dateJoined,
+                                profileEntity.dateJoined,
                                 style: _customGreyText,
                               ),
                             ],
@@ -155,7 +159,7 @@ class UserProfileInfo extends StatelessWidget {
                       Row(
                         children: [
                           Text(
-                            '${profile.following}',
+                            '${profileEntity.following}',
                             style: TextStyle(
                                 fontSize: Config.xMargin(context, 4),
                                 fontWeight: FontWeight.bold),
@@ -166,7 +170,7 @@ class UserProfileInfo extends StatelessWidget {
                           ),
                           SizedBox(width: 10),
                           Text(
-                            '${profile.followers}',
+                            '${profileEntity.followers}',
                             style: TextStyle(
                                 fontSize: Config.xMargin(context, 4),
                                 fontWeight: FontWeight.bold),
@@ -185,6 +189,6 @@ class UserProfileInfo extends StatelessWidget {
           );
         },
       );
-    });
+    
   }
 }

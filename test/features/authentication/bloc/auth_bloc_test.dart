@@ -1,6 +1,5 @@
 import 'package:dartz/dartz.dart';
 import 'package:fc_twitter/core/error/failure.dart';
-import 'package:fc_twitter/core/usecase/usecase.dart';
 import 'package:fc_twitter/features/authentication/domain/user_entity/user_entity.dart';
 import 'package:fc_twitter/features/authentication/representation/bloc/bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -12,27 +11,18 @@ import '../../../mocks/mocks.dart';
 void main() {
   UserEntity userEntity;
   AuthBloc authBloc;
-  MockSignUpNewUser signUpNewUser;
-  MockSaveUserDetail saveUserDetail;
-  MockLogInUser logInUser;
-  MockLogOutUser logOutUser;
   MockUserCredential mockUserCredential;
+  MockUserRepository mockUserRepository;
   MockFireBaseUser fireBaseUser;
 
   setUp(() {
     userEntity = userEntityFixture();
     fireBaseUser = MockFireBaseUser();
-    signUpNewUser = MockSignUpNewUser();
-    saveUserDetail = MockSaveUserDetail();
-    logInUser = MockLogInUser();
-    logOutUser = MockLogOutUser();
     mockUserCredential = MockUserCredential();
+    mockUserRepository = MockUserRepository();
     authBloc = AuthBloc(
       initialState: InitialAuthState(),
-      signUpNewUser: signUpNewUser,
-      saveUserDetail: saveUserDetail,
-      logInUser: logInUser,
-      logOutUser: logOutUser,
+      userRepository: mockUserRepository,
     );
   });
 
@@ -40,12 +30,12 @@ void main() {
     test(
         'should emit [Authinprogress] and [Authcomplete] when sign up and save is successful',
         () async {
-      when(signUpNewUser(any)).thenAnswer(
+      when(mockUserRepository.signUpNewUser(any)).thenAnswer(
         (_) => Future.value(Right(mockUserCredential)),
       );
       when(mockUserCredential.user).thenReturn(fireBaseUser);
       when(fireBaseUser.uid).thenReturn('userId');
-      when(saveUserDetail(any))
+      when(mockUserRepository.saveUserDetail(any))
           .thenAnswer(
         (_) => Future.value(Right(true)),
       );
@@ -60,7 +50,7 @@ void main() {
 
     test('should emit [Authinprogress] and [Authfailed] when sign up fails',
         () async {
-      when(signUpNewUser(any)).thenAnswer(
+      when(mockUserRepository.signUpNewUser(any)).thenAnswer(
         (_) => Future.value(Left(AuthFailure(message: 'Sign up failed'))),
       );
       final expected = [
@@ -73,12 +63,12 @@ void main() {
     });
 
     test('should emit [AuthFailed] when user details fails to save', () async {
-      when(signUpNewUser(any)).thenAnswer(
+      when(mockUserRepository.signUpNewUser(any)).thenAnswer(
         (_) => Future.value(Right(mockUserCredential)),
       );
       when(mockUserCredential.user).thenReturn(fireBaseUser);
       when(fireBaseUser.uid).thenReturn('userId');
-      when(saveUserDetail(any))
+      when(mockUserRepository.saveUserDetail(any))
           .thenAnswer(
         (_) =>
             Future.value(Left(AuthFailure(message: 'Saving details failed'))),
@@ -97,7 +87,7 @@ void main() {
     test(
         'should emit [Authinprogress] and [Authcomplete] when log in is successful',
         () async {
-      when(logInUser(any)).thenAnswer(
+      when(mockUserRepository.logInUser(any)).thenAnswer(
         (_) => Future.value(Right(mockUserCredential)),
       );
       final expected = [
@@ -111,7 +101,7 @@ void main() {
 
     test('should emit [Authinprogress] and [Authfailed] when log in fails',
         () async {
-      when(logInUser(any)).thenAnswer(
+      when(mockUserRepository.logInUser(any)).thenAnswer(
         (_) => Future.value(Left(AuthFailure(message: 'Sign up failed'))),
       );
       final expected = [
@@ -131,8 +121,8 @@ void main() {
 
     test(('confirm log out is called for log out event'), () async {
       authBloc.add(LogOut());
-      await untilCalled(logOutUser(NoParams()));
-      verify(logOutUser(NoParams()));
+      await untilCalled(mockUserRepository.logOutUser());
+      verify(mockUserRepository.logOutUser());
     });
   });
 }

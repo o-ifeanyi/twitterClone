@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:fc_twitter/core/error/failure.dart';
 import 'package:fc_twitter/core/model/stream_converter.dart';
-import 'package:fc_twitter/core/usecase/usecase.dart';
 import 'package:fc_twitter/features/timeline/representation/bloc/bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
@@ -12,19 +11,19 @@ import 'package:mockito/mockito.dart';
 import '../../../mocks/mocks.dart';
 
 void main() {
-  MockFetchTweets fetchTweets;
   MockCollectionReference collectionReference;
   // ignore: close_sinks
   StreamController streamController;
   TimeLineBloc timeLineBloc;
+  MockTimeLineRepository mockTimeLineRepository;
 
   setUp(() {
-    fetchTweets = MockFetchTweets();
     collectionReference = MockCollectionReference();
+    mockTimeLineRepository = MockTimeLineRepository();
     streamController = StreamController<QuerySnapshot>();
     timeLineBloc = TimeLineBloc(
       initialState: InitialTimeLineState(),
-      fetchTweets: fetchTweets,
+      timeLineRepository: mockTimeLineRepository,
     );
   });
 
@@ -38,7 +37,7 @@ void main() {
         () async {
       when(collectionReference.snapshots())
           .thenAnswer((_) => streamController.stream);
-      when(fetchTweets(NoParams())).thenAnswer(
+      when(mockTimeLineRepository.fetchTweets()).thenAnswer(
         (_) => Future.value(
             Right(StreamConverter(collection: collectionReference))),
       );
@@ -55,7 +54,7 @@ void main() {
     test(
         'should emit [FetchingTweet, FetchingFailed] when it fails',
         () async {
-      when(fetchTweets(NoParams())).thenAnswer(
+      when(mockTimeLineRepository.fetchTweets()).thenAnswer(
         (_) => Future.value(
             Left(TimeLineFailure(message: 'Failed to load tweets'))),
       );

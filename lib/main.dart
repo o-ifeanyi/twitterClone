@@ -1,7 +1,7 @@
 import 'package:fc_twitter/features/profile/representation/bloc/bloc.dart';
 import 'package:fc_twitter/features/profile/representation/pages/edit_profile_screen.dart';
 import 'package:fc_twitter/features/profile/representation/pages/profile_screen.dart';
-import 'package:fc_twitter/features/settings/representation/bloc/bloc.dart';
+import 'package:fc_twitter/features/settings/representation/bloc/theme_bloc.dart';
 import 'package:fc_twitter/features/tweeting/representation/bloc/bloc.dart';
 import 'package:fc_twitter/injection_container.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -26,7 +26,7 @@ void main() async {
         BlocProvider<TimeLineBloc>(create: (_) => sl<TimeLineBloc>()),
         BlocProvider<TweetingBloc>(create: (_) => sl<TweetingBloc>()),
         BlocProvider<ProfileBloc>(create: (_) => sl<ProfileBloc>()),
-        BlocProvider<SettingsBloc>(create: (_) => sl<SettingsBloc>()),
+        BlocProvider<ThemeBloc>(create: (_) => sl<ThemeBloc>()),
       ],
       child: MyApp(),
     ),
@@ -34,12 +34,11 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     // ignore: close_sinks
     final profileBloc = BlocProvider.of<ProfileBloc>(context);
-    return BlocBuilder<SettingsBloc, SettingsState>(
+    return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, state) {
         return MaterialApp(
           title: 'Flutter Demo',
