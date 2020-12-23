@@ -88,7 +88,7 @@ Future<void> init() async {
         firebaseFirestore: sl(),
       ));
 
-  // Feature Settings
+  // Feature Setting
   // Bloc
   sl.registerFactory(
     () => ThemeBloc(
