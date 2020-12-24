@@ -58,25 +58,30 @@ String jsonUserProfileFixture() => json.encode({
       "name": "ifeanyi",
       "userName": "onuoha",
       "location": "Abuja",
+      "bio": null,
+      "website": null,
+      "dateOfBirth": null,
+      "dateJoined": null,
+      "profilePhoto": null,
+      "coverPhoto": null,
+      "following": null,
+      "followers": null
     });
 
 TweetEntity tweetEntityFixture() => TweetEntity(
-      name: 'ifeanyi',
-      userName: 'onuoha',
+      userProfile: userProfileEntityFixture(),
       message: 'hello world',
       timeStamp: '0s',
     );
 
 TweetModel tweetModelFixture() => TweetModel(
-      name: 'ifeanyi',
-      userName: 'onuoha',
+      userProfile: userProfileEntityFixture(),
       message: 'hello world',
       timeStamp: '0s',
     );
 
 String jsonTweetFixture() => json.encode({
-      "name": "ifeanyi",
-      "userName": "onuoha",
+      "userProfile": json.decode(jsonUserProfileFixture()),
       "message": "hello world",
       "timeStamp": "0s"
     });

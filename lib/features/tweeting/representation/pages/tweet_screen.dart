@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fc_twitter/core/util/config.dart';
+import 'package:fc_twitter/features/profile/domain/entity/user_profile_entity.dart';
+import 'package:fc_twitter/features/profile/representation/bloc/profile_bloc.dart';
 import 'package:fc_twitter/features/tweeting/domain/entity/tweet_entity.dart';
 import 'package:fc_twitter/features/tweeting/representation/bloc/bloc.dart';
 import 'package:fc_twitter/features/tweeting/representation/widgets/media_preview.dart';
@@ -16,16 +18,45 @@ class TweetScreen extends StatefulWidget {
 class _TweetScreenState extends State<TweetScreen> {
   final _tweetController = TextEditingController();
   final _focusNode = FocusNode();
-  String _tweet = '';
+  String _tweetMessage = '';
+  UserProfileEntity _userProfile;
+  TweetEntity _tweet;
 
   @override
   void initState() {
     super.initState();
     _focusNode.requestFocus();
+    // Future.delayed(Duration.zero).then((_) {
+    //   final profile = context.select<ProfileBloc, UserProfileEntity>(
+    //     (bloc) => bloc.state.userProfile,
+    //   );
+    //   if (profile != null) {
+    //     _userProfile = profile;
+    //     print(_userProfile.userName);
+    //   }
+    // });
+    // _tweet = TweetEntity(
+    //   userProfile: _userProfile,
+    //   message: _tweetMessage,
+    //   timeStamp: null,
+    // );
   }
 
   @override
   Widget build(BuildContext context) {
+    final profile = context.select<ProfileBloc, UserProfileEntity>(
+      (bloc) => bloc.state.userProfile,
+    );
+    if (profile != null) {
+      _userProfile = profile;
+      print(_userProfile.userName);
+      _tweet = TweetEntity(
+        userProfile: _userProfile,
+        message: _tweetMessage,
+        timeStamp: Timestamp.now(),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -39,15 +70,10 @@ class _TweetScreenState extends State<TweetScreen> {
         ),
         actions: [
           GestureDetector(
-            onTap: _tweet.isEmpty
+            onTap: _tweetMessage.isEmpty
                 ? null
                 : () {
-                    context.read<TweetingBloc>().add(SendTweet(tweet: TweetEntity(
-                          name: 'ifeanyi',
-                          userName: '@ifeanyi_onuoha',
-                          message: _tweet,
-                          timeStamp: Timestamp.now(),
-                        )));
+                    context.read<TweetingBloc>().add(SendTweet(tweet: _tweet));
                     _focusNode.unfocus();
                     Navigator.pop(context);
                   },
@@ -57,7 +83,7 @@ class _TweetScreenState extends State<TweetScreen> {
               width: Config.xMargin(context, 20),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(30),
-                color: _tweet.isEmpty
+                color: _tweetMessage.isEmpty
                     ? Theme.of(context).primaryColor.withOpacity(0.5)
                     : Theme.of(context).primaryColor,
               ),
@@ -97,7 +123,7 @@ class _TweetScreenState extends State<TweetScreen> {
                     ),
                     onChanged: (val) {
                       setState(() {
-                        _tweet = val;
+                        _tweetMessage = val;
                       });
                     },
                   ),
@@ -107,7 +133,7 @@ class _TweetScreenState extends State<TweetScreen> {
           ),
           Spacer(),
           // twwet.isEmpty and device 1s potrait
-          if (_tweet.isEmpty)
+          if (_tweetMessage.isEmpty)
             Container(
               height: Config.yMargin(context, 10),
               child: ListView(

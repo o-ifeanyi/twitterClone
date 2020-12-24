@@ -16,23 +16,20 @@ void main() {
       expect(tweetModel, isA<TweetEntity>());
     });
 
-    test('should return a valid model wwhen converting from entity',
-        () async {
-
+    test('should return a valid model wwhen converting from entity', () async {
       final result = TweetModel.fromEntity(tweetEntity);
 
       expect(result, equals(tweetModel));
     });
 
-    test('should return a valid model wwhen converting to entity',
-        () async {
-
+    test('should return a valid model wwhen converting to entity', () async {
       final result = tweetModel.toEntity();
 
       expect(result, equals(tweetEntity));
     });
 
-    test('should return a valid model wwhen converting from snapshot', () async {
+    test('should return a valid model wwhen converting from snapshot',
+        () async {
       final snapshot = (json.decode(jsonTweetFixture()));
 
       snapshot['timeStamp'] = Timestamp.now();
@@ -48,10 +45,14 @@ void main() {
       final result = tweetModel.toDocument();
 
       final expected = {
-        'name': 'ifeanyi',
-        'userName': 'onuoha',
+        'userProfile': json.decode(jsonUserProfileFixture()),
         'message': 'hello world',
         'timeStamp': '0s',
+        'quoteTo': null,
+        'comments': null,
+        'retweetedBy': null,
+        'likedBy': null,
+        'isRetweet': null
       };
 
       expect(result, equals(expected));

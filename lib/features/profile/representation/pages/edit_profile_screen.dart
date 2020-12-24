@@ -1,8 +1,10 @@
 import 'package:fc_twitter/core/util/config.dart';
 import 'package:fc_twitter/features/profile/domain/entity/user_profile_entity.dart';
-import 'package:fc_twitter/features/profile/representation/bloc/bloc.dart';
+import 'package:fc_twitter/features/profile/representation/bloc/image_picker_bloc.dart';
+import 'package:fc_twitter/features/profile/representation/bloc/profile_bloc.dart';
 import 'package:fc_twitter/features/profile/representation/widgets/cover_image.dart';
 import 'package:fc_twitter/features/profile/representation/widgets/profile_image.dart';
+import 'package:fc_twitter/injection_container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -69,79 +71,82 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       body: SingleChildScrollView(
         child: Container(
           height: mediaQuery.size.height + 150,
-          child: Stack(
-            children: [
-              BlocListener<ProfileBloc, ProfileState>(
-                listener: (context, state) {
-                  if (state is PickedCoverImage) {
-                    print('setting photo');
-                    profile =
-                        profile.copyWith(coverPhoto: state.pickedCoverImage);
-                  }
-                },
-                child: CoverImage(imageUrl: coverImage),
-              ),
-              Positioned(
-                top: Config.yMargin(context, 14),
-                child: Container(
-                  width: mediaQuery.size.width,
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      BlocListener<ProfileBloc, ProfileState>(
-                        listener: (context, state) {
-                          if (state is PickedProfileImage) {
-                            print('setting photo');
-                            profile = profile.copyWith(
-                                profilePhoto: state.pickedProfileImage);
-                          }
-                        },
-                        child: ProfileImage(imageUrl: profileImage),
-                      ),
-                      SizedBox(height: 10),
-                      TextField(
-                        controller: _nameController,
-                        decoration: InputDecoration(
-                          labelText: 'Name',
-                          hintText: 'Name cannot be blank',
-                        ),
-                        onChanged: (_) {
-                          setState(() {
-                            nameIsEmpty = _nameController.text.isEmpty;
-                          });
-                        },
-                      ),
-                      TextField(
-                        controller: _bioController,
-                        maxLines: 3,
-                        decoration: InputDecoration(
-                          labelText: 'Bio',
-                        ),
-                      ),
-                      TextField(
-                        controller: _locationController,
-                        decoration: InputDecoration(
-                          labelText: 'Location',
-                        ),
-                      ),
-                      TextField(
-                        controller: _websiteController,
-                        decoration: InputDecoration(
-                          labelText: 'Website',
-                        ),
-                      ),
-                      TextField(
-                        decoration: InputDecoration(
-                          labelText: 'Birth date',
-                          hintText: 'Add your date of birth',
-                        ),
-                      )
-                    ],
-                  ),
+          child: BlocProvider<ImagePickerBloc>(
+            create: (ctx) => sl<ImagePickerBloc>(),
+            child: Stack(
+              children: [
+                BlocListener<ProfileBloc, ProfileState>(
+                  listener: (context, state) {
+                    if (state is PickedCoverImage) {
+                      print('setting photo');
+                      profile =
+                          profile.copyWith(coverPhoto: state.pickedCoverImage);
+                    }
+                  },
+                  child: CoverImage(imageUrl: coverImage),
                 ),
-              )
-            ],
+                Positioned(
+                  top: Config.yMargin(context, 14),
+                  child: Container(
+                    width: mediaQuery.size.width,
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        BlocListener<ProfileBloc, ProfileState>(
+                          listener: (context, state) {
+                            if (state is PickedProfileImage) {
+                              print('setting photo');
+                              profile = profile.copyWith(
+                                  profilePhoto: state.pickedProfileImage);
+                            }
+                          },
+                          child: ProfileImage(imageUrl: profileImage),
+                        ),
+                        SizedBox(height: 10),
+                        TextField(
+                          controller: _nameController,
+                          decoration: InputDecoration(
+                            labelText: 'Name',
+                            hintText: 'Name cannot be blank',
+                          ),
+                          onChanged: (_) {
+                            setState(() {
+                              nameIsEmpty = _nameController.text.isEmpty;
+                            });
+                          },
+                        ),
+                        TextField(
+                          controller: _bioController,
+                          maxLines: 3,
+                          decoration: InputDecoration(
+                            labelText: 'Bio',
+                          ),
+                        ),
+                        TextField(
+                          controller: _locationController,
+                          decoration: InputDecoration(
+                            labelText: 'Location',
+                          ),
+                        ),
+                        TextField(
+                          controller: _websiteController,
+                          decoration: InputDecoration(
+                            labelText: 'Website',
+                          ),
+                        ),
+                        TextField(
+                          decoration: InputDecoration(
+                            labelText: 'Birth date',
+                            hintText: 'Add your date of birth',
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),

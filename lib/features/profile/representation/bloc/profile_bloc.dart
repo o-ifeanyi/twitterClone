@@ -1,8 +1,51 @@
+import 'dart:io';
+
+import 'package:equatable/equatable.dart';
 import 'package:fc_twitter/features/profile/domain/entity/user_profile_entity.dart';
 import 'package:fc_twitter/features/profile/domain/repository/profile_repository.dart.dart';
-import 'package:fc_twitter/features/profile/representation/bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_picker/image_picker.dart';
+
+class ProfileEvent extends Equatable {
+  @override
+  List<Object> get props => [];
+}
+
+class FetchUserProfile extends ProfileEvent {
+  final String userId;
+
+  FetchUserProfile(this.userId);
+}
+
+class UpdateUserProfile extends ProfileEvent {
+  final UserProfileEntity userEntity;
+
+  UpdateUserProfile(this.userEntity);
+}
+
+class ProfileState extends Equatable {
+  final UserProfileEntity userProfile;
+  final File pickedProfileImage;
+  final File pickedCoverImage;
+
+  ProfileState(
+      {this.userProfile, this.pickedProfileImage, this.pickedCoverImage});
+  @override
+  List<Object> get props => [];
+}
+
+class ProfileInitialState extends ProfileState {}
+
+class FetchingUserProfile extends ProfileState {}
+
+class FetchingFailed extends ProfileState {}
+
+class FetchingComplete extends ProfileState {
+  final UserProfileEntity userProfile;
+
+  FetchingComplete({this.userProfile}) : super(userProfile: userProfile);
+}
+
+class UpdateFailed extends ProfileState {}
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final ProfileRepository profileRepository;
@@ -16,9 +59,6 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     }
     if (event is UpdateUserProfile) {
       yield* _mapUpdateUserProfileToEvent(event.userEntity);
-    }
-    if (event is PickImage) {
-      yield* _mapPickImageToEvent(event.imageSource, event.isCoverPhoto);
     }
   }
 
@@ -50,19 +90,6 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       yield UpdateFailed();
     }, (success) async* {
       yield* _mapFetchUserProfileToEvent(entity.id);
-    });
-  }
-
-  Stream<ProfileState> _mapPickImageToEvent(
-      ImageSource source, bool isCoverPhoto) async* {
-    print(isCoverPhoto);
-    final imageEither = await profileRepository.pickImage(source, isCoverPhoto);
-    yield* imageEither.fold((failure) async* {
-      print('nothing');
-    }, (image) async* {
-      yield isCoverPhoto
-          ? PickedCoverImage(pickedCoverImage: image)
-          : PickedProfileImage(pickedProfileImage: image);
     });
   }
 }

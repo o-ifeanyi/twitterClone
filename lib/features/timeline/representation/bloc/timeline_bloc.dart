@@ -24,6 +24,9 @@ class TimeLineBloc extends Bloc<TimeLineEvent, TimeLineState> {
         yield FetchingError(message: failure.message);
       },
       (converter) async* {
+        // converter.toTweetEntity(converter.collection).listen((event) {
+        //   print(event);
+        // });
         yield FetchingComplete(
             tweetStream: converter.toTweetEntity(converter.collection));
       },

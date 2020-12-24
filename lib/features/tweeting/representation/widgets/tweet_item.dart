@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fc_twitter/core/util/config.dart';
 import 'package:fc_twitter/features/tweeting/domain/entity/tweet_entity.dart';
 import 'package:flutter/material.dart';
@@ -10,13 +11,24 @@ class TweetItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Container(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CircleAvatar(
-            radius: 24,
-            backgroundColor: Theme.of(context).primaryColor,
+          CachedNetworkImage(
+            imageUrl: _tweet.userProfile.profilePhoto,
+            imageBuilder: (_, imageProvider) => CircleAvatar(
+              radius: 24,
+              backgroundColor: theme.accentColor,
+              backgroundImage: imageProvider,
+            ),
+            placeholder: (_, __) => CircleAvatar(
+              radius: 24,
+              backgroundColor: theme.accentColor,
+              child: Icon(Icons.person, size: Config.xMargin(context, 10)),
+            ),
+            fit: BoxFit.contain,
           ),
           SizedBox(width: 10),
           Expanded(
@@ -26,14 +38,14 @@ class TweetItem extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      _tweet.name,
+                      _tweet.userProfile.name,
                       style: TextStyle(
                         fontWeight: FontWeight.w700,
                         fontSize: Config.xMargin(context, 4.5),
                       ),
                     ),
                     SizedBox(width: 5),
-                    Text(_tweet.userName),
+                    Text(_tweet.userProfile.userName),
                     Text(' . '),
                     Text(_tweet.timeStamp),
                     Spacer(),
@@ -51,15 +63,15 @@ class TweetItem extends StatelessWidget {
                   children: [
                     Icon(EvilIcons.comment),
                     SizedBox(width: 5),
-                    Text('12'),
+                    Text('${_tweet.comments.length}'),
                     Spacer(),
                     Icon(EvilIcons.retweet),
                     SizedBox(width: 5),
-                    Text('36'),
+                    Text('${_tweet.retweetedBy.length}'),
                     Spacer(),
                     Icon(EvilIcons.heart),
                     SizedBox(width: 5),
-                    Text('235'),
+                    Text('${_tweet.likedBy.length}'),
                     Spacer(),
                     IconButton(
                       icon: Icon(EvilIcons.share_google),

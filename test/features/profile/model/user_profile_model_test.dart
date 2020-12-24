@@ -63,6 +63,15 @@ void main() {
     });
 
     test(
+        'should return a a valid model when converting from Map',
+        () async {
+      final profileMap = json.decode(jsonUserProfileFixture());
+
+      final result = UserProfileModel.fromMap(profileMap);
+
+      expect(result, equals(userModel));
+    });
+    test(
         'should return a JSON map containing proper data when converting to document',
         () async {
       final result = userModel.toMap();

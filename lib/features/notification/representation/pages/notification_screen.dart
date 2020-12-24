@@ -8,14 +8,9 @@ class NotificationScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 1,
-        leading: Padding(
-          padding: const EdgeInsets.all(10),
-          child: GestureDetector(
-            onTap: () => Scaffold.of(context).openDrawer(),
-            child: CircleAvatar(
-              backgroundColor: Theme.of(context).primaryColor,
-            ),
-          ),
+        leading: IconButton(
+          onPressed: () => Scaffold.of(context).openDrawer(),
+          icon: Icon(Foundation.list, color: Theme.of(context).primaryColor),
         ),
         title:
             Text('Notifications', style: Theme.of(context).textTheme.headline6),

@@ -1,5 +1,5 @@
 import 'package:fc_twitter/core/util/config.dart';
-import 'package:fc_twitter/features/profile/representation/bloc/bloc.dart';
+import 'package:fc_twitter/features/profile/representation/bloc/image_picker_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_icons/flutter_icons.dart';
@@ -11,7 +11,7 @@ class CoverImage extends StatelessWidget {
   CoverImage({@required this.imageUrl});
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ProfileBloc, ProfileState>(
+    return BlocBuilder<ImagePickerBloc, ImagePickerState>(
       buildWhen: (_, currentState) {
         return currentState is PickedCoverImage;
       },
@@ -69,7 +69,7 @@ class CoverImage extends StatelessWidget {
                   return;
                 }
                 context
-                    .read<ProfileBloc>()
+                    .read<ImagePickerBloc>()
                     .add(PickImage(imageSource: choice, isCoverPhoto: true));
               },
               child: Container(

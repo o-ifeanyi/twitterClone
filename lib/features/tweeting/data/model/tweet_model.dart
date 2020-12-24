@@ -1,52 +1,79 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fc_twitter/features/profile/data/model/user_profile_model.dart';
 import 'package:fc_twitter/features/tweeting/domain/entity/tweet_entity.dart';
 import 'package:flutter/cupertino.dart';
 
 class TweetModel extends TweetEntity {
   TweetModel({
-    @required name,
-    @required userName,
+    @required userProfile,
     @required message,
     @required timeStamp,
+    quoteTo,
+    comments,
+    retweetedBy,
+    likedBy,
+    isRetweet,
   }) : super(
-            name: name,
-            userName: userName,
-            message: message,
-            timeStamp: timeStamp);
+          userProfile: userProfile,
+          message: message,
+          timeStamp: timeStamp,
+          quoteTo: quoteTo,
+          comments: comments,
+          retweetedBy: retweetedBy,
+          likedBy: likedBy,
+          isRetweet: isRetweet,
+        );
 
   factory TweetModel.fromSnapShot(snapShot) {
+    final profile = UserProfileModel.fromMap(snapShot['userProfile']).toEntity();
     return TweetModel(
-      name: snapShot['name'],
-      userName: snapShot['userName'],
+      userProfile: profile,
       message: snapShot['message'],
       timeStamp: getTime(snapShot['timeStamp']),
+      quoteTo: snapShot['quoteTo'],
+      comments: snapShot['comments'] ?? <Map<String, dynamic>>[],
+      retweetedBy: snapShot['retweetedBy'] ?? <Map<String, dynamic>>[],
+      likedBy: snapShot['likedBy'] ?? <Map<String, dynamic>>[],
+      isRetweet: snapShot['isRetweet']  ?? false,
     );
   }
 
   factory TweetModel.fromEntity(TweetEntity tweet) {
     return TweetModel(
-      name: tweet.name,
-      userName: tweet.userName,
+      userProfile: tweet.userProfile,
       message: tweet.message,
       timeStamp: tweet.timeStamp,
+      quoteTo: tweet.quoteTo,
+      comments: tweet.comments,
+      retweetedBy: tweet.retweetedBy,
+      likedBy: tweet.likedBy,
+      isRetweet: tweet.isRetweet,
     );
   }
 
   TweetEntity toEntity() {
     return TweetEntity(
-      name: this.name,
-      userName: this.userName,
+      userProfile: this.userProfile,
       message: this.message,
       timeStamp: this.timeStamp,
+      quoteTo: this.quoteTo,
+      comments: this.comments,
+      retweetedBy: this.retweetedBy,
+      likedBy: this.likedBy,
+      isRetweet: this.isRetweet,
     );
   }
 
   Map<String, dynamic> toDocument() {
     return {
-      'name': this.name,
-      'userName': this.userName,
+      'userProfile': UserProfileModel.fromEntity(this.userProfile).toMap(),
       'message': this.message,
       'timeStamp': this.timeStamp,
+      'quoteTo': this.quoteTo,
+      'comments': this.comments,
+      'retweetedBy': this.retweetedBy,
+      'likedBy': this.likedBy,
+      'isRetweet': this.isRetweet,
     };
   }
 

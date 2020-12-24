@@ -11,7 +11,7 @@ class StreamConverter extends Equatable {
   Stream<List<TweetEntity>> toTweetEntity(CollectionReference tweets) {
     return tweets.snapshots().map((snapshot) {
       return snapshot.docs
-          .map((doc) => TweetModel.fromSnapShot(doc).toEntity())
+          .map((doc) => TweetModel.fromSnapShot(doc))
           .toList();
     });
   }

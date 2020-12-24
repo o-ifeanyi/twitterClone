@@ -1,4 +1,3 @@
-import 'package:fc_twitter/features/profile/representation/bloc/bloc.dart';
 import 'package:fc_twitter/features/profile/representation/pages/edit_profile_screen.dart';
 import 'package:fc_twitter/features/profile/representation/pages/profile_screen.dart';
 import 'package:fc_twitter/features/settings/representation/bloc/theme_bloc.dart';
@@ -11,6 +10,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'features/authentication/representation/bloc/bloc.dart';
 import 'features/authentication/representation/pages/auth_form.dart';
 import 'features/authentication/representation/pages/auth_screen.dart';
+import 'features/profile/representation/bloc/profile_bloc.dart';
 import 'features/timeline/representation/bloc/bloc.dart';
 import 'features/tweeting/representation/pages/tweet_screen.dart';
 import 'navigation_screen.dart';
