@@ -29,11 +29,11 @@ class CoverImage extends StatelessWidget {
                     )
                   : BoxDecoration(
                       color: Theme.of(context).primaryColor,
-                      image: DecorationImage(
+                      image: imageUrl.isNotEmpty ?  DecorationImage(
                         fit: BoxFit.fitWidth,
                         image:
-                            imageUrl.isNotEmpty ? NetworkImage(imageUrl) : null,
-                      ),
+                            NetworkImage(imageUrl),
+                      ) : null,
                     ),
             ),
             GestureDetector(

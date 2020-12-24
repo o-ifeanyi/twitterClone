@@ -36,7 +36,7 @@ void main() {
 
       final expectations = [
         FetchingUserProfile(),
-        FetchingComplete(userProfile: UserProfileEntity()),
+        FetchingUserProfileComplete(userProfile: UserProfileEntity()),
       ];
 
       expectLater(profileBloc, emitsInOrder(expectations));
@@ -52,7 +52,7 @@ void main() {
 
       final expectations = [
         FetchingUserProfile(),
-        FetchingFailed(),
+        FetchingUserProfileFailed(),
       ];
 
       expectLater(profileBloc, emitsInOrder(expectations));
@@ -76,7 +76,7 @@ void main() {
 
       final expectations = [
         FetchingUserProfile(),
-        FetchingComplete(userProfile: UserProfileEntity()),
+        FetchingUserProfileComplete(userProfile: UserProfileEntity()),
       ];
 
       expectLater(profileBloc, emitsInOrder(expectations));

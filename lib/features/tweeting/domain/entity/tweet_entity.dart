@@ -3,16 +3,18 @@ import 'package:fc_twitter/features/profile/domain/entity/user_profile_entity.da
 import 'package:flutter/cupertino.dart';
 
 class TweetEntity extends Equatable {
+  final String id;
   final UserProfileEntity userProfile;
   final String message;
   final Map<String, dynamic> quoteTo;
-  final List<Map<String, dynamic>> comments;
-  final List<Map<String, dynamic>> retweetedBy;
-  final List<Map<String, dynamic>> likedBy;
+  final List comments;
+  final List retweetedBy;
+  final List likedBy;
   final bool isRetweet;
   final dynamic timeStamp;
 
   TweetEntity({
+    @required this.id,
     @required this.userProfile,
     @required this.message,
     @required this.timeStamp,
@@ -22,6 +24,20 @@ class TweetEntity extends Equatable {
     this.likedBy,
     this.isRetweet,
   });
+
+  TweetEntity copyWith({List<dynamic> likedBy}) {
+    return TweetEntity(
+      id: this.id,
+      userProfile: this.userProfile,
+      message: this.message,
+      quoteTo: this.quoteTo,
+      comments: this.comments,
+      retweetedBy: this.retweetedBy,
+      likedBy: likedBy ?? this.likedBy,
+      isRetweet: this.isRetweet,
+      timeStamp: this.timeStamp,
+    );
+  }
 
   @override
   List<Object> get props => [userProfile, message, timeStamp];

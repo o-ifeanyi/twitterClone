@@ -1,13 +1,21 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fc_twitter/core/util/config.dart';
+import 'package:fc_twitter/features/profile/domain/entity/user_profile_entity.dart';
 import 'package:fc_twitter/features/tweeting/domain/entity/tweet_entity.dart';
+import 'package:fc_twitter/features/tweeting/representation/bloc/bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 
 class TweetItem extends StatelessWidget {
   final TweetEntity _tweet;
+  final UserProfileEntity _profile;
 
-  TweetItem(this._tweet);
+  TweetItem(this._tweet, this._profile);
+
+  bool isLiked(UserProfileEntity profile, TweetEntity tweet) {
+    return tweet.likedBy.any((element) => element['id'] == profile?.id);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +77,24 @@ class TweetItem extends StatelessWidget {
                     SizedBox(width: 5),
                     Text('${_tweet.retweetedBy.length}'),
                     Spacer(),
-                    Icon(EvilIcons.heart),
+                    GestureDetector(
+                      onTap: () {
+                        if (_profile == null) return;
+                        context.read<TweetingBloc>().add(LikeOrUnlikeTweet(
+                              userProfile: _profile,
+                              tweet: _tweet,
+                            ));
+                      },
+                      child: isLiked(_profile, _tweet)
+                          ? Icon(
+                              Entypo.heart,
+                              color: Colors.red,
+                              size: 20,
+                            )
+                          : Icon(
+                              EvilIcons.heart,
+                            ),
+                    ),
                     SizedBox(width: 5),
                     Text('${_tweet.likedBy.length}'),
                     Spacer(),

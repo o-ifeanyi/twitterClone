@@ -49,10 +49,10 @@ class _NavigationScreenState extends State<NavigationScreen> {
       body: SafeArea(
         child: BlocListener<TweetingBloc, TweetingState>(
           listener: (context, state) {
-            if (state is SendingError) {
+            if (state is TweetingError) {
               state.showSnackBar(context, _scaffoldKey, 'Error', 2,
                   isError: true);
-            } else if (state is SendingComplete) {
+            } else if (state is TweetingComplete) {
               state.showSnackBar(context, _scaffoldKey, 'Complete', 2);
             }
           },

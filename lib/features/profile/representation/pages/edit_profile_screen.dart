@@ -75,7 +75,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             create: (ctx) => sl<ImagePickerBloc>(),
             child: Stack(
               children: [
-                BlocListener<ProfileBloc, ProfileState>(
+                BlocListener<ImagePickerBloc, ImagePickerState>(
                   listener: (context, state) {
                     if (state is PickedCoverImage) {
                       print('setting photo');
@@ -93,7 +93,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        BlocListener<ProfileBloc, ProfileState>(
+                        BlocListener<ImagePickerBloc, ImagePickerState>(
                           listener: (context, state) {
                             if (state is PickedProfileImage) {
                               print('setting photo');

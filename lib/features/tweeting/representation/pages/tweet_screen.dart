@@ -26,20 +26,6 @@ class _TweetScreenState extends State<TweetScreen> {
   void initState() {
     super.initState();
     _focusNode.requestFocus();
-    // Future.delayed(Duration.zero).then((_) {
-    //   final profile = context.select<ProfileBloc, UserProfileEntity>(
-    //     (bloc) => bloc.state.userProfile,
-    //   );
-    //   if (profile != null) {
-    //     _userProfile = profile;
-    //     print(_userProfile.userName);
-    //   }
-    // });
-    // _tweet = TweetEntity(
-    //   userProfile: _userProfile,
-    //   message: _tweetMessage,
-    //   timeStamp: null,
-    // );
   }
 
   @override
@@ -49,8 +35,8 @@ class _TweetScreenState extends State<TweetScreen> {
     );
     if (profile != null) {
       _userProfile = profile;
-      print(_userProfile.userName);
       _tweet = TweetEntity(
+        id: null,
         userProfile: _userProfile,
         message: _tweetMessage,
         timeStamp: Timestamp.now(),

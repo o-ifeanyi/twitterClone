@@ -37,12 +37,12 @@ class ProfileInitialState extends ProfileState {}
 
 class FetchingUserProfile extends ProfileState {}
 
-class FetchingFailed extends ProfileState {}
+class FetchingUserProfileFailed extends ProfileState {}
 
-class FetchingComplete extends ProfileState {
+class FetchingUserProfileComplete extends ProfileState {
   final UserProfileEntity userProfile;
 
-  FetchingComplete({this.userProfile}) : super(userProfile: userProfile);
+  FetchingUserProfileComplete({this.userProfile}) : super(userProfile: userProfile);
 }
 
 class UpdateFailed extends ProfileState {}
@@ -67,10 +67,10 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     final userProfileEither = await profileRepository.getUserProfile(id);
     yield* userProfileEither.fold(
       (failure) async* {
-        yield FetchingFailed();
+        yield FetchingUserProfileFailed();
       },
       (profile) async* {
-        yield FetchingComplete(userProfile: profile);
+        yield FetchingUserProfileComplete(userProfile: profile);
       },
     );
   }

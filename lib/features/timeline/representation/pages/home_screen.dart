@@ -1,3 +1,5 @@
+import 'package:fc_twitter/features/profile/domain/entity/user_profile_entity.dart';
+import 'package:fc_twitter/features/profile/representation/bloc/profile_bloc.dart';
 import 'package:fc_twitter/features/timeline/representation/bloc/bloc.dart';
 import 'package:fc_twitter/features/tweeting/domain/entity/tweet_entity.dart';
 import 'package:fc_twitter/features/tweeting/representation/widgets/tweet_item.dart';
@@ -8,6 +10,9 @@ import 'package:flutter_icons/flutter_icons.dart';
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+     final profile = context.select<ProfileBloc, UserProfileEntity>(
+      (bloc) => bloc.state.userProfile,
+    );
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -49,7 +54,7 @@ class HomeScreen extends StatelessWidget {
                         separatorBuilder: (BuildContext context, int index) =>
                             Divider(thickness: 1, height: 15),
                         itemBuilder: (ctx, index) =>
-                            TweetItem(snapshot.data[index]),
+                            TweetItem(snapshot.data[index], profile),
                       )
                     : Center(child: Text('nothing'));
               },

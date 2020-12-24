@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:fc_twitter/features/profile/domain/entity/user_profile_entity.dart';
 import 'package:fc_twitter/features/tweeting/domain/entity/tweet_entity.dart';
 
 class TweetingEvent extends Equatable {
@@ -13,4 +14,14 @@ class SendTweet extends TweetingEvent {
 
   @override
   List<Object> get props => [tweet];
+
+}
+class LikeOrUnlikeTweet extends TweetingEvent {
+  final UserProfileEntity userProfile;
+  final TweetEntity tweet;
+
+  LikeOrUnlikeTweet({this.tweet, this.userProfile});
+
+  @override
+  List<Object> get props => [tweet, userProfile];
 }

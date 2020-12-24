@@ -25,7 +25,7 @@ class ProfileScreen extends StatelessWidget {
                     color: theme.scaffoldBackgroundColor,
                     child: BlocBuilder<ProfileBloc, ProfileState>(
                         builder: (context, state) {
-                      if (state is FetchingComplete) {
+                      if (state is FetchingUserProfileComplete) {
                         return UserProfileInfo(
                           profileEntity: state.userProfile,
                         );

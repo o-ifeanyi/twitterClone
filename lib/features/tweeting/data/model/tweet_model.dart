@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 
 class TweetModel extends TweetEntity {
   TweetModel({
+    @required id,
     @required userProfile,
     @required message,
     @required timeStamp,
@@ -14,6 +15,7 @@ class TweetModel extends TweetEntity {
     likedBy,
     isRetweet,
   }) : super(
+          id: id,
           userProfile: userProfile,
           message: message,
           timeStamp: timeStamp,
@@ -24,22 +26,27 @@ class TweetModel extends TweetEntity {
           isRetweet: isRetweet,
         );
 
-  factory TweetModel.fromSnapShot(snapShot) {
-    final profile = UserProfileModel.fromMap(snapShot['userProfile']).toEntity();
+  factory TweetModel.fromSnapShot(DocumentSnapshot snapShot) {
+    final data = snapShot.data();
+    final profile =
+        UserProfileModel.fromMap(data['userProfile']).toEntity();
+  print(data['titmeStamp']);
     return TweetModel(
+      id: snapShot.id,
       userProfile: profile,
-      message: snapShot['message'],
-      timeStamp: getTime(snapShot['timeStamp']),
-      quoteTo: snapShot['quoteTo'],
-      comments: snapShot['comments'] ?? <Map<String, dynamic>>[],
-      retweetedBy: snapShot['retweetedBy'] ?? <Map<String, dynamic>>[],
-      likedBy: snapShot['likedBy'] ?? <Map<String, dynamic>>[],
-      isRetweet: snapShot['isRetweet']  ?? false,
+      message: data['message'],
+      timeStamp: getTime(data['timeStamp']),
+      quoteTo: data['quoteTo'],
+      comments: data['comments'] ?? List(),
+      retweetedBy: data['retweetedBy'] ?? List(),
+      likedBy: data['likedBy'] ?? List(),
+      isRetweet: data['isRetweet'] ?? false,
     );
   }
 
   factory TweetModel.fromEntity(TweetEntity tweet) {
     return TweetModel(
+      id: tweet.id,
       userProfile: tweet.userProfile,
       message: tweet.message,
       timeStamp: tweet.timeStamp,
@@ -53,6 +60,7 @@ class TweetModel extends TweetEntity {
 
   TweetEntity toEntity() {
     return TweetEntity(
+      id: this.id,
       userProfile: this.userProfile,
       message: this.message,
       timeStamp: this.timeStamp,

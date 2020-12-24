@@ -30,13 +30,13 @@ class TweetingState extends Equatable {
 
 class InitialTweetingState extends TweetingState {}
 
-class SendingError extends TweetingState {
+class TweetingError extends TweetingState {
   final String message;
 
-  SendingError({this.message});
+  TweetingError({this.message});
 
   @override
   List<Object> get props => [message];
 }
 
-class SendingComplete extends TweetingState {}
+class TweetingComplete extends TweetingState {}

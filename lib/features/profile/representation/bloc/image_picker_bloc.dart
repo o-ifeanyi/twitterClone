@@ -56,7 +56,6 @@ class ImagePickerBloc extends Bloc<ImagePickerEvent, ImagePickerState> {
       ImageSource source, bool isCoverPhoto) async* {
     final imageEither = await profileRepository.pickImage(source, isCoverPhoto);
     yield* imageEither.fold((failure) async* {
-      print('nothing');
     }, (image) async* {
       yield isCoverPhoto
           ? PickedCoverImage(pickedCoverImage: image)

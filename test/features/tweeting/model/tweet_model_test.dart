@@ -4,10 +4,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fc_twitter/features/tweeting/data/model/tweet_model.dart';
 import 'package:fc_twitter/features/tweeting/domain/entity/tweet_entity.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/mockito.dart';
 
 import '../../../fixtures/fixture_reader.dart';
+import '../../../mocks/mocks.dart';
 
 void main() {
+  MockDocumentSnapshot documentSnapshot = MockDocumentSnapshot();
   final tweetModel = tweetModelFixture();
 
   final tweetEntity = tweetEntityFixture();
@@ -30,11 +33,12 @@ void main() {
 
     test('should return a valid model wwhen converting from snapshot',
         () async {
-      final snapshot = (json.decode(jsonTweetFixture()));
+      when(documentSnapshot.id).thenReturn('001');
+      final data = json.decode(jsonTweetFixture());
+      data['timeStamp'] = Timestamp.now();
+      when(documentSnapshot.data()).thenReturn(data);
 
-      snapshot['timeStamp'] = Timestamp.now();
-
-      final result = TweetModel.fromSnapShot(snapshot);
+      final result = TweetModel.fromSnapShot(documentSnapshot);
 
       expect(result, equals(tweetModel));
     });

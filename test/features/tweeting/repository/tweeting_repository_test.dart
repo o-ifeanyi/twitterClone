@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:fc_twitter/core/error/failure.dart';
+import 'package:fc_twitter/features/profile/domain/entity/user_profile_entity.dart';
 import 'package:fc_twitter/features/tweeting/data/repository/tweeting_repository.dart';
 import 'package:fc_twitter/features/tweeting/domain/entity/tweet_entity.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -11,6 +12,7 @@ import '../../../mocks/mocks.dart';
 
 void main() {
   TweetEntity tweetEntity;
+  UserProfileEntity userProfile;
   FirebaseFirestore mockFirebaseFirestore;
   TweetingRepositoryImpl tweetingRepositoryImpl;
   MockCollectionReference collectionReference;
@@ -18,6 +20,7 @@ void main() {
 
   setUp(() {
     tweetEntity = tweetEntityFixture();
+    userProfile = userProfileEntityFixture();
     mockFirebaseFirestore = MockFirebaseFirestore();
     collectionReference = MockCollectionReference();
     documentReference = MockDocumentReference();
@@ -26,16 +29,13 @@ void main() {
   });
 
   group('tweeting repository sendTeet', () {
-    test(
-        'should return a true when successful',
-        () async {
+    test('should return a true when successful', () async {
       when(mockFirebaseFirestore.collection(any))
           .thenReturn(collectionReference);
       when(collectionReference.add(any))
           .thenAnswer((_) => Future.value(documentReference));
 
       final response = await tweetingRepositoryImpl.sendTweet(tweetEntity);
-      verify(tweetingRepositoryImpl.sendTweet(tweetEntity));
 
       expect(response, Right(true));
     });
@@ -44,9 +44,29 @@ void main() {
       when(mockFirebaseFirestore.collection(any)).thenThrow(Error());
 
       final response = await tweetingRepositoryImpl.sendTweet(tweetEntity);
-      verify(tweetingRepositoryImpl.sendTweet(tweetEntity));
 
       expect(response, Left(TweetingFailure(message: 'Failed to send tweet')));
+    });
+  });
+
+  group('tweeting repository likeTweet', () {
+    test('should return true if tweet is liked successfully', () async {
+      when(mockFirebaseFirestore.collection(any))
+          .thenReturn(collectionReference);
+      when(collectionReference.doc(any)).thenReturn(documentReference);
+      when(documentReference.update(any)).thenAnswer((_) => null);
+
+      final result = await tweetingRepositoryImpl.likeOrUnlikeTweet(userProfile, tweetEntity);
+
+      expect(result, equals(Right(true)));
+    });
+
+    test('should return a TweetingFailure when it fails', () async {
+      when(mockFirebaseFirestore.collection(any)).thenThrow(Error());
+
+      final response = await tweetingRepositoryImpl.likeOrUnlikeTweet(userProfile, tweetEntity);
+
+      expect(response, Left(TweetingFailure(message: 'Failed to like tweet')));
     });
   });
 }

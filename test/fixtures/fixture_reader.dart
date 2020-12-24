@@ -69,12 +69,14 @@ String jsonUserProfileFixture() => json.encode({
     });
 
 TweetEntity tweetEntityFixture() => TweetEntity(
+      id: '001',
       userProfile: userProfileEntityFixture(),
       message: 'hello world',
       timeStamp: '0s',
     );
 
 TweetModel tweetModelFixture() => TweetModel(
+      id: '001',
       userProfile: userProfileEntityFixture(),
       message: 'hello world',
       timeStamp: '0s',
@@ -83,5 +85,5 @@ TweetModel tweetModelFixture() => TweetModel(
 String jsonTweetFixture() => json.encode({
       "userProfile": json.decode(jsonUserProfileFixture()),
       "message": "hello world",
-      "timeStamp": "0s"
+      "timeStamp": "0s",
     });
