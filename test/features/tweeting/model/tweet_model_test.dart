@@ -35,7 +35,7 @@ void main() {
         () async {
       when(documentSnapshot.id).thenReturn('001');
       final data = json.decode(jsonTweetFixture());
-      data['timeStamp'] = Timestamp.now();
+      data['timeStamp'] = Timestamp(0, 0);
       when(documentSnapshot.data()).thenReturn(data);
 
       final result = TweetModel.fromSnapShot(documentSnapshot);
@@ -51,7 +51,8 @@ void main() {
       final expected = {
         'userProfile': json.decode(jsonUserProfileFixture()),
         'message': 'hello world',
-        'timeStamp': '0s',
+        'timeStamp': Timestamp(0, 0),
+        'retweetersProfile': null,
         'quoteTo': null,
         'comments': null,
         'retweetedBy': null,

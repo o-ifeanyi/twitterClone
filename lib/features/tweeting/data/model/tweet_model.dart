@@ -9,6 +9,7 @@ class TweetModel extends TweetEntity {
     @required userProfile,
     @required message,
     @required timeStamp,
+    retweetersProfile,
     quoteTo,
     comments,
     retweetedBy,
@@ -17,6 +18,7 @@ class TweetModel extends TweetEntity {
   }) : super(
           id: id,
           userProfile: userProfile,
+          retweetersProfile: retweetersProfile,
           message: message,
           timeStamp: timeStamp,
           quoteTo: quoteTo,
@@ -28,15 +30,18 @@ class TweetModel extends TweetEntity {
 
   factory TweetModel.fromSnapShot(DocumentSnapshot snapShot) {
     final data = snapShot.data();
-    final profile =
-        UserProfileModel.fromMap(data['userProfile']).toEntity();
-  print(data['titmeStamp']);
+    final profile = UserProfileModel.fromMap(data['userProfile']).toEntity();
+    final retweetersProfile = data['retweetersProfile'] != null
+        ? UserProfileModel.fromMap(data['retweetersProfile']).toEntity()
+        : null;
+    print(data['titmeStamp']);
     return TweetModel(
       id: snapShot.id,
       userProfile: profile,
       message: data['message'],
-      timeStamp: getTime(data['timeStamp']),
+      timeStamp: data['timeStamp'],
       quoteTo: data['quoteTo'],
+      retweetersProfile: retweetersProfile,
       comments: data['comments'] ?? List(),
       retweetedBy: data['retweetedBy'] ?? List(),
       likedBy: data['likedBy'] ?? List(),
@@ -48,6 +53,7 @@ class TweetModel extends TweetEntity {
     return TweetModel(
       id: tweet.id,
       userProfile: tweet.userProfile,
+      retweetersProfile: tweet.retweetersProfile,
       message: tweet.message,
       timeStamp: tweet.timeStamp,
       quoteTo: tweet.quoteTo,
@@ -62,6 +68,7 @@ class TweetModel extends TweetEntity {
     return TweetEntity(
       id: this.id,
       userProfile: this.userProfile,
+      retweetersProfile: this.retweetersProfile,
       message: this.message,
       timeStamp: this.timeStamp,
       quoteTo: this.quoteTo,
@@ -75,6 +82,8 @@ class TweetModel extends TweetEntity {
   Map<String, dynamic> toDocument() {
     return {
       'userProfile': UserProfileModel.fromEntity(this.userProfile).toMap(),
+      'retweetersProfile': this.retweetersProfile != null ?
+          UserProfileModel.fromEntity(this.retweetersProfile).toMap() : null,
       'message': this.message,
       'timeStamp': this.timeStamp,
       'quoteTo': this.quoteTo,
@@ -83,18 +92,5 @@ class TweetModel extends TweetEntity {
       'likedBy': this.likedBy,
       'isRetweet': this.isRetweet,
     };
-  }
-
-  static String getTime(Timestamp timeStamp) {
-    final time = DateTime.now().subtract(Duration(seconds: timeStamp.seconds));
-    if (time.day > 1) {
-      return '${time.day}d';
-    } else if (time.hour > 1) {
-      return '${time.hour}h';
-    } else if (time.minute >= 1) {
-      return '${time.minute}m';
-    } else {
-      return '${time.second}s';
-    }
   }
 }

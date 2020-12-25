@@ -25,3 +25,13 @@ class LikeOrUnlikeTweet extends TweetingEvent {
   @override
   List<Object> get props => [tweet, userProfile];
 }
+
+class RetweetTweet extends TweetingEvent {
+  final UserProfileEntity userProfile;
+  final TweetEntity tweet;
+
+  RetweetTweet({this.tweet, this.userProfile});
+
+  @override
+  List<Object> get props => [tweet, userProfile];
+}

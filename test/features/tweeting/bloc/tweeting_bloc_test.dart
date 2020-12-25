@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:fc_twitter/core/error/failure.dart';
 import 'package:fc_twitter/features/profile/domain/entity/user_profile_entity.dart';
@@ -15,9 +14,6 @@ import '../../../mocks/mocks.dart';
 void main() {
   TweetEntity tweetEntity;
   UserProfileEntity userProfile;
-  MockCollectionReference collectionReference;
-  // ignore: close_sinks
-  StreamController streamController;
   TweetingBloc tweetingBloc;
   MockTweetingRepository mockTweetingRepository;
 
@@ -25,8 +21,6 @@ void main() {
     tweetEntity = tweetEntityFixture();
     userProfile = userProfileEntityFixture();
     mockTweetingRepository = MockTweetingRepository();
-    collectionReference = MockCollectionReference();
-    streamController = StreamController<QuerySnapshot>();
     tweetingBloc = TweetingBloc(
       initialState: InitialTweetingState(),
       tweetingRepository: mockTweetingRepository,
@@ -37,18 +31,12 @@ void main() {
     expect(tweetingBloc.state, equals(InitialTweetingState()));
   });
 
-  void setUpFetchSuccess() {
-    when(collectionReference.snapshots())
-        .thenAnswer((_) => streamController.stream);
-  }
-
   group('tweeting bloc sendTweet', () {
     test('should emit [TweetingComplete] when successful',
         () async {
       when(mockTweetingRepository.sendTweet(any)).thenAnswer(
         (_) => Future.value(Right(true)),
       );
-      setUpFetchSuccess();
 
       final expectations = [
         TweetingComplete(),
@@ -63,7 +51,6 @@ void main() {
         (_) => Future.value(
             Left(TweetingFailure(message: 'Failed to send tweet'))),
       );
-      setUpFetchSuccess();
 
       final expectations = [
         TweetingError(message: 'Failed to send tweet'),
@@ -93,7 +80,6 @@ void main() {
         (_) => Future.value(
             Left(TweetingFailure(message: 'Failed to like tweet'))),
       );
-      setUpFetchSuccess();
 
       final expectations = [
         TweetingError(message: 'Failed to like tweet'),
@@ -101,6 +87,38 @@ void main() {
       expectLater(tweetingBloc, emitsInOrder(expectations));
 
       tweetingBloc.add(LikeOrUnlikeTweet(userProfile: userProfile, tweet: tweetEntity));
+    });
+  });
+  group('tweeting bloc retweetTweet', () {
+    test('should emit [TweetingComplete] when successful',
+        () async {
+      when(mockTweetingRepository.retweetTweet(any, any)).thenAnswer(
+        (_) => Future.value(Right(true)),
+      );
+      when(mockTweetingRepository.sendTweet(any)).thenAnswer(
+        (_) => Future.value(Right(true)),
+      );
+
+      final expectations = [
+        TweetingComplete(),
+      ];
+      expectLater(tweetingBloc, emitsInOrder(expectations));
+
+      tweetingBloc.add(RetweetTweet(userProfile: userProfile, tweet: tweetEntity));
+    });
+
+    test('should emit [TweetingError] when sending tweet fails', () async {
+      when(mockTweetingRepository.retweetTweet(any, any)).thenAnswer(
+        (_) => Future.value(
+            Left(TweetingFailure(message: 'Failed to retweet'))),
+      );
+
+      final expectations = [
+        TweetingError(message: 'Failed to retweet'),
+      ];
+      expectLater(tweetingBloc, emitsInOrder(expectations));
+
+      tweetingBloc.add(RetweetTweet(userProfile: userProfile, tweet: tweetEntity));
     });
   });
 }

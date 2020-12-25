@@ -47,4 +47,26 @@ class TweetingRepositoryImpl implements TweetingRepository {
       return Left(TweetingFailure(message: 'Failed to like tweet'));
     }
   }
+
+  @override
+  Future<Either<TweetingFailure, bool>> retweetTweet(UserProfileEntity userProfile, TweetEntity tweet) async{
+    try {
+      final retweetedBy = tweet.retweetedBy;
+      final found = retweetedBy?.any((element) => element['id'] == userProfile.id) ?? false;
+      if (found) {
+        retweetedBy?.removeWhere((element) => element['id'] == userProfile.id);
+      } else {
+        retweetedBy?.add(UserProfileModel.fromEntity(userProfile).toMap());
+      }
+      tweet = tweet.copyWith(retweetedBy: retweetedBy);
+      await firebaseFirestore
+          .collection('tweets')
+          .doc(tweet.id)
+          .update({'retweetedBy': retweetedBy});
+      return Right(found);
+    } catch (error) {
+      print(error);
+      return Left(TweetingFailure(message: 'Failed to retweet'));
+    }
+  }
 }

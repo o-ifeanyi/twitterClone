@@ -17,9 +17,15 @@ class TweetItem extends StatelessWidget {
     return tweet.likedBy.any((element) => element['id'] == profile?.id);
   }
 
+  bool isRetweeted(UserProfileEntity profile, TweetEntity tweet) {
+    return tweet.retweetedBy.any((element) => element['id'] == profile?.id);
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final bool isTweetLiked = isLiked(_profile, _tweet);
+    final bool isTweetRetweeted = isRetweeted(_profile, _tweet);
     return Container(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -43,6 +49,20 @@ class TweetItem extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                if (_tweet.isRetweet)
+                  Row(
+                    children: [
+                      Icon(EvilIcons.retweet, size: 18),
+                      SizedBox(width: 5),
+                      Text(
+                        _tweet.retweetersProfile?.userName == _profile?.userName
+                            ? 'You Retweeted'
+                            : '${_tweet.retweetersProfile?.userName} Retweeted',
+                        style:
+                            TextStyle(fontSize: Config.xMargin(context, 3.2)),
+                      ),
+                    ],
+                  ),
                 Row(
                   children: [
                     Text(
@@ -55,7 +75,7 @@ class TweetItem extends StatelessWidget {
                     SizedBox(width: 5),
                     Text(_tweet.userProfile.userName),
                     Text(' . '),
-                    Text(_tweet.timeStamp),
+                    Text(_tweet.getTime(_tweet.timeStamp)),
                     Spacer(),
                     Icon(Icons.expand_more_outlined),
                   ],
@@ -73,9 +93,26 @@ class TweetItem extends StatelessWidget {
                     SizedBox(width: 5),
                     Text('${_tweet.comments.length}'),
                     Spacer(),
-                    Icon(EvilIcons.retweet),
+                    GestureDetector(
+                      onTap: () {
+                        if (_profile == null) return;
+                        context.read<TweetingBloc>().add(RetweetTweet(
+                              userProfile: _profile,
+                              tweet: _tweet,
+                            ));
+                      },
+                      child: Icon(
+                        EvilIcons.retweet,
+                        color: isTweetRetweeted ? Colors.greenAccent : null,
+                      ),
+                    ),
                     SizedBox(width: 5),
-                    Text('${_tweet.retweetedBy.length}'),
+                    Text(
+                      '${_tweet.retweetedBy.length}',
+                      style: TextStyle(
+                        color: isTweetRetweeted ? Colors.greenAccent : null,
+                      ),
+                    ),
                     Spacer(),
                     GestureDetector(
                       onTap: () {
@@ -85,7 +122,7 @@ class TweetItem extends StatelessWidget {
                               tweet: _tweet,
                             ));
                       },
-                      child: isLiked(_profile, _tweet)
+                      child: isTweetLiked
                           ? Icon(
                               Entypo.heart,
                               color: Colors.red,
@@ -96,7 +133,10 @@ class TweetItem extends StatelessWidget {
                             ),
                     ),
                     SizedBox(width: 5),
-                    Text('${_tweet.likedBy.length}'),
+                    Text('${_tweet.likedBy.length}',
+                        style: TextStyle(
+                          color: isTweetLiked ? Colors.red : null,
+                        )),
                     Spacer(),
                     IconButton(
                       icon: Icon(EvilIcons.share_google),

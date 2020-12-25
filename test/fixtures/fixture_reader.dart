@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fc_twitter/features/authentication/data/model/user_model.dart';
 import 'package:fc_twitter/features/authentication/domain/user_entity/user_entity.dart';
 import 'package:fc_twitter/features/profile/data/model/user_profile_model.dart';
@@ -72,14 +73,14 @@ TweetEntity tweetEntityFixture() => TweetEntity(
       id: '001',
       userProfile: userProfileEntityFixture(),
       message: 'hello world',
-      timeStamp: '0s',
+      timeStamp: Timestamp(0, 0),
     );
 
 TweetModel tweetModelFixture() => TweetModel(
       id: '001',
       userProfile: userProfileEntityFixture(),
       message: 'hello world',
-      timeStamp: '0s',
+      timeStamp: Timestamp(0, 0),
     );
 
 String jsonTweetFixture() => json.encode({

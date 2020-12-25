@@ -18,6 +18,9 @@ class TweetingBloc extends Bloc<TweetingEvent, TweetingState> {
     if (event is LikeOrUnlikeTweet) {
       yield* _mapLikeOrUnlikeToState(event.userProfile, event.tweet);
     }
+    if (event is RetweetTweet) {
+      yield* _mapRetweetTweetToState(event.userProfile, event.tweet);
+    }
   }
 
   Stream<TweetingState> _mapSendTweetToState(TweetEntity tweet) async* {
@@ -42,6 +45,28 @@ class TweetingBloc extends Bloc<TweetingEvent, TweetingState> {
       },
       (success) async* {
         yield TweetingComplete();
+      },
+    );
+  }
+
+  Stream<TweetingState> _mapRetweetTweetToState(
+      UserProfileEntity userProfile, TweetEntity tweet) async* {
+    final retweetEither =
+        await tweetingRepository.retweetTweet(userProfile, tweet);
+    yield* retweetEither.fold(
+      (failure) async* {
+        yield TweetingError(message: failure.message);
+      },
+      (found) async* {
+        if (found) {
+          // delete tweet
+          yield TweetingComplete();
+        } else {
+          // Send tweet
+          tweet =
+              tweet.copyWith(isRetweet: true, retweetersProfile: userProfile);
+          yield* _mapSendTweetToState(tweet);
+        }
       },
     );
   }

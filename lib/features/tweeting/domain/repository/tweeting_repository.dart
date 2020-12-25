@@ -8,4 +8,6 @@ abstract class TweetingRepository {
   Future<Either<TweetingFailure, bool>> sendTweet(TweetEntity tweet);
 
   Future<Either<TweetingFailure, bool>> likeOrUnlikeTweet(UserProfileEntity userProfile, TweetEntity tweet);
+
+  Future<Either<TweetingFailure, bool>> retweetTweet(UserProfileEntity userProfile, TweetEntity tweet);
 }

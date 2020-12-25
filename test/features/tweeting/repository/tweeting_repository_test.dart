@@ -49,7 +49,7 @@ void main() {
     });
   });
 
-  group('tweeting repository likeTweet', () {
+  group('tweeting repository likeOrUnlikeTweet', () {
     test('should return true if tweet is liked successfully', () async {
       when(mockFirebaseFirestore.collection(any))
           .thenReturn(collectionReference);
@@ -67,6 +67,27 @@ void main() {
       final response = await tweetingRepositoryImpl.likeOrUnlikeTweet(userProfile, tweetEntity);
 
       expect(response, Left(TweetingFailure(message: 'Failed to like tweet')));
+    });
+  });
+
+  group('tweeting repository retweetTweet', () {
+    test('should return true if tweet is retweeted successfully', () async {
+      when(mockFirebaseFirestore.collection(any))
+          .thenReturn(collectionReference);
+      when(collectionReference.doc(any)).thenReturn(documentReference);
+      when(documentReference.update(any)).thenAnswer((_) => null);
+
+      final result = await tweetingRepositoryImpl.retweetTweet(userProfile, tweetEntity);
+
+      expect(result, equals(Right(false)));
+    });
+
+    test('should return a TweetingFailure when it fails', () async {
+      when(mockFirebaseFirestore.collection(any)).thenThrow(Error());
+
+      final response = await tweetingRepositoryImpl.retweetTweet(userProfile, tweetEntity);
+
+      expect(response, Left(TweetingFailure(message: 'Failed to retweet')));
     });
   });
 }
