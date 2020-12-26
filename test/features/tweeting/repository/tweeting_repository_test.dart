@@ -49,14 +49,14 @@ void main() {
     });
   });
 
-  group('tweeting repository likeOrUnlikeTweet', () {
+  group('tweeting repository likeTweet', () {
     test('should return true if tweet is liked successfully', () async {
       when(mockFirebaseFirestore.collection(any))
           .thenReturn(collectionReference);
       when(collectionReference.doc(any)).thenReturn(documentReference);
       when(documentReference.update(any)).thenAnswer((_) => null);
 
-      final result = await tweetingRepositoryImpl.likeOrUnlikeTweet(userProfile, tweetEntity);
+      final result = await tweetingRepositoryImpl.likeTweet(userProfile, tweetEntity);
 
       expect(result, equals(Right(true)));
     });
@@ -64,28 +64,70 @@ void main() {
     test('should return a TweetingFailure when it fails', () async {
       when(mockFirebaseFirestore.collection(any)).thenThrow(Error());
 
-      final response = await tweetingRepositoryImpl.likeOrUnlikeTweet(userProfile, tweetEntity);
+      final response = await tweetingRepositoryImpl.likeTweet(userProfile, tweetEntity);
 
       expect(response, Left(TweetingFailure(message: 'Failed to like tweet')));
     });
   });
 
-  group('tweeting repository retweetTweet', () {
+  group('tweeting repository unlikeTweet', () {
+    test('should return true if tweet is liked successfully', () async {
+      when(mockFirebaseFirestore.collection(any))
+          .thenReturn(collectionReference);
+      when(collectionReference.doc(any)).thenReturn(documentReference);
+      when(documentReference.update(any)).thenAnswer((_) => null);
+
+      final result = await tweetingRepositoryImpl.unlikeTweet(userProfile, tweetEntity);
+
+      expect(result, equals(Right(true)));
+    });
+
+    test('should return a TweetingFailure when it fails', () async {
+      when(mockFirebaseFirestore.collection(any)).thenThrow(Error());
+
+      final response = await tweetingRepositoryImpl.unlikeTweet(userProfile, tweetEntity);
+
+      expect(response, Left(TweetingFailure(message: 'Failed to like tweet')));
+    });
+  });
+
+  group('tweeting repository retweet', () {
     test('should return true if tweet is retweeted successfully', () async {
       when(mockFirebaseFirestore.collection(any))
           .thenReturn(collectionReference);
       when(collectionReference.doc(any)).thenReturn(documentReference);
       when(documentReference.update(any)).thenAnswer((_) => null);
 
-      final result = await tweetingRepositoryImpl.retweetTweet(userProfile, tweetEntity);
+      final result = await tweetingRepositoryImpl.retweet(userProfile, tweetEntity);
 
-      expect(result, equals(Right(false)));
+      expect(result, equals(Right(true)));
     });
 
     test('should return a TweetingFailure when it fails', () async {
       when(mockFirebaseFirestore.collection(any)).thenThrow(Error());
 
-      final response = await tweetingRepositoryImpl.retweetTweet(userProfile, tweetEntity);
+      final response = await tweetingRepositoryImpl.retweet(userProfile, tweetEntity);
+
+      expect(response, Left(TweetingFailure(message: 'Failed to retweet')));
+    });
+  });
+
+  group('tweeting repository retweet', () {
+    test('should return true if tweet is undoRetweet successfully', () async {
+      when(mockFirebaseFirestore.collection(any))
+          .thenReturn(collectionReference);
+      when(collectionReference.doc(any)).thenReturn(documentReference);
+      when(documentReference.update(any)).thenAnswer((_) => null);
+
+      final result = await tweetingRepositoryImpl.undoRetweet(userProfile, tweetEntity);
+
+      expect(result, equals(Right(true)));
+    });
+
+    test('should return a TweetingFailure when it fails', () async {
+      when(mockFirebaseFirestore.collection(any)).thenThrow(Error());
+
+      final response = await tweetingRepositoryImpl.undoRetweet(userProfile, tweetEntity);
 
       expect(response, Left(TweetingFailure(message: 'Failed to retweet')));
     });

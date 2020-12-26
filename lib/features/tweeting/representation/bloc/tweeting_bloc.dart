@@ -15,11 +15,17 @@ class TweetingBloc extends Bloc<TweetingEvent, TweetingState> {
     if (event is SendTweet) {
       yield* _mapSendTweetToState(event.tweet);
     }
-    if (event is LikeOrUnlikeTweet) {
-      yield* _mapLikeOrUnlikeToState(event.userProfile, event.tweet);
+    if (event is LikeTweet) {
+      yield* _mapLikeTweetToState(event.userProfile, event.tweet);
     }
-    if (event is RetweetTweet) {
-      yield* _mapRetweetTweetToState(event.userProfile, event.tweet);
+    if (event is UnlikeTweet) {
+      yield* _mapUnlikeTweetToState(event.userProfile, event.tweet);
+    }
+    if (event is Retweet) {
+      yield* _mapRetweetToState(event.userProfile, event.tweet);
+    }
+    if (event is UndoRetweet) {
+      yield* _mapUndoRetweetToState(event.userProfile, event.tweet);
     }
   }
 
@@ -35,10 +41,9 @@ class TweetingBloc extends Bloc<TweetingEvent, TweetingState> {
     );
   }
 
-  Stream<TweetingState> _mapLikeOrUnlikeToState(
+  Stream<TweetingState> _mapLikeTweetToState(
       UserProfileEntity userProfile, TweetEntity tweet) async* {
-    final likeEither =
-        await tweetingRepository.likeOrUnlikeTweet(userProfile, tweet);
+    final likeEither = await tweetingRepository.likeTweet(userProfile, tweet);
     yield* likeEither.fold(
       (failure) async* {
         yield TweetingError(message: failure.message);
@@ -49,24 +54,43 @@ class TweetingBloc extends Bloc<TweetingEvent, TweetingState> {
     );
   }
 
-  Stream<TweetingState> _mapRetweetTweetToState(
+  Stream<TweetingState> _mapUnlikeTweetToState(
       UserProfileEntity userProfile, TweetEntity tweet) async* {
-    final retweetEither =
-        await tweetingRepository.retweetTweet(userProfile, tweet);
+    final likeEither = await tweetingRepository.unlikeTweet(userProfile, tweet);
+    yield* likeEither.fold(
+      (failure) async* {
+        yield TweetingError(message: failure.message);
+      },
+      (success) async* {
+        yield TweetingComplete();
+      },
+    );
+  }
+
+  Stream<TweetingState> _mapRetweetToState(
+      UserProfileEntity userProfile, TweetEntity tweet) async* {
+    final retweetEither = await tweetingRepository.retweet(userProfile, tweet);
     yield* retweetEither.fold(
       (failure) async* {
         yield TweetingError(message: failure.message);
       },
-      (found) async* {
-        if (found) {
-          // delete tweet
-          yield TweetingComplete();
-        } else {
-          // Send tweet
-          tweet =
-              tweet.copyWith(isRetweet: true, retweetersProfile: userProfile);
-          yield* _mapSendTweetToState(tweet);
-        }
+      (success) async* {
+        tweet = tweet.copyWith(isRetweet: true, retweetersProfile: userProfile);
+        yield* _mapSendTweetToState(tweet);
+      },
+    );
+  }
+
+  Stream<TweetingState> _mapUndoRetweetToState(
+      UserProfileEntity userProfile, TweetEntity tweet) async* {
+    final retweetEither = await tweetingRepository.undoRetweet(userProfile, tweet);
+    yield* retweetEither.fold(
+      (failure) async* {
+        yield TweetingError(message: failure.message);
+      },
+      (success) async* {
+        // Delete tweet
+        yield TweetingComplete();
       },
     );
   }

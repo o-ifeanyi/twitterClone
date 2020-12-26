@@ -79,6 +79,7 @@ class CoverImage extends StatelessWidget {
                 child: Icon(
                   Feather.camera,
                   size: Config.xMargin(context, 10),
+                  color: Colors.white,
                 ),
               ),
             )

@@ -16,21 +16,41 @@ class SendTweet extends TweetingEvent {
   List<Object> get props => [tweet];
 
 }
-class LikeOrUnlikeTweet extends TweetingEvent {
+class LikeTweet extends TweetingEvent {
   final UserProfileEntity userProfile;
   final TweetEntity tweet;
 
-  LikeOrUnlikeTweet({this.tweet, this.userProfile});
+  LikeTweet({this.tweet, this.userProfile});
 
   @override
   List<Object> get props => [tweet, userProfile];
 }
 
-class RetweetTweet extends TweetingEvent {
+class UnlikeTweet extends TweetingEvent {
   final UserProfileEntity userProfile;
   final TweetEntity tweet;
 
-  RetweetTweet({this.tweet, this.userProfile});
+  UnlikeTweet({this.tweet, this.userProfile});
+
+  @override
+  List<Object> get props => [tweet, userProfile];
+}
+
+class Retweet extends TweetingEvent {
+  final UserProfileEntity userProfile;
+  final TweetEntity tweet;
+
+  Retweet({this.tweet, this.userProfile});
+
+  @override
+  List<Object> get props => [tweet, userProfile];
+}
+
+class UndoRetweet extends TweetingEvent {
+  final UserProfileEntity userProfile;
+  final TweetEntity tweet;
+
+  UndoRetweet({this.tweet, this.userProfile});
 
   @override
   List<Object> get props => [tweet, userProfile];

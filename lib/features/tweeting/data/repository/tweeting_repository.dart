@@ -26,16 +26,11 @@ class TweetingRepositoryImpl implements TweetingRepository {
   }
 
   @override
-  Future<Either<TweetingFailure, bool>> likeOrUnlikeTweet(
+  Future<Either<TweetingFailure, bool>> likeTweet(
       UserProfileEntity userProfile, TweetEntity tweet) async {
     try {
       final likedBy = tweet.likedBy;
-      final found = likedBy?.any((element) => element['id'] == userProfile.id);
-      if (found ?? false) {
-        likedBy?.removeWhere((element) => element['id'] == userProfile.id);
-      } else {
-        likedBy?.add(UserProfileModel.fromEntity(userProfile).toMap());
-      }
+      likedBy?.add(UserProfileModel.fromEntity(userProfile).toMap());
       tweet = tweet.copyWith(likedBy: likedBy);
       await firebaseFirestore
           .collection('tweets')
@@ -49,21 +44,56 @@ class TweetingRepositoryImpl implements TweetingRepository {
   }
 
   @override
-  Future<Either<TweetingFailure, bool>> retweetTweet(UserProfileEntity userProfile, TweetEntity tweet) async{
+  Future<Either<TweetingFailure, bool>> unlikeTweet(
+      UserProfileEntity userProfile, TweetEntity tweet) async {
+    try {
+      final likedBy = tweet.likedBy;
+      likedBy?.removeWhere((element) => element['id'] == userProfile.id);
+      tweet = tweet.copyWith(likedBy: likedBy);
+      await firebaseFirestore
+          .collection('tweets')
+          .doc(tweet.id)
+          .update({'likedBy': likedBy});
+      return Right(true);
+    } catch (error) {
+      print(error);
+      return Left(TweetingFailure(message: 'Failed to like tweet'));
+    }
+  }
+
+  @override
+  Future<Either<TweetingFailure, bool>> retweet(
+      UserProfileEntity userProfile, TweetEntity tweet) async {
     try {
       final retweetedBy = tweet.retweetedBy;
-      final found = retweetedBy?.any((element) => element['id'] == userProfile.id) ?? false;
-      if (found) {
-        retweetedBy?.removeWhere((element) => element['id'] == userProfile.id);
-      } else {
-        retweetedBy?.add(UserProfileModel.fromEntity(userProfile).toMap());
-      }
+      retweetedBy?.add(UserProfileModel.fromEntity(userProfile).toMap());
       tweet = tweet.copyWith(retweetedBy: retweetedBy);
       await firebaseFirestore
           .collection('tweets')
           .doc(tweet.id)
           .update({'retweetedBy': retweetedBy});
-      return Right(found);
+      return Right(true);
+    } catch (error) {
+      print(error);
+      return Left(TweetingFailure(message: 'Failed to retweet'));
+    }
+  }
+
+  @override
+  Future<Either<TweetingFailure, bool>> undoRetweet(
+      UserProfileEntity userProfile, TweetEntity tweet) async {
+    try {
+      final retweetedBy = tweet.retweetedBy;
+      retweetedBy?.removeWhere((element) => element['id'] == userProfile.id);
+      tweet = tweet.copyWith(retweetedBy: retweetedBy);
+      await firebaseFirestore
+          .collection('tweets')
+          .doc(tweet.id)
+          .update({'retweetedBy': retweetedBy});
+      if (tweet.isRetweet ?? false) {
+        await firebaseFirestore.collection('tweets').doc(tweet.id).delete();
+      }
+      return Right(true);
     } catch (error) {
       print(error);
       return Left(TweetingFailure(message: 'Failed to retweet'));

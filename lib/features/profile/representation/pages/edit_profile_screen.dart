@@ -39,7 +39,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
-        title: Text('Edit profile'),
+        title: Text(
+          'Edit profile',
+          style: TextStyle(
+            color: Theme.of(context).textTheme.headline6.color,
+          ),
+        ),
+        leading: IconButton(
+          color: Theme.of(context).iconTheme.color,
+          icon: Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+        ),
         actions: [
           FlatButton(
             onPressed: nameIsEmpty

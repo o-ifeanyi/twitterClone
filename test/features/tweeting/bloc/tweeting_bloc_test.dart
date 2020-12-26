@@ -31,7 +31,7 @@ void main() {
     expect(tweetingBloc.state, equals(InitialTweetingState()));
   });
 
-  group('tweeting bloc sendTweet', () {
+  group('tweeting bloc SendTweet', () {
     test('should emit [TweetingComplete] when successful',
         () async {
       when(mockTweetingRepository.sendTweet(any)).thenAnswer(
@@ -60,10 +60,10 @@ void main() {
       tweetingBloc.add(SendTweet(tweet: tweetEntity));
     });
   });
-  group('tweeting bloc likeTweet', () {
+  group('tweeting bloc LikeTweet', () {
     test('should emit [TweetingComplete] when successful',
         () async {
-      when(mockTweetingRepository.likeOrUnlikeTweet(any, any)).thenAnswer(
+      when(mockTweetingRepository.likeTweet(any, any)).thenAnswer(
         (_) => Future.value(Right(true)),
       );
 
@@ -72,11 +72,11 @@ void main() {
       ];
       expectLater(tweetingBloc, emitsInOrder(expectations));
 
-      tweetingBloc.add(LikeOrUnlikeTweet(userProfile: userProfile, tweet: tweetEntity));
+      tweetingBloc.add(LikeTweet(userProfile: userProfile, tweet: tweetEntity));
     });
 
     test('should emit [TweetingError] when sending tweet fails', () async {
-      when(mockTweetingRepository.likeOrUnlikeTweet(any, any)).thenAnswer(
+      when(mockTweetingRepository.likeTweet(any, any)).thenAnswer(
         (_) => Future.value(
             Left(TweetingFailure(message: 'Failed to like tweet'))),
       );
@@ -86,13 +86,43 @@ void main() {
       ];
       expectLater(tweetingBloc, emitsInOrder(expectations));
 
-      tweetingBloc.add(LikeOrUnlikeTweet(userProfile: userProfile, tweet: tweetEntity));
+      tweetingBloc.add(LikeTweet(userProfile: userProfile, tweet: tweetEntity));
     });
   });
-  group('tweeting bloc retweetTweet', () {
+
+  group('tweeting bloc UnlikeTweet', () {
     test('should emit [TweetingComplete] when successful',
         () async {
-      when(mockTweetingRepository.retweetTweet(any, any)).thenAnswer(
+      when(mockTweetingRepository.unlikeTweet(any, any)).thenAnswer(
+        (_) => Future.value(Right(true)),
+      );
+
+      final expectations = [
+        TweetingComplete(),
+      ];
+      expectLater(tweetingBloc, emitsInOrder(expectations));
+
+      tweetingBloc.add(UnlikeTweet(userProfile: userProfile, tweet: tweetEntity));
+    });
+
+    test('should emit [TweetingError] when sending tweet fails', () async {
+      when(mockTweetingRepository.unlikeTweet(any, any)).thenAnswer(
+        (_) => Future.value(
+            Left(TweetingFailure(message: 'Failed to unLike tweet'))),
+      );
+
+      final expectations = [
+        TweetingError(message: 'Failed to unLike tweet'),
+      ];
+      expectLater(tweetingBloc, emitsInOrder(expectations));
+
+      tweetingBloc.add(UnlikeTweet(userProfile: userProfile, tweet: tweetEntity));
+    });
+  });
+  group('tweeting bloc Retweet', () {
+    test('should emit [TweetingComplete] when successful',
+        () async {
+      when(mockTweetingRepository.retweet(any, any)).thenAnswer(
         (_) => Future.value(Right(true)),
       );
       when(mockTweetingRepository.sendTweet(any)).thenAnswer(
@@ -104,11 +134,11 @@ void main() {
       ];
       expectLater(tweetingBloc, emitsInOrder(expectations));
 
-      tweetingBloc.add(RetweetTweet(userProfile: userProfile, tweet: tweetEntity));
+      tweetingBloc.add(Retweet(userProfile: userProfile, tweet: tweetEntity));
     });
 
     test('should emit [TweetingError] when sending tweet fails', () async {
-      when(mockTweetingRepository.retweetTweet(any, any)).thenAnswer(
+      when(mockTweetingRepository.retweet(any, any)).thenAnswer(
         (_) => Future.value(
             Left(TweetingFailure(message: 'Failed to retweet'))),
       );
@@ -118,7 +148,37 @@ void main() {
       ];
       expectLater(tweetingBloc, emitsInOrder(expectations));
 
-      tweetingBloc.add(RetweetTweet(userProfile: userProfile, tweet: tweetEntity));
+      tweetingBloc.add(Retweet(userProfile: userProfile, tweet: tweetEntity));
+    });
+  });
+
+  group('tweeting bloc UndoRetweet', () {
+    test('should emit [TweetingComplete] when successful',
+        () async {
+      when(mockTweetingRepository.undoRetweet(any, any)).thenAnswer(
+        (_) => Future.value(Right(true)),
+      );
+
+      final expectations = [
+        TweetingComplete(),
+      ];
+      expectLater(tweetingBloc, emitsInOrder(expectations));
+
+      tweetingBloc.add(UndoRetweet(userProfile: userProfile, tweet: tweetEntity));
+    });
+
+    test('should emit [TweetingError] when sending tweet fails', () async {
+      when(mockTweetingRepository.undoRetweet(any, any)).thenAnswer(
+        (_) => Future.value(
+            Left(TweetingFailure(message: 'Failed to undo retweet'))),
+      );
+
+      final expectations = [
+        TweetingError(message: 'Failed to undo retweet'),
+      ];
+      expectLater(tweetingBloc, emitsInOrder(expectations));
+
+      tweetingBloc.add(UndoRetweet(userProfile: userProfile, tweet: tweetEntity));
     });
   });
 }
