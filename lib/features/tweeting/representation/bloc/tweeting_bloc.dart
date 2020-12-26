@@ -27,6 +27,9 @@ class TweetingBloc extends Bloc<TweetingEvent, TweetingState> {
     if (event is UndoRetweet) {
       yield* _mapUndoRetweetToState(event.userProfile, event.tweet);
     }
+    if (event is Comment) {
+      yield* _mapCommentToState(event.tweet, event.comment);
+    }
   }
 
   Stream<TweetingState> _mapSendTweetToState(TweetEntity tweet) async* {
@@ -84,6 +87,19 @@ class TweetingBloc extends Bloc<TweetingEvent, TweetingState> {
   Stream<TweetingState> _mapUndoRetweetToState(
       UserProfileEntity userProfile, TweetEntity tweet) async* {
     final retweetEither = await tweetingRepository.undoRetweet(userProfile, tweet);
+    yield* retweetEither.fold(
+      (failure) async* {
+        yield TweetingError(message: failure.message);
+      },
+      (success) async* {
+        // Delete tweet
+        yield TweetingComplete();
+      },
+    );
+  }
+
+  Stream<TweetingState> _mapCommentToState(TweetEntity tweet, TweetEntity comment) async* {
+    final retweetEither = await tweetingRepository.comment(tweet, comment);
     yield* retweetEither.fold(
       (failure) async* {
         yield TweetingError(message: failure.message);

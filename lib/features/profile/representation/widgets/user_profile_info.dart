@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fc_twitter/core/util/config.dart';
 import 'package:fc_twitter/features/profile/domain/entity/user_profile_entity.dart';
 import 'package:fc_twitter/features/profile/representation/pages/edit_profile_screen.dart';
+import 'package:fc_twitter/features/tweeting/representation/widgets/avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 
@@ -50,21 +51,7 @@ class UserProfileInfo extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          CachedNetworkImage(
-                            imageUrl: profileEntity.profilePhoto,
-                            imageBuilder: (_, imageProvider) => CircleAvatar(
-                              radius: 30,
-                              backgroundColor: theme.accentColor,
-                              backgroundImage: imageProvider,
-                            ),
-                            placeholder: (_, __) => CircleAvatar(
-                              radius: 30,
-                              backgroundColor: theme.accentColor,
-                              child: Icon(Icons.person,
-                                  size: Config.xMargin(context, 12)),
-                            ),
-                            fit: BoxFit.contain,
-                          ),
+                          Avatar(imageUrl: profileEntity.profilePhoto, radius: 30),
                           GestureDetector(
                             onTap: () => Navigator.pushNamed(
                               context,

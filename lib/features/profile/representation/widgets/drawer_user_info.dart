@@ -1,6 +1,6 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fc_twitter/core/util/config.dart';
 import 'package:fc_twitter/features/profile/representation/bloc/profile_bloc.dart';
+import 'package:fc_twitter/features/tweeting/representation/widgets/avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -25,20 +25,7 @@ class DrawerUserInfo extends StatelessWidget {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CachedNetworkImage(
-                imageUrl: profile.profilePhoto,
-                imageBuilder: (_, imageProvider) => CircleAvatar(
-                  radius: 30,
-                  backgroundColor: Theme.of(context).accentColor,
-                  backgroundImage: imageProvider,
-                ),
-                placeholder: (_, __) => CircleAvatar(
-                  radius: 30,
-                  backgroundColor: Theme.of(context).accentColor,
-                  child: Icon(Icons.person, size: Config.xMargin(context, 12)),
-                ),
-                fit: BoxFit.contain,
-              ),
+              Avatar(imageUrl: profile.profilePhoto, radius: 30),
               SizedBox(height: 8),
               Text(
                 profile.name,

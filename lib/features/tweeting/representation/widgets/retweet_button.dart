@@ -9,14 +9,12 @@ import 'package:flutter_icons/flutter_icons.dart';
 class RetweetButton extends StatelessWidget {
   const RetweetButton({
     Key key,
-    @required this.isTweetRetweeted,
     @required UserProfileEntity profile,
     @required TweetEntity tweet,
   })  : _profile = profile,
         _tweet = tweet,
         super(key: key);
 
-  final bool isTweetRetweeted;
   final UserProfileEntity _profile;
   final TweetEntity _tweet;
 
@@ -38,8 +36,14 @@ class RetweetButton extends StatelessWidget {
     );
   }
 
+  bool isRetweeted(UserProfileEntity profile, TweetEntity tweet) {
+    // return false;
+    return tweet.retweetedBy.any((element) => element['id'] == profile?.id);
+  }
+
   @override
   Widget build(BuildContext context) {
+    bool isTweetRetweeted = isRetweeted(_profile, _tweet);
     return GestureDetector(
       onTap: () {
         showModalBottomSheet(
@@ -95,8 +99,12 @@ class RetweetButton extends StatelessWidget {
         );
       },
       child: Icon(
-        isTweetRetweeted ? MaterialCommunityIcons.twitter_retweet : EvilIcons.retweet,
-        color: isTweetRetweeted ? Colors.greenAccent : Theme.of(context).accentColor,
+        isTweetRetweeted
+            ? MaterialCommunityIcons.twitter_retweet
+            : EvilIcons.retweet,
+        color: isTweetRetweeted
+            ? Colors.greenAccent
+            : Theme.of(context).accentColor,
       ),
     );
   }

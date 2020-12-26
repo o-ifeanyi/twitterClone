@@ -5,6 +5,8 @@ import 'package:fc_twitter/features/profile/domain/entity/user_profile_entity.da
 import 'package:fc_twitter/features/tweeting/domain/entity/tweet_entity.dart';
 
 abstract class TweetingRepository {
+  Future<Either<TweetingFailure, bool>> comment(TweetEntity tweet, TweetEntity comment);
+
   Future<Either<TweetingFailure, bool>> sendTweet(TweetEntity tweet);
 
   Future<Either<TweetingFailure, bool>> likeTweet(UserProfileEntity userProfile, TweetEntity tweet);

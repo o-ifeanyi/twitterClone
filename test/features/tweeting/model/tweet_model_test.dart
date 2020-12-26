@@ -43,10 +43,19 @@ void main() {
       expect(result, equals(tweetModel));
     });
 
+    test('should return a valid model wwhen converting from map', () async {
+      final data = json.decode(jsonTweetFixture());
+      data['timeStamp'] = Timestamp(0, 0);
+
+      final result = TweetModel.fromMap(data);
+
+      expect(result, equals(tweetModel));
+    });
+
     test(
         'should return a JSON map containing proper data when converting to document',
         () async {
-      final result = tweetModel.toDocument();
+      final result = tweetModel.toMap();
 
       final expected = {
         'userProfile': json.decode(jsonUserProfileFixture()),
@@ -57,7 +66,8 @@ void main() {
         'comments': null,
         'retweetedBy': null,
         'likedBy': null,
-        'isRetweet': null
+        'isRetweet': null,
+        'isComment': null
       };
 
       expect(result, equals(expected));

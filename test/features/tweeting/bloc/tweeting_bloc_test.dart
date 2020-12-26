@@ -181,4 +181,34 @@ void main() {
       tweetingBloc.add(UndoRetweet(userProfile: userProfile, tweet: tweetEntity));
     });
   });
+
+  group('tweeting bloc Coomment', () {
+    test('should emit [TweetingComplete] when successful',
+        () async {
+      when(mockTweetingRepository.comment(any, any)).thenAnswer(
+        (_) => Future.value(Right(true)),
+      );
+
+      final expectations = [
+        TweetingComplete(),
+      ];
+      expectLater(tweetingBloc, emitsInOrder(expectations));
+
+      tweetingBloc.add(Comment(comment: tweetEntity, tweet: tweetEntity));
+    });
+
+    test('should emit [TweetingError] when sending tweet fails', () async {
+      when(mockTweetingRepository.comment(any, any)).thenAnswer(
+        (_) => Future.value(
+            Left(TweetingFailure(message: 'Failed to comment'))),
+      );
+
+      final expectations = [
+        TweetingError(message: 'Failed to comment'),
+      ];
+      expectLater(tweetingBloc, emitsInOrder(expectations));
+
+      tweetingBloc.add(Comment(comment: tweetEntity, tweet: tweetEntity));
+    });
+  });
 }

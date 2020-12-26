@@ -2,6 +2,7 @@ import 'package:fc_twitter/features/profile/representation/pages/edit_profile_sc
 import 'package:fc_twitter/features/profile/representation/pages/profile_screen.dart';
 import 'package:fc_twitter/features/settings/representation/bloc/theme_bloc.dart';
 import 'package:fc_twitter/features/tweeting/representation/bloc/bloc.dart';
+import 'package:fc_twitter/features/tweeting/representation/pages/comments_screen.dart';
 import 'package:fc_twitter/injection_container.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -55,6 +56,7 @@ class MyApp extends StatelessWidget {
               }),
           routes: {
             TweetScreen.pageId: (ctx) => TweetScreen(),
+            CommentsScreen.pageId: (ctx) => CommentsScreen(),
             AuthForm.pageId: (ctx) => AuthForm(),
             NavigationScreen.pageId: (ctx) => NavigationScreen(),
             ProfileScreen.pageId: (ctx) => ProfileScreen(),

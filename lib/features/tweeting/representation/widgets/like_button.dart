@@ -9,18 +9,22 @@ class LikeButton extends StatelessWidget {
   const LikeButton({
     Key key,
     @required UserProfileEntity profile,
-    @required this.isTweetLiked,
     @required TweetEntity tweet,
   })  : _profile = profile,
         _tweet = tweet,
         super(key: key);
 
   final UserProfileEntity _profile;
-  final bool isTweetLiked;
   final TweetEntity _tweet;
+
+  bool isLiked(UserProfileEntity profile, TweetEntity tweet) {
+    // return false;
+    return tweet.likedBy.any((element) => element['id'] == profile?.id);
+  }
 
   @override
   Widget build(BuildContext context) {
+    bool isTweetLiked = isLiked(_profile, _tweet);
     return GestureDetector(
       onTap: () {
         if (_profile == null) return;

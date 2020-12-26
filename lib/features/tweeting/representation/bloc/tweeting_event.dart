@@ -55,3 +55,13 @@ class UndoRetweet extends TweetingEvent {
   @override
   List<Object> get props => [tweet, userProfile];
 }
+
+class Comment extends TweetingEvent {
+  final TweetEntity tweet;
+  final TweetEntity comment;
+
+  Comment({this.tweet, this.comment});
+
+  @override
+  List<Object> get props => [tweet, comment];
+}

@@ -13,6 +13,7 @@ class TweetEntity extends Equatable {
   final List retweetedBy;
   final List likedBy;
   final bool isRetweet;
+  final bool isComment;
   final Timestamp timeStamp;
 
   TweetEntity({
@@ -26,15 +27,22 @@ class TweetEntity extends Equatable {
     this.retweetedBy,
     this.likedBy,
     this.isRetweet,
+    this.isComment
   });
 
-  TweetEntity copyWith({List likedBy, List retweetedBy, bool isRetweet, UserProfileEntity retweetersProfile}) {
+  TweetEntity copyWith({
+    List likedBy,
+    List retweetedBy,
+    List comments,
+    bool isRetweet,
+    UserProfileEntity retweetersProfile,
+  }) {
     return TweetEntity(
       id: this.id,
       userProfile: this.userProfile,
       message: this.message,
       quoteTo: this.quoteTo,
-      comments: this.comments,
+      comments: comments ?? this.comments,
       retweetersProfile: retweetersProfile ?? this.retweetersProfile,
       retweetedBy: retweetedBy ?? this.retweetedBy,
       likedBy: likedBy ?? this.likedBy,
@@ -43,7 +51,7 @@ class TweetEntity extends Equatable {
     );
   }
 
-   String getTime(Timestamp timeStamp) {
+  String getTime(Timestamp timeStamp) {
     final time = DateTime.now().subtract(Duration(seconds: timeStamp.seconds));
     if (time.day > 1) {
       return '${time.day}d';
@@ -57,5 +65,5 @@ class TweetEntity extends Equatable {
   }
 
   @override
-  List<Object> get props => [userProfile, message, timeStamp];
+  List<Object> get props => [userProfile.id, userProfile.userName, message, timeStamp];
 }

@@ -132,4 +132,25 @@ void main() {
       expect(response, Left(TweetingFailure(message: 'Failed to retweet')));
     });
   });
+
+  group('tweeting repository comment', () {
+    test('should return true after commenting successfully', () async {
+      when(mockFirebaseFirestore.collection(any))
+          .thenReturn(collectionReference);
+      when(collectionReference.doc(any)).thenReturn(documentReference);
+      when(documentReference.update(any)).thenAnswer((_) => null);
+
+      final result = await tweetingRepositoryImpl.comment(tweetEntity, tweetEntity);
+
+      expect(result, equals(Right(true)));
+    });
+
+    test('should return a TweetingFailure when it fails', () async {
+      when(mockFirebaseFirestore.collection(any)).thenThrow(Error());
+
+      final response = await tweetingRepositoryImpl.comment(tweetEntity, tweetEntity);
+
+      expect(response, Left(TweetingFailure(message: 'Failed to comment')));
+    });
+  });
 }

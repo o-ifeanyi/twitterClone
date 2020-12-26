@@ -15,6 +15,7 @@ class TweetModel extends TweetEntity {
     retweetedBy,
     likedBy,
     isRetweet,
+    isComment
   }) : super(
           id: id,
           userProfile: userProfile,
@@ -26,6 +27,7 @@ class TweetModel extends TweetEntity {
           retweetedBy: retweetedBy,
           likedBy: likedBy,
           isRetweet: isRetweet,
+          isComment: isComment,
         );
 
   factory TweetModel.fromSnapShot(DocumentSnapshot snapShot) {
@@ -46,6 +48,7 @@ class TweetModel extends TweetEntity {
       retweetedBy: data['retweetedBy'] ?? List(),
       likedBy: data['likedBy'] ?? List(),
       isRetweet: data['isRetweet'] ?? false,
+      isComment: data['isComment'] ?? false,
     );
   }
 
@@ -61,6 +64,26 @@ class TweetModel extends TweetEntity {
       retweetedBy: tweet.retweetedBy,
       likedBy: tweet.likedBy,
       isRetweet: tweet.isRetweet,
+      isComment: tweet.isComment,
+    );
+  }
+
+  factory TweetModel.fromMap(Map<String, dynamic> data) {
+    final retweetersProfile = data['retweetersProfile'] != null
+        ? UserProfileModel.fromMap(data['retweetersProfile']).toEntity()
+        : null;
+    return TweetModel(
+      id: data['id'],
+      userProfile: UserProfileModel.fromMap(data['userProfile']),
+      retweetersProfile: retweetersProfile,
+      message: data['message'],
+      timeStamp: data['timeStamp'],
+      quoteTo: data['quoteTo'],
+      comments: data['comments'] ?? List(),
+      retweetedBy: data['retweetedBy'] ?? List(),
+      likedBy: data['likedBy'] ?? List(),
+      isRetweet: data['isRetweet'] ?? false,
+      isComment: data['isComment'] ?? false,
     );
   }
 
@@ -76,10 +99,11 @@ class TweetModel extends TweetEntity {
       retweetedBy: this.retweetedBy,
       likedBy: this.likedBy,
       isRetweet: this.isRetweet,
+      isComment: this.isComment,
     );
   }
 
-  Map<String, dynamic> toDocument() {
+  Map<String, dynamic> toMap() {
     return {
       'userProfile': UserProfileModel.fromEntity(this.userProfile).toMap(),
       'retweetersProfile': this.retweetersProfile != null ?
@@ -91,6 +115,7 @@ class TweetModel extends TweetEntity {
       'retweetedBy': this.retweetedBy,
       'likedBy': this.likedBy,
       'isRetweet': this.isRetweet,
+      'isComment': this.isComment,
     };
   }
 }

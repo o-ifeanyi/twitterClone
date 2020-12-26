@@ -12,12 +12,30 @@ class TweetingRepositoryImpl implements TweetingRepository {
 
   TweetingRepositoryImpl({this.firebaseFirestore})
       : assert(firebaseFirestore != null);
+
+  @override
+  Future<Either<TweetingFailure, bool>> comment(TweetEntity tweet, TweetEntity comment) async {
+    try {
+      final comments = tweet.comments;
+      comments?.add(TweetModel.fromEntity(comment).toMap());
+      tweet = tweet.copyWith(comments: comments);
+      await firebaseFirestore
+          .collection('tweets')
+          .doc(tweet.id)
+          .update({'comments': comments});
+      return Right(true);
+    } catch (error) {
+      print(error);
+      return Left(TweetingFailure(message: 'Failed to comment'));
+    }
+  }
+
   @override
   Future<Either<TweetingFailure, bool>> sendTweet(TweetEntity tweet) async {
     try {
       await firebaseFirestore
           .collection('tweets')
-          .add(TweetModel.fromEntity(tweet).toDocument());
+          .add(TweetModel.fromEntity(tweet).toMap());
       return Right(true);
     } catch (error) {
       print(error);
