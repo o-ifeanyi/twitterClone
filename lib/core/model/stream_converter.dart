@@ -5,8 +5,9 @@ import 'package:fc_twitter/features/tweeting/domain/entity/tweet_entity.dart';
 
 class StreamConverter extends Equatable {
   final CollectionReference collection;
+  final Query commentQuery;
 
-  StreamConverter({this.collection});
+  StreamConverter({this.collection, this.commentQuery});
 
   Stream<List<TweetEntity>> toTweetEntity(CollectionReference tweets) {
     return tweets.snapshots().map((snapshot) {
@@ -16,6 +17,14 @@ class StreamConverter extends Equatable {
     });
   }
 
+  Stream<List<TweetEntity>> fromCommentQuery(Query commentQuery) {
+    return commentQuery.snapshots().map((snapshot) {
+      return snapshot.docs
+          .map((doc) => TweetModel.fromSnapShot(doc))
+          .toList();
+    });
+  }
+
   @override
-  List<Object> get props => [collection];
+  List<Object> get props => [];
 }

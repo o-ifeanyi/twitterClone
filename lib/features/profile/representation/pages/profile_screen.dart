@@ -1,4 +1,5 @@
 import 'package:fc_twitter/core/util/config.dart';
+import 'package:fc_twitter/features/profile/domain/entity/user_profile_entity.dart';
 import 'package:fc_twitter/features/profile/representation/bloc/profile_bloc.dart';
 import 'package:fc_twitter/features/profile/representation/widgets/user_profile_info.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final UserProfileEntity userProfile = ModalRoute.of(context).settings.arguments;
     return DefaultTabController(
       length: 4,
       child: Scaffold(
@@ -27,7 +29,8 @@ class ProfileScreen extends StatelessWidget {
                         builder: (context, state) {
                       if (state is FetchingUserProfileComplete) {
                         return UserProfileInfo(
-                          profileEntity: state.userProfile,
+                          profileEntity: userProfile ?? state.userProfile,
+                          isCurrentUser: userProfile == null ? true : userProfile.id == state.userProfile.id,
                         );
                       }
                       return SizedBox.expand();

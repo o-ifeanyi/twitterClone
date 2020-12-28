@@ -63,11 +63,12 @@ void main() {
         'timeStamp': Timestamp(0, 0),
         'retweetersProfile': null,
         'quoteTo': null,
-        'comments': null,
+        'commentingTo': null,
+        'noOfComments': 0,
         'retweetedBy': null,
         'likedBy': null,
         'isRetweet': null,
-        'isComment': null
+        'isComment': false
       };
 
       expect(result, equals(expected));

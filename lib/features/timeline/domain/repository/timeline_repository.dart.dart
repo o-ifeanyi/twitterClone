@@ -5,4 +5,6 @@ import 'package:fc_twitter/core/model/stream_converter.dart';
 
 abstract class TimeLineRepository {
   Future<Either<TimeLineFailure, StreamConverter>> fetchTweets();
+
+  Future<Either<TimeLineFailure, StreamConverter>> fetchComments(String tweetId);
 }

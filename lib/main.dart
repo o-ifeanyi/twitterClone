@@ -1,8 +1,9 @@
 import 'package:fc_twitter/features/profile/representation/pages/edit_profile_screen.dart';
 import 'package:fc_twitter/features/profile/representation/pages/profile_screen.dart';
 import 'package:fc_twitter/features/settings/representation/bloc/theme_bloc.dart';
+import 'package:fc_twitter/features/timeline/representation/bloc/comment_bloc.dart';
 import 'package:fc_twitter/features/tweeting/representation/bloc/bloc.dart';
-import 'package:fc_twitter/features/tweeting/representation/pages/comments_screen.dart';
+import 'package:fc_twitter/features/timeline/representation/pages/comments_screen.dart';
 import 'package:fc_twitter/injection_container.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -12,7 +13,7 @@ import 'features/authentication/representation/bloc/bloc.dart';
 import 'features/authentication/representation/pages/auth_form.dart';
 import 'features/authentication/representation/pages/auth_screen.dart';
 import 'features/profile/representation/bloc/profile_bloc.dart';
-import 'features/timeline/representation/bloc/bloc.dart';
+import 'features/timeline/representation/bloc/timeline_bloc.dart';
 import 'features/tweeting/representation/pages/tweet_screen.dart';
 import 'navigation_screen.dart';
 
@@ -25,6 +26,7 @@ void main() async {
       providers: [
         BlocProvider<AuthBloc>(create: (_) => sl<AuthBloc>()),
         BlocProvider<TimeLineBloc>(create: (_) => sl<TimeLineBloc>()),
+        BlocProvider<CommentBloc>(create: (_) => sl<CommentBloc>()),
         BlocProvider<TweetingBloc>(create: (_) => sl<TweetingBloc>()),
         BlocProvider<ProfileBloc>(create: (_) => sl<ProfileBloc>()),
         BlocProvider<ThemeBloc>(create: (_) => sl<ThemeBloc>()),

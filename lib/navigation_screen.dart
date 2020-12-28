@@ -52,8 +52,6 @@ class _NavigationScreenState extends State<NavigationScreen> {
             if (state is TweetingError) {
               state.showSnackBar(context, _scaffoldKey, state.message, 2,
                   isError: true);
-            } else if (state is TweetingComplete) {
-              state.showSnackBar(context, _scaffoldKey, 'Complete', 2);
             }
           },
           child: IndexedStack(

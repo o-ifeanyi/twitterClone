@@ -1,6 +1,6 @@
 import 'package:fc_twitter/features/profile/domain/entity/user_profile_entity.dart';
 import 'package:fc_twitter/features/profile/representation/bloc/profile_bloc.dart';
-import 'package:fc_twitter/features/timeline/representation/bloc/bloc.dart';
+import 'package:fc_twitter/features/timeline/representation/bloc/timeline_bloc.dart';
 import 'package:fc_twitter/features/tweeting/domain/entity/tweet_entity.dart';
 import 'package:fc_twitter/features/tweeting/representation/widgets/tweet_item.dart';
 import 'package:flutter/material.dart';
@@ -40,10 +40,10 @@ class HomeScreen extends StatelessWidget {
       ),
       body: BlocBuilder<TimeLineBloc, TimeLineState>(
         buildWhen: (_, currentState) {
-          return currentState is FetchingComplete;
+          return currentState is FetchingTweetComplete;
         },
         builder: (context, state) {
-          if (state is FetchingComplete) {
+          if (state is FetchingTweetComplete) {
             return StreamBuilder<List<TweetEntity>>(
               stream: state.tweetStream,
               builder: (context, snapshot) {
@@ -54,7 +54,7 @@ class HomeScreen extends StatelessWidget {
                         separatorBuilder: (BuildContext context, int index) =>
                             Divider(thickness: 1, height: 15),
                         itemBuilder: (ctx, index) =>
-                            TweetItem(snapshot.data[index], profile),
+                            TweetItem(tweet: snapshot.data[index], profile: profile),
                       )
                     : Center(child: Text('nothing'));
               },

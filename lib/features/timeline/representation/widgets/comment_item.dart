@@ -2,11 +2,10 @@ import 'dart:io';
 
 import 'package:fc_twitter/core/util/config.dart';
 import 'package:fc_twitter/features/profile/domain/entity/user_profile_entity.dart';
+import 'package:fc_twitter/features/profile/representation/widgets/avatar.dart';
 import 'package:fc_twitter/features/tweeting/domain/entity/tweet_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
-
-import 'avatar.dart';
 
 class CommentItem extends StatelessWidget {
   const CommentItem({
@@ -51,7 +50,7 @@ class CommentItem extends StatelessWidget {
           SizedBox(height: 5),
           Row(
             children: [
-              Avatar(imageUrl: _tweet.userProfile.profilePhoto, radius: 28),
+              Avatar(userProfile: _tweet.userProfile, radius: 28),
               SizedBox(width: 10),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

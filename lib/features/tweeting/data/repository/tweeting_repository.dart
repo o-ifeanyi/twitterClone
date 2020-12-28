@@ -16,13 +16,16 @@ class TweetingRepositoryImpl implements TweetingRepository {
   @override
   Future<Either<TweetingFailure, bool>> comment(TweetEntity tweet, TweetEntity comment) async {
     try {
-      final comments = tweet.comments;
-      comments?.add(TweetModel.fromEntity(comment).toMap());
-      tweet = tweet.copyWith(comments: comments);
+      int comments = tweet.noOfComments;
+      comments++;
+      tweet = tweet.copyWith(noOfComments: comments);
       await firebaseFirestore
-          .collection('tweets')
+          .collection(tweet.isComment ? 'comments' : 'tweets')
           .doc(tweet.id)
-          .update({'comments': comments});
+          .update({'noOfComments': comments});
+      await firebaseFirestore
+          .collection('comments')
+          .add(TweetModel.fromEntity(comment).toMap());
       return Right(true);
     } catch (error) {
       print(error);
@@ -47,11 +50,12 @@ class TweetingRepositoryImpl implements TweetingRepository {
   Future<Either<TweetingFailure, bool>> likeTweet(
       UserProfileEntity userProfile, TweetEntity tweet) async {
     try {
+      print(tweet.isComment);
       final likedBy = tweet.likedBy;
       likedBy?.add(UserProfileModel.fromEntity(userProfile).toMap());
       tweet = tweet.copyWith(likedBy: likedBy);
       await firebaseFirestore
-          .collection('tweets')
+          .collection(tweet.isComment ? 'comments' : 'tweets')
           .doc(tweet.id)
           .update({'likedBy': likedBy});
       return Right(true);
@@ -69,7 +73,7 @@ class TweetingRepositoryImpl implements TweetingRepository {
       likedBy?.removeWhere((element) => element['id'] == userProfile.id);
       tweet = tweet.copyWith(likedBy: likedBy);
       await firebaseFirestore
-          .collection('tweets')
+          .collection(tweet.isComment ? 'comments' : 'tweets')
           .doc(tweet.id)
           .update({'likedBy': likedBy});
       return Right(true);
@@ -87,7 +91,7 @@ class TweetingRepositoryImpl implements TweetingRepository {
       retweetedBy?.add(UserProfileModel.fromEntity(userProfile).toMap());
       tweet = tweet.copyWith(retweetedBy: retweetedBy);
       await firebaseFirestore
-          .collection('tweets')
+          .collection(tweet.isComment ? 'comments' : 'tweets')
           .doc(tweet.id)
           .update({'retweetedBy': retweetedBy});
       return Right(true);
@@ -105,7 +109,7 @@ class TweetingRepositoryImpl implements TweetingRepository {
       retweetedBy?.removeWhere((element) => element['id'] == userProfile.id);
       tweet = tweet.copyWith(retweetedBy: retweetedBy);
       await firebaseFirestore
-          .collection('tweets')
+          .collection(tweet.isComment && !tweet.isRetweet ? 'comments' : 'tweets')
           .doc(tweet.id)
           .update({'retweetedBy': retweetedBy});
       if (tweet.isRetweet ?? false) {

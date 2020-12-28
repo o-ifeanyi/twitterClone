@@ -1,8 +1,9 @@
 import 'package:fc_twitter/core/util/config.dart';
 import 'package:fc_twitter/features/profile/representation/bloc/profile_bloc.dart';
-import 'package:fc_twitter/features/tweeting/representation/widgets/avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'avatar.dart';
 
 class DrawerUserInfo extends StatelessWidget {
   @override
@@ -25,7 +26,7 @@ class DrawerUserInfo extends StatelessWidget {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Avatar(imageUrl: profile.profilePhoto, radius: 30),
+              Avatar(userProfile: profile, radius: 30),
               SizedBox(height: 8),
               Text(
                 profile.name,

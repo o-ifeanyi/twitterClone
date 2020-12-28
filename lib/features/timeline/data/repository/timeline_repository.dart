@@ -19,4 +19,17 @@ class TimeLineRepositoryImpl implements TimeLineRepository {
       return Left(TimeLineFailure(message: 'Failed to load tweets'));
     }
   }
+
+  @override
+  Future<Either<TimeLineFailure, StreamConverter>> fetchComments(
+      String tweetId) async {
+    try {
+      final collection = firebaseFirestore
+          .collection('comments')
+          .where('commentingTo', isEqualTo: tweetId);
+      return Right(StreamConverter(commentQuery: collection));
+    } catch (error) {
+      return Left(TimeLineFailure(message: 'Failed to load comments'));
+    }
+  }
 }

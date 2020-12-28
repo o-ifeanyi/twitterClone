@@ -8,7 +8,7 @@ import 'package:fc_twitter/features/profile/data/repository/profile_repository.d
 import 'package:fc_twitter/features/profile/representation/bloc/image_picker_bloc.dart';
 import 'package:fc_twitter/features/settings/representation/bloc/theme_bloc.dart';
 import 'package:fc_twitter/features/timeline/data/repository/timeline_repository.dart';
-import 'package:fc_twitter/features/timeline/representation/bloc/bloc.dart';
+import 'package:fc_twitter/features/timeline/representation/bloc/comment_bloc.dart';
 import 'package:fc_twitter/features/tweeting/data/repository/tweeting_repository.dart';
 import 'package:fc_twitter/features/tweeting/domain/repository/tweeting_repository.dart';
 import 'package:fc_twitter/features/tweeting/representation/bloc/bloc.dart';
@@ -24,6 +24,7 @@ import 'features/settings/data/model/theme_model.dart';
 import 'features/settings/data/repository/settings_repository.dart';
 import 'features/settings/domain/repository/settings_repository.dart';
 import 'features/timeline/domain/repository/timeline_repository.dart.dart';
+import 'features/timeline/representation/bloc/timeline_bloc.dart';
 
 final sl = GetIt.instance;
 Future<void> init() async {
@@ -50,8 +51,14 @@ Future<void> init() async {
         timeLineRepository: sl(),
       )..add(FetchTweet()));
 
+  sl.registerFactory(() => CommentBloc(
+        initialState: sl(),
+        timeLineRepository: sl(),
+      ));
+
   // State
   sl.registerLazySingleton<TimeLineState>(() => InitialTimeLineState());
+  sl.registerLazySingleton<CommentState>(() => InitialCommentState());
 
   // Repository
   sl.registerLazySingleton<TimeLineRepository>(() => TimeLineRepositoryImpl(

@@ -2,14 +2,16 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fc_twitter/core/util/config.dart';
 import 'package:fc_twitter/features/profile/domain/entity/user_profile_entity.dart';
 import 'package:fc_twitter/features/profile/representation/pages/edit_profile_screen.dart';
-import 'package:fc_twitter/features/tweeting/representation/widgets/avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 
+import 'avatar.dart';
+
 class UserProfileInfo extends StatelessWidget {
   final UserProfileEntity profileEntity;
+  final bool isCurrentUser;
 
-  UserProfileInfo({@required this.profileEntity});
+  UserProfileInfo({@required this.profileEntity, this.isCurrentUser});
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -51,8 +53,8 @@ class UserProfileInfo extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Avatar(imageUrl: profileEntity.profilePhoto, radius: 30),
-                          GestureDetector(
+                          Avatar(userProfile: profileEntity, radius: 30),
+                          if (isCurrentUser) GestureDetector(
                             onTap: () => Navigator.pushNamed(
                               context,
                               EditProfileScreen.pageId,

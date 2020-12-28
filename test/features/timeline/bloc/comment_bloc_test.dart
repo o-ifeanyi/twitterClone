@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:fc_twitter/core/error/failure.dart';
 import 'package:fc_twitter/core/model/stream_converter.dart';
-import 'package:fc_twitter/features/timeline/representation/bloc/timeline_bloc.dart';
+import 'package:fc_twitter/features/timeline/representation/bloc/comment_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
@@ -14,57 +14,57 @@ void main() {
   MockCollectionReference collectionReference;
   // ignore: close_sinks
   StreamController streamController;
-  TimeLineBloc timeLineBloc;
+  CommentBloc commentBloc;
   MockTimeLineRepository mockTimeLineRepository;
 
   setUp(() {
     collectionReference = MockCollectionReference();
     mockTimeLineRepository = MockTimeLineRepository();
     streamController = StreamController<QuerySnapshot>();
-    timeLineBloc = TimeLineBloc(
-      initialState: InitialTimeLineState(),
+    commentBloc = CommentBloc(
+      initialState: InitialCommentState(),
       timeLineRepository: mockTimeLineRepository,
     );
   });
 
   test(('confirm initial bloc state'), () {
-    expect(timeLineBloc.state, equals(InitialTimeLineState()));
+    expect(commentBloc.state, equals(InitialCommentState()));
   });
-  group('timeline bloc fetchTweets event', () {
+  group('commentBloc fetchComments event', () {
 
     test(
-        'should emit [FetchingTweet, FetchingTweetComplete] when successful',
+        'should emit [FetchingComments, FetchingCommentsComplete] when successful',
         () async {
       when(collectionReference.snapshots())
           .thenAnswer((_) => streamController.stream);
-      when(mockTimeLineRepository.fetchTweets()).thenAnswer(
+      when(mockTimeLineRepository.fetchComments(any)).thenAnswer(
         (_) => Future.value(
-            Right(StreamConverter(collection: collectionReference))),
+            Right(StreamConverter(commentQuery: collectionReference))),
       );
 
       final expectations = [
-        FetchingTweet(),
-        FetchingTweetComplete(),
+        FetchingComments(),
+        FetchingCommentsComplete(),
       ];
-      expectLater(timeLineBloc, emitsInOrder(expectations));
+      expectLater(commentBloc, emitsInOrder(expectations));
 
-      timeLineBloc.add(FetchTweet());
+      commentBloc.add(FetchComments(tweetId: 'id'));
     });
 
     test(
-        'should emit [FetchingTweet, FetchingTweetFailed] when it fails',
+        'should emit [FetchingComments, FetchingCommentsFailed] when it fails',
         () async {
-      when(mockTimeLineRepository.fetchTweets()).thenAnswer(
+      when(mockTimeLineRepository.fetchComments(any)).thenAnswer(
         (_) => Future.value(
-            Left(TimeLineFailure(message: 'Failed to load tweets'))),
+            Left(TimeLineFailure(message: 'Failed to load comments'))),
       );
       final expectations = [
-        FetchingTweet(),
-        FetchingTweetError(message: 'Failed to load tweets'),
+        FetchingComments(),
+        FetchingCommentsError(message: 'Failed to load comments'),
       ];
-      expectLater(timeLineBloc, emitsInOrder(expectations));
+      expectLater(commentBloc, emitsInOrder(expectations));
 
-      timeLineBloc.add(FetchTweet());
+      commentBloc.add(FetchComments(tweetId: 'id'));
     });
   });
 }

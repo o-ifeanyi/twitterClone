@@ -1,11 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fc_twitter/core/util/config.dart';
-import 'package:fc_twitter/features/profile/data/model/user_profile_model.dart';
 import 'package:fc_twitter/features/profile/domain/entity/user_profile_entity.dart';
-import 'package:fc_twitter/features/tweeting/data/model/tweet_model.dart';
+import 'package:fc_twitter/features/timeline/representation/bloc/comment_bloc.dart';
+import 'package:fc_twitter/features/timeline/representation/widgets/comment_item.dart';
 import 'package:fc_twitter/features/tweeting/domain/entity/tweet_entity.dart';
 import 'package:fc_twitter/features/tweeting/representation/bloc/bloc.dart';
-import 'package:fc_twitter/features/tweeting/representation/widgets/comment_item.dart';
 import 'package:fc_twitter/features/tweeting/representation/widgets/like_button.dart';
 import 'package:fc_twitter/features/tweeting/representation/widgets/retweet_button.dart';
 import 'package:fc_twitter/features/tweeting/representation/widgets/tweet_item.dart';
@@ -32,6 +31,8 @@ class _CommentsScreenState extends State<CommentsScreen> {
               id: null,
               userProfile: profile,
               message: _replyController.text,
+              isComment: true,
+              commentingTo: tweet.id,
               timeStamp: Timestamp.now(),
             ),
           ),
@@ -46,6 +47,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
     final arguments = ModalRoute.of(context).settings.arguments as Map;
     final TweetEntity _tweet = arguments['tweet'];
     final UserProfileEntity _profile = arguments['profile'];
+    final isTyping = _replyNode.hasFocus;
 
     return Scaffold(
       appBar: AppBar(
@@ -62,44 +64,36 @@ class _CommentsScreenState extends State<CommentsScreen> {
       body: Stack(
         children: [
           Container(
+            height: MediaQuery.of(context).size.height,
             // color: Colors.blue,
             margin: EdgeInsets.only(
                 bottom: Config.yMargin(context, _replyNode.hasFocus ? 15 : 7)),
-            child: ListView(
-              children: [
-                CommentItem(tweet: _tweet, profile: _profile),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Icon(EvilIcons.comment),
-                    RetweetButton(
-                      profile: _profile,
-                      tweet: _tweet,
-                    ),
-                    LikeButton(
-                      profile: _profile,
-                      tweet: _tweet,
-                    ),
-                    IconButton(
-                      icon: Icon(EvilIcons.share_google),
-                      onPressed: () {},
-                    ),
-                  ],
-                ),
-                Divider(thickness: 2, height: 0),
-                ..._tweet.comments
-                    .map(
-                      (e) => Padding(
-                        padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-                        child: TweetItem(
-                          TweetModel.fromMap(e),
-                          UserProfileModel.fromMap(e['userProfile']),
-                        ),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  CommentItem(tweet: _tweet, profile: _profile),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Icon(EvilIcons.comment),
+                      RetweetButton(
+                        profile: _profile,
+                        tweet: _tweet,
                       ),
-                    )
-                    .toList(),
-                Divider(thickness: 2, height: 10),
-              ],
+                      LikeButton(
+                        profile: _profile,
+                        tweet: _tweet,
+                      ),
+                      IconButton(
+                        icon: Icon(EvilIcons.share_google),
+                        onPressed: () {},
+                      ),
+                    ],
+                  ),
+                  Divider(thickness: 2, height: 0),
+                  CommentBuilder(tweet: _tweet),
+                ],
+              ),
             ),
           ),
           Align(
@@ -109,7 +103,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  if (_replyNode.hasFocus)
+                  if (isTyping)
                     Row(
                       children: [
                         Text(
@@ -131,7 +125,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
                     ),
                   ),
                   SizedBox(height: 5),
-                  if (_replyNode.hasFocus)
+                  if (isTyping)
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -167,6 +161,47 @@ class _CommentsScreenState extends State<CommentsScreen> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class CommentBuilder extends StatelessWidget {
+  const CommentBuilder({
+    Key key,
+    @required TweetEntity tweet,
+  }) : _tweet = tweet, super(key: key);
+
+  final TweetEntity _tweet;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<CommentBloc, CommentState>(
+      builder: (context, state) {
+        if (state is FetchingComments) {
+          return CircularProgressIndicator();
+        }
+        if (state is FetchingCommentsComplete) {
+          return StreamBuilder<List<TweetEntity>>(
+            stream: state.commentStream,
+            builder: (context, snapshot) {
+              return snapshot.hasData
+                  ?
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Column(
+                      children: snapshot.data.map((e) => TweetItem(
+                          tweet: e,
+                          profile: e.userProfile,
+                          commenTweet: _tweet,
+                        ),).toList(),
+                    ),
+                  )
+                  : Center(child: Text('nothing'));
+            },
+          );
+        }
+        return SizedBox();
+      },
     );
   }
 }

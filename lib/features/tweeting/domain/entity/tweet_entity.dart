@@ -9,7 +9,8 @@ class TweetEntity extends Equatable {
   final UserProfileEntity retweetersProfile;
   final String message;
   final Map<String, dynamic> quoteTo;
-  final List comments;
+  final String commentingTo;
+  final int noOfComments;
   final List retweetedBy;
   final List likedBy;
   final bool isRetweet;
@@ -23,7 +24,8 @@ class TweetEntity extends Equatable {
     @required this.timeStamp,
     this.retweetersProfile,
     this.quoteTo,
-    this.comments,
+    this.commentingTo,
+    this.noOfComments,
     this.retweetedBy,
     this.likedBy,
     this.isRetweet,
@@ -33,7 +35,7 @@ class TweetEntity extends Equatable {
   TweetEntity copyWith({
     List likedBy,
     List retweetedBy,
-    List comments,
+    int noOfComments,
     bool isRetweet,
     UserProfileEntity retweetersProfile,
   }) {
@@ -42,11 +44,12 @@ class TweetEntity extends Equatable {
       userProfile: this.userProfile,
       message: this.message,
       quoteTo: this.quoteTo,
-      comments: comments ?? this.comments,
+      noOfComments: noOfComments ?? this.noOfComments,
       retweetersProfile: retweetersProfile ?? this.retweetersProfile,
       retweetedBy: retweetedBy ?? this.retweetedBy,
       likedBy: likedBy ?? this.likedBy,
       isRetweet: isRetweet ?? this.isRetweet,
+      isComment: this.isComment,
       timeStamp: this.timeStamp,
     );
   }

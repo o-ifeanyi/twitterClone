@@ -73,6 +73,8 @@ TweetEntity tweetEntityFixture() => TweetEntity(
       id: '001',
       userProfile: userProfileEntityFixture(),
       message: 'hello world',
+      noOfComments: 0,
+      isComment: false,
       timeStamp: Timestamp(0, 0),
     );
 
@@ -80,6 +82,8 @@ TweetModel tweetModelFixture() => TweetModel(
       id: '001',
       userProfile: userProfileEntityFixture(),
       message: 'hello world',
+      noOfComments: 0,
+      isComment: false,
       timeStamp: Timestamp(0, 0),
     );
 
@@ -87,4 +91,5 @@ String jsonTweetFixture() => json.encode({
       "userProfile": json.decode(jsonUserProfileFixture()),
       "message": "hello world",
       "timeStamp": "0s",
+      "noOfComments": 0,
     });
