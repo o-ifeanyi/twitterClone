@@ -81,4 +81,53 @@ class ProfileRepositoryImpl implements ProfileRepository {
       return Left(ProfileFailure());
     }
   }
+
+  @override
+  Future<Either<ProfileFailure, bool>> follow(
+    UserProfileEntity userProfile,
+    UserProfileEntity currentUser,
+  ) async {
+    try {
+      final userCollection = firebaseFirestore.collection('users');
+      print(1);
+      final followers = userProfile.followers;
+      followers?.add(UserProfileModel.fromEntity(currentUser).toMap());
+      print(2);
+      // userProfile = userProfile.copyWith(followers: followers);
+      await userCollection.doc(userProfile.id).update({'followers': followers});
+      print(3);
+      final following = currentUser.following;
+      following?.add(UserProfileModel.fromEntity(userProfile).toMap());
+      print(4);
+      // currentUser = currentUser.copyWith(following: following);
+      await userCollection.doc(currentUser.id).update({'following': following});
+      print(5);
+      return Right(true);
+    } catch (error) {
+      print(error);
+      return Left(ProfileFailure());
+    }
+  }
+
+  @override
+  Future<Either<ProfileFailure, bool>> unfollow(
+    UserProfileEntity userProfile,
+    UserProfileEntity currentUser,
+  ) async {
+    final userCollection = firebaseFirestore.collection('users');
+    try {
+      final followers = userProfile.followers;
+      followers?.removeWhere((element) => element['id'] == currentUser.id);
+      // userProfile = userProfile.copyWith(followers: followers);
+      await userCollection.doc(userProfile.id).update({'followers': followers});
+      final following = currentUser.following;
+      following?.removeWhere((element) => element['id'] == currentUser.id);
+      // currentUser = currentUser.copyWith(following: following);
+      await userCollection.doc(currentUser.id).update({'following': following});
+      return Right(true);
+    } catch (error) {
+      print(error);
+      return Left(ProfileFailure());
+    }
+  }
 }

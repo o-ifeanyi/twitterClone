@@ -4,27 +4,29 @@ import 'package:fc_twitter/features/tweeting/domain/entity/tweet_entity.dart';
 import 'package:flutter/cupertino.dart';
 
 class TweetModel extends TweetEntity {
-  TweetModel({
-    @required id,
-    @required userProfile,
-    @required message,
-    @required timeStamp,
-    retweetersProfile,
-    quoteTo,
-    noOfComments,
-    commentingTo,
-    retweetedBy,
-    likedBy,
-    isRetweet,
-    isComment
-  }) : super(
+  TweetModel(
+      {@required id,
+      @required userProfile,
+      @required message,
+      @required timeStamp,
+      retweetersProfile,
+      quoteTo,
+      noOfComments,
+      commentTo,
+      retweetTo,
+      retweetedBy,
+      likedBy,
+      isRetweet,
+      isComment})
+      : super(
           id: id,
           userProfile: userProfile,
           retweetersProfile: retweetersProfile,
           message: message,
           timeStamp: timeStamp,
           quoteTo: quoteTo,
-          commentingTo: commentingTo,
+          retweetTo: retweetTo,
+          commentTo: commentTo,
           noOfComments: noOfComments,
           retweetedBy: retweetedBy,
           likedBy: likedBy,
@@ -38,7 +40,12 @@ class TweetModel extends TweetEntity {
     final retweetersProfile = data['retweetersProfile'] != null
         ? UserProfileModel.fromMap(data['retweetersProfile']).toEntity()
         : null;
-    print(data['titmeStamp']);
+    final commentTo = data['commentTo'] != null
+        ? TweetModel.fromMap(data['commentTo']).toEntity()
+        : null;
+    final retweetTo = data['retweetTo'] != null
+        ? TweetModel.fromMap(data['retweetTo']).toEntity()
+        : null;
     return TweetModel(
       id: snapShot.id,
       userProfile: profile,
@@ -46,7 +53,8 @@ class TweetModel extends TweetEntity {
       timeStamp: data['timeStamp'],
       quoteTo: data['quoteTo'],
       retweetersProfile: retweetersProfile,
-      commentingTo: data['commentingTo'] ?? '',
+      retweetTo: retweetTo,
+      commentTo: commentTo,
       noOfComments: data['noOfComments'] ?? 0,
       retweetedBy: data['retweetedBy'] ?? List(),
       likedBy: data['likedBy'] ?? List(),
@@ -62,8 +70,9 @@ class TweetModel extends TweetEntity {
       retweetersProfile: tweet.retweetersProfile,
       message: tweet.message,
       timeStamp: tweet.timeStamp,
+      retweetTo: tweet.retweetTo,
       quoteTo: tweet.quoteTo,
-      commentingTo: tweet.commentingTo,
+      commentTo: tweet.commentTo,
       noOfComments: tweet.noOfComments,
       retweetedBy: tweet.retweetedBy,
       likedBy: tweet.likedBy,
@@ -76,6 +85,12 @@ class TweetModel extends TweetEntity {
     final retweetersProfile = data['retweetersProfile'] != null
         ? UserProfileModel.fromMap(data['retweetersProfile']).toEntity()
         : null;
+    final commentTo = data['commentTo'] != null
+        ? TweetModel.fromMap(data['commentTo']).toEntity()
+        : null;
+    final retweetTo = data['retweetTo'] != null
+        ? TweetModel.fromMap(data['retweetTo']).toEntity()
+        : null;
     return TweetModel(
       id: data['id'],
       userProfile: UserProfileModel.fromMap(data['userProfile']),
@@ -83,7 +98,8 @@ class TweetModel extends TweetEntity {
       message: data['message'],
       timeStamp: data['timeStamp'],
       quoteTo: data['quoteTo'],
-      commentingTo: data['commentingTo'] ?? '',
+      commentTo: commentTo,
+      retweetTo: retweetTo,
       noOfComments: data['noOfComments'] ?? 0,
       retweetedBy: data['retweetedBy'] ?? List(),
       likedBy: data['likedBy'] ?? List(),
@@ -100,7 +116,8 @@ class TweetModel extends TweetEntity {
       message: this.message,
       timeStamp: this.timeStamp,
       quoteTo: this.quoteTo,
-      commentingTo: this.commentingTo,
+      retweetTo: this.retweetTo,
+      commentTo: this.commentTo,
       noOfComments: this.noOfComments,
       retweetedBy: this.retweetedBy,
       likedBy: this.likedBy,
@@ -111,13 +128,20 @@ class TweetModel extends TweetEntity {
 
   Map<String, dynamic> toMap() {
     return {
+      'id': this.id,
       'userProfile': UserProfileModel.fromEntity(this.userProfile).toMap(),
-      'retweetersProfile': this.retweetersProfile != null ?
-          UserProfileModel.fromEntity(this.retweetersProfile).toMap() : null,
+      'retweetersProfile': this.retweetersProfile != null
+          ? UserProfileModel.fromEntity(this.retweetersProfile).toMap()
+          : null,
       'message': this.message,
       'timeStamp': this.timeStamp,
       'quoteTo': this.quoteTo,
-      'commentingTo': this.commentingTo,
+      'commentTo': this.commentTo != null
+          ? TweetModel.fromEntity(this.commentTo).toMap()
+          : null,
+      'retweetTo': this.retweetTo != null
+          ? TweetModel.fromEntity(this.retweetTo).toMap()
+          : null,
       'noOfComments': this.noOfComments,
       'retweetedBy': this.retweetedBy,
       'likedBy': this.likedBy,

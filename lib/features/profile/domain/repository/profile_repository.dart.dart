@@ -14,4 +14,8 @@ abstract class ProfileRepository {
   Future<Either<ProfileFailure, UserProfileEntity>> uploadImage(UserProfileEntity userProfile);
 
   Future<Either<ProfileFailure, bool>> updateUserProfile(UserProfileEntity userProfile);
+
+  Future<Either<ProfileFailure, bool>> follow(UserProfileEntity userProfile ,UserProfileEntity currentUser);
+
+  Future<Either<ProfileFailure, bool>> unfollow(UserProfileEntity userProfile ,UserProfileEntity currentUser);
 }

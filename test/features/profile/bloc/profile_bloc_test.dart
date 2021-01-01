@@ -101,4 +101,76 @@ void main() {
       profileBloc.add(UpdateUserProfile(userEntity));
     });
   });
+
+  group('profile bloc Follow event', () {
+    test(
+        'should emit [FetchingUserProfile and FetchingComplete] when successful',
+        () {
+      when(mockProfileRepository.follow(any, any)).thenAnswer(
+        (_) => Future.value(Right(true)),
+      );
+      when(mockProfileRepository.getUserProfile(any)).thenAnswer(
+        (_) => Future.value(Right(UserProfileEntity())),
+      );
+
+      final expectations = [
+        FetchingUserProfile(),
+        FetchingUserProfileComplete(userProfile: UserProfileEntity()),
+      ];
+
+      expectLater(profileBloc, emitsInOrder(expectations));
+      profileBloc.add(Follow(userEntity: userEntity, currentUserEntity: userEntity));
+    });
+
+    test(
+        'should emit [UpdateFailed] when un-successful',
+        () {
+      when(mockProfileRepository.follow(any, any)).thenAnswer(
+        (_) => Future.value(Left(ProfileFailure())),
+      );
+
+      final expectations = [
+        UpdateFailed(),
+      ];
+
+      expectLater(profileBloc, emitsInOrder(expectations));
+      profileBloc.add(Follow(userEntity: userEntity, currentUserEntity: userEntity));
+    });
+  });
+
+  group('profile bloc UnFollow event', () {
+    test(
+        'should emit [FetchingUserProfile and FetchingComplete] when successful',
+        () {
+      when(mockProfileRepository.unfollow(any, any)).thenAnswer(
+        (_) => Future.value(Right(true)),
+      );
+      when(mockProfileRepository.getUserProfile(any)).thenAnswer(
+        (_) => Future.value(Right(UserProfileEntity())),
+      );
+
+      final expectations = [
+        FetchingUserProfile(),
+        FetchingUserProfileComplete(userProfile: UserProfileEntity()),
+      ];
+
+      expectLater(profileBloc, emitsInOrder(expectations));
+      profileBloc.add(UnFollow(userEntity: userEntity, currentUserEntity: userEntity));
+    });
+
+    test(
+        'should emit [UpdateFailed] when un-successful',
+        () {
+      when(mockProfileRepository.unfollow(any, any)).thenAnswer(
+        (_) => Future.value(Left(ProfileFailure())),
+      );
+
+      final expectations = [
+        UpdateFailed(),
+      ];
+
+      expectLater(profileBloc, emitsInOrder(expectations));
+      profileBloc.add(UnFollow(userEntity: userEntity, currentUserEntity: userEntity));
+    });
+  });
 }

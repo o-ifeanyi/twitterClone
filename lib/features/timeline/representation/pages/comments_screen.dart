@@ -1,13 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fc_twitter/core/util/config.dart';
 import 'package:fc_twitter/features/profile/domain/entity/user_profile_entity.dart';
-import 'package:fc_twitter/features/timeline/representation/bloc/comment_bloc.dart';
+import 'package:fc_twitter/features/timeline/representation/widgets/comment_builder.dart';
 import 'package:fc_twitter/features/timeline/representation/widgets/comment_item.dart';
 import 'package:fc_twitter/features/tweeting/domain/entity/tweet_entity.dart';
 import 'package:fc_twitter/features/tweeting/representation/bloc/bloc.dart';
 import 'package:fc_twitter/features/tweeting/representation/widgets/like_button.dart';
 import 'package:fc_twitter/features/tweeting/representation/widgets/retweet_button.dart';
-import 'package:fc_twitter/features/tweeting/representation/widgets/tweet_item.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
@@ -32,7 +31,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
               userProfile: profile,
               message: _replyController.text,
               isComment: true,
-              commentingTo: tweet.id,
+              commentTo: tweet,
               timeStamp: Timestamp.now(),
             ),
           ),
@@ -91,7 +90,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
                     ],
                   ),
                   Divider(thickness: 2, height: 0),
-                  CommentBuilder(tweet: _tweet),
+                  CommentBuilder(),
                 ],
               ),
             ),
@@ -161,47 +160,6 @@ class _CommentsScreenState extends State<CommentsScreen> {
           ),
         ],
       ),
-    );
-  }
-}
-
-class CommentBuilder extends StatelessWidget {
-  const CommentBuilder({
-    Key key,
-    @required TweetEntity tweet,
-  }) : _tweet = tweet, super(key: key);
-
-  final TweetEntity _tweet;
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<CommentBloc, CommentState>(
-      builder: (context, state) {
-        if (state is FetchingComments) {
-          return CircularProgressIndicator();
-        }
-        if (state is FetchingCommentsComplete) {
-          return StreamBuilder<List<TweetEntity>>(
-            stream: state.commentStream,
-            builder: (context, snapshot) {
-              return snapshot.hasData
-                  ?
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Column(
-                      children: snapshot.data.map((e) => TweetItem(
-                          tweet: e,
-                          profile: e.userProfile,
-                          commenTweet: _tweet,
-                        ),).toList(),
-                    ),
-                  )
-                  : Center(child: Text('nothing'));
-            },
-          );
-        }
-        return SizedBox();
-      },
     );
   }
 }

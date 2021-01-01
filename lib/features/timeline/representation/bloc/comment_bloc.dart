@@ -10,9 +10,9 @@ class CommentEvent extends Equatable {
 }
 
 class FetchComments extends CommentEvent {
-  final String tweetId;
+  final TweetEntity tweet;
 
-  FetchComments({this.tweetId});
+  FetchComments({this.tweet});
 }
 
 class CommentState extends Equatable {
@@ -46,19 +46,19 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
   @override
   Stream<CommentState> mapEventToState(CommentEvent event) async*{
     if (event is FetchComments) {
-      yield* _mapFetchCommentsToState(event.tweetId);
+      yield* _mapFetchCommentsToState(event.tweet);
     }
   }
 
-  Stream<CommentState> _mapFetchCommentsToState(String id) async* {
+  Stream<CommentState> _mapFetchCommentsToState(TweetEntity tweet) async* {
     yield FetchingComments();
-    final sendEither = await timeLineRepository.fetchComments(id);
+    final sendEither = await timeLineRepository.fetchComments(tweet);
     yield* sendEither.fold(
       (failure) async* {
         yield FetchingCommentsError(message: failure.message);
       },
       (converter) async* {
-        // converter.toTweetEntity(converter.collection).listen((event) {
+        // converter.fromCommentQuery(converter.commentQuery).listen((event) {
         //   print(event);
         // });
         yield FetchingCommentsComplete(

@@ -117,4 +117,48 @@ void main() {
       verifyNever(reference.putFile(any));
     });
   });
+
+  group('profile repository follow', () {
+    test('should return true when successful', () async {
+      when(firebaseFirestore.collection(any)).thenReturn(collectionReference);
+      when(collectionReference.doc(any)).thenReturn(documentReference);
+      when(documentReference.update(any))
+          .thenAnswer((_) => null);
+
+      final result = await profileRepositoryImpl.follow(userEntity, userEntity);
+
+      expect(result, Right(true));
+    });
+
+    test('should return ProfileFailure when it fails', () async {
+      when(firebaseFirestore.collection(any)).thenReturn(collectionReference);
+      when(collectionReference.doc(any)).thenThrow(Error());
+
+      final result = await profileRepositoryImpl.follow(userEntity, userEntity);
+
+      expect(result, Left(ProfileFailure()));
+    });
+  });
+
+  group('profile repository unFollow', () {
+    test('should return true when successful', () async {
+      when(firebaseFirestore.collection(any)).thenReturn(collectionReference);
+      when(collectionReference.doc(any)).thenReturn(documentReference);
+      when(documentReference.update(any))
+          .thenAnswer((_) => null);
+
+      final result = await profileRepositoryImpl.unfollow(userEntity, userEntity);
+
+      expect(result, Right(true));
+    });
+
+    test('should return ProfileFailure when it fails', () async {
+      when(firebaseFirestore.collection(any)).thenReturn(collectionReference);
+      when(collectionReference.doc(any)).thenThrow(Error());
+
+      final result = await profileRepositoryImpl.unfollow(userEntity, userEntity);
+
+      expect(result, Left(ProfileFailure()));
+    });
+  });
 }

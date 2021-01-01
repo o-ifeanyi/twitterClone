@@ -78,7 +78,7 @@ class TweetingBloc extends Bloc<TweetingEvent, TweetingState> {
         yield TweetingError(message: failure.message);
       },
       (success) async* {
-        tweet = tweet.copyWith(isRetweet: true, retweetersProfile: userProfile);
+        tweet = tweet.copyWith(isRetweet: true, retweetersProfile: userProfile, retweetTo: tweet);
         yield* _mapSendTweetToState(tweet);
       },
     );

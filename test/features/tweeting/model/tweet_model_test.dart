@@ -58,16 +58,18 @@ void main() {
       final result = tweetModel.toMap();
 
       final expected = {
+        'id': '001',
         'userProfile': json.decode(jsonUserProfileFixture()),
         'message': 'hello world',
         'timeStamp': Timestamp(0, 0),
         'retweetersProfile': null,
         'quoteTo': null,
-        'commentingTo': null,
+        'commentTo': null,
+        'retweetTo': null,
         'noOfComments': 0,
         'retweetedBy': null,
         'likedBy': null,
-        'isRetweet': null,
+        'isRetweet': false,
         'isComment': false
       };
 

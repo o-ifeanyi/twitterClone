@@ -8,6 +8,7 @@ import 'package:fc_twitter/features/timeline/representation/bloc/comment_bloc.da
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
+import '../../../fixtures/fixture_reader.dart';
 import '../../../mocks/mocks.dart';
 
 void main() {
@@ -48,7 +49,7 @@ void main() {
       ];
       expectLater(commentBloc, emitsInOrder(expectations));
 
-      commentBloc.add(FetchComments(tweetId: 'id'));
+      commentBloc.add(FetchComments(tweet: tweetEntityFixture()));
     });
 
     test(
@@ -64,7 +65,7 @@ void main() {
       ];
       expectLater(commentBloc, emitsInOrder(expectations));
 
-      commentBloc.add(FetchComments(tweetId: 'id'));
+      commentBloc.add(FetchComments(tweet: tweetEntityFixture()));
     });
   });
 }

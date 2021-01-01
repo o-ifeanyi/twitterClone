@@ -1,5 +1,6 @@
 import 'package:fc_twitter/core/util/config.dart';
 import 'package:fc_twitter/features/profile/representation/bloc/profile_bloc.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -16,6 +17,9 @@ class DrawerUserInfo extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       width: double.infinity,
       child: BlocBuilder<ProfileBloc, ProfileState>(
+        buildWhen: (_, currentState) {
+          return currentState.userProfile.id == FirebaseAuth.instance.currentUser.uid;
+        },
         builder: (context, state) {
           if (state.userProfile == null) {
             return Container(
@@ -43,7 +47,7 @@ class DrawerUserInfo extends StatelessWidget {
               Row(
                 children: [
                   Text(
-                    '${profile.following}',
+                    '${profile.following.length}',
                     style: TextStyle(
                         fontSize: Config.xMargin(context, 4),
                         fontWeight: FontWeight.bold),
@@ -54,7 +58,7 @@ class DrawerUserInfo extends StatelessWidget {
                   ),
                   SizedBox(width: 10),
                   Text(
-                    '${profile.followers}',
+                    '${profile.followers.length}',
                     style: TextStyle(
                         fontSize: Config.xMargin(context, 4),
                         fontWeight: FontWeight.bold),

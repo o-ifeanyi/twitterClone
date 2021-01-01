@@ -56,7 +56,7 @@ void main() {
       when(mockFirebaseFirestore.collection(any))
           .thenReturn(collectionReference);
 
-      final response = await timeLineRepositoryImpl.fetchComments(tweetEntity.id);
+      final response = await timeLineRepositoryImpl.fetchComments(tweetEntity);
 
       expect(response, Right(StreamConverter(collection: collectionReference)));
     });
@@ -66,7 +66,7 @@ void main() {
       when(mockFirebaseFirestore.collection(any))
           .thenThrow(Error());
 
-      final response = await timeLineRepositoryImpl.fetchComments(tweetEntity.id);
+      final response = await timeLineRepositoryImpl.fetchComments(tweetEntity);
 
       expect(response, Left(TimeLineFailure(message: 'Failed to load comments')));
     });

@@ -44,8 +44,8 @@ class UserProfileModel extends UserProfileEntity {
       dateJoined: data['dateJoined'],
       profilePhoto: data['profilePhoto'] ?? '',
       coverPhoto: data['coverPhoto'] ?? '',
-      following: data['following'] ?? 0,
-      followers: data['followers'] ?? 0,
+      following: data['following'] ?? List(),
+      followers: data['followers'] ?? List(),
     );
   }
 
@@ -61,8 +61,8 @@ class UserProfileModel extends UserProfileEntity {
       dateJoined: userMap['dateJoined'],
       profilePhoto: userMap['profilePhoto'] ?? '',
       coverPhoto: userMap['coverPhoto'] ?? '',
-      following: userMap['following'] ?? 0,
-      followers: userMap['followers'] ?? 0,
+      following: userMap['following'] ?? List(),
+      followers: userMap['followers'] ?? List(),
     );
   }
 

@@ -12,8 +12,8 @@ class UserProfileEntity extends Equatable {
   final String dateJoined;
   final dynamic profilePhoto;
   final dynamic coverPhoto;
-  final int following;
-  final int followers;
+  final List following;
+  final List followers;
 
   UserProfileEntity({
     this.id,
@@ -32,13 +32,16 @@ class UserProfileEntity extends Equatable {
   @SemanticsHintOverrides()
   List<Object> get props => [id, name, userName];
 
-  UserProfileEntity copyWith(
-      {String name,
-      String bio,
-      String location,
-      String website,
-      dynamic profilePhoto,
-      dynamic coverPhoto}) {
+  UserProfileEntity copyWith({
+    String name,
+    String bio,
+    String location,
+    String website,
+    dynamic profilePhoto,
+    dynamic coverPhoto,
+    List following,
+    List followers,
+  }) {
     return UserProfileEntity(
       id: this.id,
       userName: this.userName,
@@ -50,8 +53,8 @@ class UserProfileEntity extends Equatable {
       coverPhoto: coverPhoto ?? this.coverPhoto,
       dateOfBirth: this.dateOfBirth,
       dateJoined: this.dateJoined,
-      following: this.following,
-      followers: this.followers,
+      following: following ?? this.following,
+      followers: followers ?? this.followers,
     );
   }
 }

@@ -7,10 +7,18 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ProfileScreen extends StatelessWidget {
   static const String pageId = '/profileScreen';
+
+  // bool following(UserProfileEntity userProfile, UserProfileEntity currentUser) {
+  //   if (userProfile == null) return false;
+  //   return userProfile.followers
+  //       .any((element) => element['id'] == currentUser.id);
+  // }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final UserProfileEntity userProfile = ModalRoute.of(context).settings.arguments;
+    final UserProfileEntity userProfile =
+        ModalRoute.of(context).settings.arguments;
     return DefaultTabController(
       length: 4,
       child: Scaffold(
@@ -29,8 +37,11 @@ class ProfileScreen extends StatelessWidget {
                         builder: (context, state) {
                       if (state is FetchingUserProfileComplete) {
                         return UserProfileInfo(
-                          profileEntity: userProfile ?? state.userProfile,
-                          isCurrentUser: userProfile == null ? true : userProfile.id == state.userProfile.id,
+                          currentUser: state.userProfile,
+                          displayUser: userProfile,
+                          isCurrentUser: userProfile != null ? userProfile.id == state.userProfile.id : true,
+                          isFollowing: state.userProfile.following.any(
+                              (element) => element['id'] == userProfile.id),
                         );
                       }
                       return SizedBox.expand();

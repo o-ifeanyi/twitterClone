@@ -75,6 +75,7 @@ TweetEntity tweetEntityFixture() => TweetEntity(
       message: 'hello world',
       noOfComments: 0,
       isComment: false,
+      isRetweet: false,
       timeStamp: Timestamp(0, 0),
     );
 
@@ -84,6 +85,7 @@ TweetModel tweetModelFixture() => TweetModel(
       message: 'hello world',
       noOfComments: 0,
       isComment: false,
+      isRetweet: false,
       timeStamp: Timestamp(0, 0),
     );
 

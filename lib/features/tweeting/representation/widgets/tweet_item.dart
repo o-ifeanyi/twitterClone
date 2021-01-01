@@ -12,16 +12,14 @@ import 'like_button.dart';
 import 'retweet_button.dart';
 
 class TweetItem extends StatelessWidget {
-  const TweetItem(
-      {@required TweetEntity tweet,
-      @required UserProfileEntity profile,
-      this.commenTweet})
-      : _tweet = tweet,
+  const TweetItem({
+    @required TweetEntity tweet,
+    @required UserProfileEntity profile,
+  })  : _tweet = tweet,
         _profile = profile;
 
   final TweetEntity _tweet;
   final UserProfileEntity _profile;
-  final TweetEntity commenTweet;
 
   bool isLiked(UserProfileEntity profile, TweetEntity tweet) {
     return tweet.likedBy.any((element) => element['id'] == profile?.id);
@@ -38,7 +36,7 @@ class TweetItem extends StatelessWidget {
     final bool isTweetRetweeted = isRetweeted(_profile, _tweet);
     return GestureDetector(
       onTap: () {
-        context.read<CommentBloc>().add(FetchComments(tweetId: _tweet.id));
+        context.read<CommentBloc>().add(FetchComments(tweet: _tweet));
         final arguments = {
           'tweet': _tweet,
           'profile': _profile,
@@ -59,7 +57,8 @@ class TweetItem extends StatelessWidget {
                   if (_tweet.isRetweet)
                     Row(
                       children: [
-                        Icon(EvilIcons.retweet, size: 18, color: theme.accentColor),
+                        Icon(EvilIcons.retweet,
+                            size: 18, color: theme.accentColor),
                         SizedBox(width: 5),
                         Text(
                           _tweet.retweetersProfile?.userName ==
@@ -109,7 +108,7 @@ class TweetItem extends StatelessWidget {
                           style: TextStyle(color: theme.accentColor),
                         ),
                         Text(
-                          commenTweet.userProfile.userName,
+                          _tweet.commentTo.userProfile.userName,
                           style: TextStyle(color: theme.primaryColor),
                         ),
                       ],

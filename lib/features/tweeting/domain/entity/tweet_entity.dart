@@ -8,8 +8,9 @@ class TweetEntity extends Equatable {
   final UserProfileEntity userProfile;
   final UserProfileEntity retweetersProfile;
   final String message;
-  final Map<String, dynamic> quoteTo;
-  final String commentingTo;
+  final TweetEntity quoteTo;
+  final TweetEntity retweetTo;
+  final TweetEntity commentTo;
   final int noOfComments;
   final List retweetedBy;
   final List likedBy;
@@ -23,8 +24,9 @@ class TweetEntity extends Equatable {
     @required this.message,
     @required this.timeStamp,
     this.retweetersProfile,
+    this.retweetTo,
     this.quoteTo,
-    this.commentingTo,
+    this.commentTo,
     this.noOfComments,
     this.retweetedBy,
     this.likedBy,
@@ -36,6 +38,8 @@ class TweetEntity extends Equatable {
     List likedBy,
     List retweetedBy,
     int noOfComments,
+    TweetEntity commentTo,
+    TweetEntity retweetTo,
     bool isRetweet,
     UserProfileEntity retweetersProfile,
   }) {
@@ -44,6 +48,8 @@ class TweetEntity extends Equatable {
       userProfile: this.userProfile,
       message: this.message,
       quoteTo: this.quoteTo,
+      commentTo: commentTo ?? this.commentTo,
+      retweetTo: retweetTo ?? this.retweetTo,
       noOfComments: noOfComments ?? this.noOfComments,
       retweetersProfile: retweetersProfile ?? this.retweetersProfile,
       retweetedBy: retweetedBy ?? this.retweetedBy,

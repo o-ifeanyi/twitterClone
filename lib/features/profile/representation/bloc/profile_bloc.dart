@@ -22,6 +22,20 @@ class UpdateUserProfile extends ProfileEvent {
   UpdateUserProfile(this.userEntity);
 }
 
+class Follow extends ProfileEvent {
+  final UserProfileEntity userEntity;
+  final UserProfileEntity currentUserEntity;
+
+  Follow({this.userEntity, this.currentUserEntity});
+}
+
+class UnFollow extends ProfileEvent {
+  final UserProfileEntity userEntity;
+  final UserProfileEntity currentUserEntity;
+
+  UnFollow({this.userEntity, this.currentUserEntity});
+}
+
 class ProfileState extends Equatable {
   final UserProfileEntity userProfile;
   final File pickedProfileImage;
@@ -42,7 +56,8 @@ class FetchingUserProfileFailed extends ProfileState {}
 class FetchingUserProfileComplete extends ProfileState {
   final UserProfileEntity userProfile;
 
-  FetchingUserProfileComplete({this.userProfile}) : super(userProfile: userProfile);
+  FetchingUserProfileComplete({this.userProfile})
+      : super(userProfile: userProfile);
 }
 
 class UpdateFailed extends ProfileState {}
@@ -59,6 +74,12 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     }
     if (event is UpdateUserProfile) {
       yield* _mapUpdateUserProfileToEvent(event.userEntity);
+    }
+    if (event is Follow) {
+      yield* _mapFollowToEvent(event.userEntity, event.currentUserEntity);
+    }
+    if (event is UnFollow) {
+      yield* _mapUnFollowToEvent(event.userEntity, event.currentUserEntity);
     }
   }
 
@@ -77,7 +98,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
   Stream<ProfileState> _mapUpdateUserProfileToEvent(
       UserProfileEntity entity) async* {
-    if (entity.profilePhoto.runtimeType != String || entity.coverPhoto.runtimeType != String) {
+    if (entity.profilePhoto.runtimeType != String ||
+        entity.coverPhoto.runtimeType != String) {
       final uploadEither = await profileRepository.uploadImage(entity);
       yield* uploadEither.fold((failure) async* {
         yield UpdateFailed();
@@ -91,5 +113,35 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     }, (success) async* {
       yield* _mapFetchUserProfileToEvent(entity.id);
     });
+  }
+
+  Stream<ProfileState> _mapFollowToEvent(
+      UserProfileEntity userProfile, UserProfileEntity currentUser) async* {
+    final followEither =
+        await profileRepository.follow(userProfile, currentUser);
+    yield* followEither.fold(
+      (failure) async* {
+        print('profile bloc follow failure');
+        yield UpdateFailed();
+      },
+      (success) async* {
+        yield* _mapFetchUserProfileToEvent(currentUser.id);
+      },
+    );
+  }
+
+  Stream<ProfileState> _mapUnFollowToEvent(
+      UserProfileEntity userProfile, UserProfileEntity currentUser) async* {
+    final unFollowEither =
+        await profileRepository.unfollow(userProfile, currentUser);
+    yield* unFollowEither.fold(
+      (failure) async* {
+        print('profile bloc un-follow failure');
+        yield UpdateFailed();
+      },
+      (success) async* {
+        yield* _mapFetchUserProfileToEvent(currentUser.id);
+      },
+    );
   }
 }
