@@ -59,9 +59,9 @@ void main() {
 
       final expected = {
         'id': '001',
-        'userProfile': json.decode(jsonUserProfileFixture()),
         'message': 'hello world',
         'timeStamp': Timestamp(0, 0),
+        'userProfile': docReference,
         'retweetersProfile': null,
         'quoteTo': null,
         'commentTo': null,

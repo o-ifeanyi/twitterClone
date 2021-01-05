@@ -12,6 +12,7 @@ import 'package:fc_twitter/features/timeline/representation/bloc/comment_bloc.da
 import 'package:fc_twitter/features/tweeting/data/repository/tweeting_repository.dart';
 import 'package:fc_twitter/features/tweeting/domain/repository/tweeting_repository.dart';
 import 'package:fc_twitter/features/tweeting/representation/bloc/bloc.dart';
+import 'package:fc_twitter/features/tweeting/representation/bloc/tweet_media_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get_it/get_it.dart';
@@ -94,8 +95,14 @@ Future<void> init() async {
         tweetingRepository: sl()
       ));
 
+  sl.registerFactory(() => TweetMediaBloc(
+        initialState: sl(),
+        tweetingRepository: sl()
+      ));
+
   // State
   sl.registerLazySingleton<TweetingState>(() => InitialTweetingState());
+  sl.registerLazySingleton<TweetMediaState>(() => InitialMediaState());
 
   // Repository
   sl.registerLazySingleton<TweetingRepository>(() => TweetingRepositoryImpl(

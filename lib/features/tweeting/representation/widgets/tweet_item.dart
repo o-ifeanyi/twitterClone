@@ -1,7 +1,9 @@
 import 'package:fc_twitter/core/util/config.dart';
+import 'package:fc_twitter/features/profile/data/model/user_profile_model.dart';
 import 'package:fc_twitter/features/profile/domain/entity/user_profile_entity.dart';
 import 'package:fc_twitter/features/profile/representation/widgets/avatar.dart';
 import 'package:fc_twitter/features/timeline/representation/bloc/comment_bloc.dart';
+import 'package:fc_twitter/features/tweeting/data/model/tweet_model.dart';
 import 'package:fc_twitter/features/tweeting/domain/entity/tweet_entity.dart';
 import 'package:fc_twitter/features/timeline/representation/pages/comments_screen.dart';
 import 'package:flutter/material.dart';
@@ -11,156 +13,203 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'like_button.dart';
 import 'retweet_button.dart';
 
-class TweetItem extends StatelessWidget {
+class TweetItem extends StatefulWidget {
   const TweetItem({
+    Key key,
     @required TweetEntity tweet,
     @required UserProfileEntity profile,
   })  : _tweet = tweet,
-        _profile = profile;
+        _currentUserProfile = profile,
+        super(key: key);
 
   final TweetEntity _tweet;
-  final UserProfileEntity _profile;
+  final UserProfileEntity _currentUserProfile;
 
-  bool isLiked(UserProfileEntity profile, TweetEntity tweet) {
-    return tweet.likedBy.any((element) => element['id'] == profile?.id);
-  }
+  @override
+  _TweetItemState createState() => _TweetItemState();
+}
 
-  bool isRetweeted(UserProfileEntity profile, TweetEntity tweet) {
-    return tweet.retweetedBy.any((element) => element['id'] == profile?.id);
+class _TweetItemState extends State<TweetItem> {
+  Future<UserProfileEntity> _getUserProfile;
+  Future<UserProfileEntity> _getRetweetersProfile;
+  Future<UserProfileEntity> _getCommentto;
+
+  @override
+  void initState() {
+    super.initState();
+    _getUserProfile = widget._tweet.userProfile
+        .get()
+        .then((snapshot) => UserProfileModel.fromDoc(snapshot));
+    if (widget._tweet.isRetweet) {
+      _getRetweetersProfile = widget._tweet.retweetersProfile
+          .get()
+          .then((snapshot) => UserProfileModel.fromDoc(snapshot));
+    }
+    if (widget._tweet.isComment) {
+      _getCommentto = widget._tweet.commentTo.get().then((value) async {
+        final tweet = TweetModel.fromSnapShot(value);
+        final user = await tweet.userProfile.get();
+        return UserProfileModel.fromDoc(user);
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final bool isTweetLiked = isLiked(_profile, _tweet);
-    final bool isTweetRetweeted = isRetweeted(_profile, _tweet);
-    return GestureDetector(
-      onTap: () {
-        context.read<CommentBloc>().add(FetchComments(tweet: _tweet));
-        final arguments = {
-          'tweet': _tweet,
-          'profile': _profile,
-        };
-        Navigator.pushNamed(context, CommentsScreen.pageId,
-            arguments: arguments);
-      },
-      child: Container(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Avatar(userProfile: _tweet.userProfile, radius: 24),
-            SizedBox(width: 10),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (_tweet.isRetweet)
-                    Row(
-                      children: [
-                        Icon(EvilIcons.retweet,
-                            size: 18, color: theme.accentColor),
-                        SizedBox(width: 5),
-                        Text(
-                          _tweet.retweetersProfile?.userName ==
-                                  _profile?.userName
-                              ? 'You Retweeted'
-                              : '${_tweet.retweetersProfile?.userName} Retweeted',
-                          style: TextStyle(
-                            fontSize: Config.xMargin(context, 3.2),
-                            color: theme.accentColor,
+    return FutureBuilder<UserProfileEntity>(
+      future: _getUserProfile,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return SizedBox.shrink();
+        }
+        final profile = snapshot.data;
+        return GestureDetector(
+          onTap: () {
+            context
+                .read<CommentBloc>()
+                .add(FetchComments(tweet: widget._tweet));
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => CommentsScreen(
+                        tweet: widget._tweet,
+                        currentUserProfile: widget._currentUserProfile,
+                      )),
+            );
+          },
+          child: Container(
+            child: Column(
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Avatar(userProfile: profile, radius: 24),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (widget._tweet.isRetweet)
+                            FutureBuilder<UserProfileEntity>(
+                                future: _getRetweetersProfile,
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return SizedBox.shrink();
+                                  }
+                                  final retweetersProfile = snapshot.data;
+                                  return Row(
+                                    children: [
+                                      Icon(EvilIcons.retweet,
+                                          size: 18, color: theme.accentColor),
+                                      SizedBox(width: 5),
+                                      Text(
+                                        retweetersProfile?.userName ==
+                                                widget._currentUserProfile?.userName
+                                            ? 'You Retweeted'
+                                            : '${retweetersProfile?.userName} Retweeted',
+                                        style: TextStyle(
+                                          fontSize: Config.xMargin(context, 3.2),
+                                          color: theme.accentColor,
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                }),
+                          Row(
+                            children: [
+                              Text(
+                                profile.name,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: Config.xMargin(context, 4.5),
+                                ),
+                              ),
+                              SizedBox(width: 5),
+                              Text(
+                                profile.userName,
+                                style: TextStyle(
+                                  color: theme.accentColor,
+                                ),
+                              ),
+                              Text(' . '),
+                              Text(
+                                widget._tweet.getTime(widget._tweet.timeStamp),
+                                style: TextStyle(
+                                  color: theme.accentColor,
+                                ),
+                              ),
+                              Spacer(),
+                              Icon(Icons.expand_more_outlined,
+                                  color: theme.accentColor),
+                            ],
                           ),
-                        ),
-                      ],
-                    ),
-                  Row(
-                    children: [
-                      Text(
-                        _tweet.userProfile.name,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: Config.xMargin(context, 4.5),
-                        ),
+                          if (widget._tweet.isComment)
+                            FutureBuilder<UserProfileEntity>(
+                                future: _getCommentto,
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return SizedBox.shrink();
+                                  }
+                                  final commentTo = snapshot.data;
+                                  return Row(
+                                    children: [
+                                      Text(
+                                        'Replying to ',
+                                        style: TextStyle(color: theme.accentColor),
+                                      ),
+                                      Text(
+                                        commentTo.userName,
+                                        style: TextStyle(color: theme.primaryColor),
+                                      ),
+                                    ],
+                                  );
+                                }),
+                          Text(widget._tweet.message),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Icon(EvilIcons.comment,
+                                  color: theme.accentColor, size: 22),
+                              SizedBox(width: 5),
+                              Text(
+                                '${widget._tweet.noOfComments}',
+                                style: TextStyle(
+                                  color: theme.accentColor,
+                                ),
+                              ),
+                              Spacer(),
+                              RetweetButton(
+                                  profile: widget._currentUserProfile,
+                                  tweet: widget._tweet),
+                              Spacer(),
+                              LikeButton(
+                                  profile: widget._currentUserProfile,
+                                  tweet: widget._tweet),
+                              Spacer(),
+                              IconButton(
+                                icon: Icon(
+                                  EvilIcons.share_google,
+                                  color: theme.accentColor,
+                                ),
+                                onPressed: () {},
+                              ),
+                              Spacer(),
+                            ],
+                          )
+                        ],
                       ),
-                      SizedBox(width: 5),
-                      Text(
-                        _tweet.userProfile.userName,
-                        style: TextStyle(
-                          color: theme.accentColor,
-                        ),
-                      ),
-                      Text(' . '),
-                      Text(
-                        _tweet.getTime(_tweet.timeStamp),
-                        style: TextStyle(
-                          color: theme.accentColor,
-                        ),
-                      ),
-                      Spacer(),
-                      Icon(Icons.expand_more_outlined,
-                          color: theme.accentColor),
-                    ],
-                  ),
-                  if (_tweet.isComment)
-                    Row(
-                      children: [
-                        Text(
-                          'Replying to ',
-                          style: TextStyle(color: theme.accentColor),
-                        ),
-                        Text(
-                          _tweet.commentTo.userProfile.userName,
-                          style: TextStyle(color: theme.primaryColor),
-                        ),
-                      ],
-                    ),
-                  Text(_tweet.message),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Icon(EvilIcons.comment, color: theme.accentColor),
-                      SizedBox(width: 5),
-                      Text(
-                        '${_tweet.noOfComments}',
-                        style: TextStyle(
-                          color: theme.accentColor,
-                        ),
-                      ),
-                      Spacer(),
-                      RetweetButton(profile: _profile, tweet: _tweet),
-                      SizedBox(width: 5),
-                      Text(
-                        '${_tweet.retweetedBy.length},',
-                        style: TextStyle(
-                          color: isTweetRetweeted
-                              ? Colors.greenAccent
-                              : theme.accentColor,
-                        ),
-                      ),
-                      Spacer(),
-                      LikeButton(profile: _profile, tweet: _tweet),
-                      SizedBox(width: 5),
-                      Text('${_tweet.likedBy.length}',
-                          style: TextStyle(
-                            color:
-                                isTweetLiked ? Colors.red : theme.accentColor,
-                          )),
-                      Spacer(),
-                      IconButton(
-                        icon: Icon(
-                          EvilIcons.share_google,
-                          color: theme.accentColor,
-                        ),
-                        onPressed: () {},
-                      ),
-                      Spacer(),
-                    ],
-                  )
-                ],
-              ),
-            )
-          ],
-        ),
-      ),
+                    )
+                  ],
+                ),
+                Divider(thickness: 1, height: 15)
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

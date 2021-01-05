@@ -91,15 +91,13 @@ class ProfileRepositoryImpl implements ProfileRepository {
       final userCollection = firebaseFirestore.collection('users');
       print(1);
       final followers = userProfile.followers;
-      followers?.add(UserProfileModel.fromEntity(currentUser).toMap());
+      followers?.add(firebaseFirestore.collection('users').doc(currentUser.id));
       print(2);
-      // userProfile = userProfile.copyWith(followers: followers);
       await userCollection.doc(userProfile.id).update({'followers': followers});
       print(3);
       final following = currentUser.following;
-      following?.add(UserProfileModel.fromEntity(userProfile).toMap());
+      following?.add(firebaseFirestore.collection('users').doc(userProfile.id));
       print(4);
-      // currentUser = currentUser.copyWith(following: following);
       await userCollection.doc(currentUser.id).update({'following': following});
       print(5);
       return Right(true);
@@ -117,11 +115,11 @@ class ProfileRepositoryImpl implements ProfileRepository {
     final userCollection = firebaseFirestore.collection('users');
     try {
       final followers = userProfile.followers;
-      followers?.removeWhere((element) => element['id'] == currentUser.id);
+      followers?.removeWhere((element) => element.path.endsWith(currentUser.id));
       // userProfile = userProfile.copyWith(followers: followers);
       await userCollection.doc(userProfile.id).update({'followers': followers});
       final following = currentUser.following;
-      following?.removeWhere((element) => element['id'] == currentUser.id);
+      following?.removeWhere((element) => element.path.endsWith(userProfile.id));
       // currentUser = currentUser.copyWith(following: following);
       await userCollection.doc(currentUser.id).update({'following': following});
       return Right(true);

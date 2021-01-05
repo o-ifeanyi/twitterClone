@@ -8,9 +8,10 @@ class TweetingEvent extends Equatable {
 }
 
 class SendTweet extends TweetingEvent {
+  final UserProfileEntity userProfile;
   final TweetEntity tweet;
 
-  SendTweet({this.tweet});
+  SendTweet({this.tweet, this.userProfile});
 
   @override
   List<Object> get props => [tweet];
@@ -57,10 +58,11 @@ class UndoRetweet extends TweetingEvent {
 }
 
 class Comment extends TweetingEvent {
+    final UserProfileEntity userProfile;
   final TweetEntity tweet;
   final TweetEntity comment;
 
-  Comment({this.tweet, this.comment});
+  Comment({this.tweet, this.comment, this.userProfile});
 
   @override
   List<Object> get props => [tweet, comment];

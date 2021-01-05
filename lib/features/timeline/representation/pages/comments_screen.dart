@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fc_twitter/core/util/config.dart';
+import 'package:fc_twitter/features/profile/data/model/user_profile_model.dart';
 import 'package:fc_twitter/features/profile/domain/entity/user_profile_entity.dart';
 import 'package:fc_twitter/features/timeline/representation/widgets/comment_builder.dart';
 import 'package:fc_twitter/features/timeline/representation/widgets/comment_item.dart';
@@ -13,11 +14,22 @@ import 'package:flutter_icons/flutter_icons.dart';
 
 class CommentsScreen extends StatefulWidget {
   static const String pageId = '/commentsScreen';
+
+  CommentsScreen({
+    TweetEntity tweet,
+    UserProfileEntity currentUserProfile,
+  })  : _tweet = tweet,
+        _currentUserProfile = currentUserProfile;
+
+  final TweetEntity _tweet;
+  final UserProfileEntity _currentUserProfile;
   @override
   _CommentsScreenState createState() => _CommentsScreenState();
 }
 
 class _CommentsScreenState extends State<CommentsScreen> {
+  Future<UserProfileEntity> _getUserProfile;
+
   final _replyController = TextEditingController();
   final _replyNode = FocusNode();
 
@@ -26,12 +38,11 @@ class _CommentsScreenState extends State<CommentsScreen> {
     context.read<TweetingBloc>().add(
           Comment(
             tweet: tweet,
+            userProfile: profile,
             comment: TweetEntity(
-              id: null,
-              userProfile: profile,
+              id: tweet.id,
               message: _replyController.text,
               isComment: true,
-              commentTo: tweet,
               timeStamp: Timestamp.now(),
             ),
           ),
@@ -41,11 +52,17 @@ class _CommentsScreenState extends State<CommentsScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _getUserProfile = widget._tweet.userProfile
+          .get()
+          .then((snapshot) => UserProfileModel.fromDoc(snapshot));
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final arguments = ModalRoute.of(context).settings.arguments as Map;
-    final TweetEntity _tweet = arguments['tweet'];
-    final UserProfileEntity _profile = arguments['profile'];
+
     final isTyping = _replyNode.hasFocus;
 
     return Scaffold(
@@ -60,106 +77,122 @@ class _CommentsScreenState extends State<CommentsScreen> {
           style: TextStyle(color: theme.textTheme.headline6.color),
         ),
       ),
-      body: Stack(
-        children: [
-          Container(
-            height: MediaQuery.of(context).size.height,
-            // color: Colors.blue,
-            margin: EdgeInsets.only(
-                bottom: Config.yMargin(context, _replyNode.hasFocus ? 15 : 7)),
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  CommentItem(tweet: _tweet, profile: _profile),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Icon(EvilIcons.comment),
-                      RetweetButton(
-                        profile: _profile,
-                        tweet: _tweet,
-                      ),
-                      LikeButton(
-                        profile: _profile,
-                        tweet: _tweet,
-                      ),
-                      IconButton(
-                        icon: Icon(EvilIcons.share_google),
-                        onPressed: () {},
-                      ),
-                    ],
-                  ),
-                  Divider(thickness: 2, height: 0),
-                  CommentBuilder(),
-                ],
-              ),
-            ),
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (isTyping)
-                    Row(
+      body: FutureBuilder<UserProfileEntity>(
+          future: _getUserProfile,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return SizedBox.shrink();
+            }
+            final _tweetProfile = snapshot.data;
+            return Stack(
+              children: [
+                Container(
+                  height: MediaQuery.of(context).size.height,
+                  margin: EdgeInsets.only(
+                      bottom: Config.yMargin(
+                          context, _replyNode.hasFocus ? 15 : 7)),
+                  child: SingleChildScrollView(
+                    child: Column(
                       children: [
-                        Text(
-                          'Replying to ',
-                          style: TextStyle(color: theme.accentColor),
+                        CommentItem(
+                          tweet: widget._tweet,
+                          profile: widget._currentUserProfile,
+                          tweetProfile: _tweetProfile,
                         ),
-                        Text(
-                          _tweet.userProfile.userName,
-                          style: TextStyle(color: theme.primaryColor),
+                        Divider(thickness: 2, height: 0),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Icon(EvilIcons.comment,
+                                color: theme.accentColor, size: 22),
+                            RetweetButton(
+                              profile: widget._currentUserProfile,
+                              tweet: widget._tweet,
+                            ),
+                            LikeButton(
+                              profile: widget._currentUserProfile,
+                              tweet: widget._tweet,
+                            ),
+                            IconButton(
+                              icon: Icon(EvilIcons.share_google),
+                              onPressed: () {},
+                            ),
+                          ],
                         ),
+                        Divider(thickness: 2, height: 0),
+                        CommentBuilder(),
                       ],
                     ),
-                  TextField(
-                    controller: _replyController,
-                    focusNode: _replyNode,
-                    textInputAction: TextInputAction.newline,
-                    decoration: InputDecoration(
-                      hintText: 'Tweet your reply',
-                    ),
                   ),
-                  SizedBox(height: 5),
-                  if (isTyping)
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                ),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 10),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(
-                          AntDesign.picture,
-                          size: 32,
-                          color: theme.primaryColor,
-                        ),
-                        GestureDetector(
-                          onTap: () => sendReply(_profile, _tweet),
-                          child: Container(
-                            alignment: Alignment.center,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 6),
-                            width: Config.xMargin(context, 20),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(30),
-                              color: theme.primaryColor,
-                            ),
-                            child: Text(
-                              'Reply',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: Config.xMargin(context, 4)),
-                            ),
+                        if (isTyping)
+                          Row(
+                            children: [
+                              Text(
+                                'Replying to ',
+                                style: TextStyle(color: theme.accentColor),
+                              ),
+                              Text(
+                                _tweetProfile.userName,
+                                style: TextStyle(color: theme.primaryColor),
+                              ),
+                            ],
+                          ),
+                        TextField(
+                          controller: _replyController,
+                          focusNode: _replyNode,
+                          textInputAction: TextInputAction.newline,
+                          decoration: InputDecoration(
+                            hintText: 'Tweet your reply',
                           ),
                         ),
+                        SizedBox(height: 5),
+                        if (isTyping)
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Icon(
+                                AntDesign.picture,
+                                size: 32,
+                                color: theme.primaryColor,
+                              ),
+                              GestureDetector(
+                                onTap: () =>
+                                    sendReply(widget._currentUserProfile, widget._tweet),
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 6),
+                                  width: Config.xMargin(context, 20),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(30),
+                                    color: theme.primaryColor,
+                                  ),
+                                  child: Text(
+                                    'Reply',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: Config.xMargin(context, 4)),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
                       ],
-                    )
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          }),
     );
   }
 }

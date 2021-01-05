@@ -10,7 +10,7 @@ import 'package:flutter_icons/flutter_icons.dart';
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-     final profile = context.select<ProfileBloc, UserProfileEntity>(
+    final profile = context.select<ProfileBloc, UserProfileEntity>(
       (bloc) => bloc.state.userProfile,
     );
     return Scaffold(
@@ -48,13 +48,14 @@ class HomeScreen extends StatelessWidget {
               stream: state.tweetStream,
               builder: (context, snapshot) {
                 return snapshot.hasData
-                    ? ListView.separated(
+                    ? ListView.builder(
                         padding: const EdgeInsets.all(10),
                         itemCount: snapshot.data.length,
-                        separatorBuilder: (BuildContext context, int index) =>
-                            Divider(thickness: 1, height: 15),
-                        itemBuilder: (ctx, index) =>
-                            TweetItem(tweet: snapshot.data[index], profile: profile),
+                        itemBuilder: (ctx, index) => TweetItem(
+                          key: ValueKey(snapshot.data[index].id),
+                          tweet: snapshot.data[index],
+                          profile: profile,
+                        ),
                       )
                     : Center(child: Text('nothing'));
               },

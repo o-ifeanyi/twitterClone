@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fc_twitter/core/util/config.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fc_twitter/features/profile/domain/entity/user_profile_entity.dart';
@@ -37,8 +38,8 @@ class RetweetButton extends StatelessWidget {
   }
 
   bool isRetweeted(UserProfileEntity profile, TweetEntity tweet) {
-    // return false;
-    return tweet.retweetedBy.any((element) => element['id'] == profile?.id);
+    return tweet.retweetedBy.any(
+        (element) => (element as DocumentReference).path.endsWith(profile.id));
   }
 
   @override
@@ -98,13 +99,27 @@ class RetweetButton extends StatelessWidget {
           ),
         );
       },
-      child: Icon(
-        isTweetRetweeted
-            ? MaterialCommunityIcons.twitter_retweet
-            : EvilIcons.retweet,
-        color: isTweetRetweeted
-            ? Colors.greenAccent
-            : Theme.of(context).accentColor,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            isTweetRetweeted
+                ? MaterialCommunityIcons.twitter_retweet
+                : EvilIcons.retweet,
+            color: isTweetRetweeted
+                ? Colors.greenAccent
+                : Theme.of(context).accentColor,
+          ),
+          SizedBox(width: 5),
+          Text(
+            '${_tweet.retweetedBy.length},',
+            style: TextStyle(
+              color: isTweetRetweeted
+                  ? Colors.greenAccent
+                  : Theme.of(context).accentColor,
+            ),
+          ),
+        ],
       ),
     );
   }

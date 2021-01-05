@@ -35,7 +35,8 @@ void main() {
       when(collectionReference.add(any))
           .thenAnswer((_) => Future.value(documentReference));
 
-      final response = await tweetingRepositoryImpl.sendTweet(tweetEntity);
+      final response =
+          await tweetingRepositoryImpl.sendTweet(userProfile, tweetEntity);
 
       expect(response, Right(true));
     });
@@ -43,7 +44,8 @@ void main() {
     test('should return a TweetingFailure when it fails', () async {
       when(mockFirebaseFirestore.collection(any)).thenThrow(Error());
 
-      final response = await tweetingRepositoryImpl.sendTweet(tweetEntity);
+      final response =
+          await tweetingRepositoryImpl.sendTweet(userProfile, tweetEntity);
 
       expect(response, Left(TweetingFailure(message: 'Failed to send tweet')));
     });
@@ -56,7 +58,8 @@ void main() {
       when(collectionReference.doc(any)).thenReturn(documentReference);
       when(documentReference.update(any)).thenAnswer((_) => null);
 
-      final result = await tweetingRepositoryImpl.likeTweet(userProfile, tweetEntity);
+      final result =
+          await tweetingRepositoryImpl.likeTweet(userProfile, tweetEntity);
 
       expect(result, equals(Right(true)));
     });
@@ -64,7 +67,8 @@ void main() {
     test('should return a TweetingFailure when it fails', () async {
       when(mockFirebaseFirestore.collection(any)).thenThrow(Error());
 
-      final response = await tweetingRepositoryImpl.likeTweet(userProfile, tweetEntity);
+      final response =
+          await tweetingRepositoryImpl.likeTweet(userProfile, tweetEntity);
 
       expect(response, Left(TweetingFailure(message: 'Failed to like tweet')));
     });
@@ -77,7 +81,8 @@ void main() {
       when(collectionReference.doc(any)).thenReturn(documentReference);
       when(documentReference.update(any)).thenAnswer((_) => null);
 
-      final result = await tweetingRepositoryImpl.unlikeTweet(userProfile, tweetEntity);
+      final result =
+          await tweetingRepositoryImpl.unlikeTweet(userProfile, tweetEntity);
 
       expect(result, equals(Right(true)));
     });
@@ -85,7 +90,8 @@ void main() {
     test('should return a TweetingFailure when it fails', () async {
       when(mockFirebaseFirestore.collection(any)).thenThrow(Error());
 
-      final response = await tweetingRepositoryImpl.unlikeTweet(userProfile, tweetEntity);
+      final response =
+          await tweetingRepositoryImpl.unlikeTweet(userProfile, tweetEntity);
 
       expect(response, Left(TweetingFailure(message: 'Failed to like tweet')));
     });
@@ -98,7 +104,8 @@ void main() {
       when(collectionReference.doc(any)).thenReturn(documentReference);
       when(documentReference.update(any)).thenAnswer((_) => null);
 
-      final result = await tweetingRepositoryImpl.retweet(userProfile, tweetEntity);
+      final result =
+          await tweetingRepositoryImpl.retweet(userProfile, tweetEntity);
 
       expect(result, equals(Right(true)));
     });
@@ -106,7 +113,8 @@ void main() {
     test('should return a TweetingFailure when it fails', () async {
       when(mockFirebaseFirestore.collection(any)).thenThrow(Error());
 
-      final response = await tweetingRepositoryImpl.retweet(userProfile, tweetEntity);
+      final response =
+          await tweetingRepositoryImpl.retweet(userProfile, tweetEntity);
 
       expect(response, Left(TweetingFailure(message: 'Failed to retweet')));
     });
@@ -119,7 +127,8 @@ void main() {
       when(collectionReference.doc(any)).thenReturn(documentReference);
       when(documentReference.update(any)).thenAnswer((_) => null);
 
-      final result = await tweetingRepositoryImpl.undoRetweet(userProfile, tweetEntity);
+      final result =
+          await tweetingRepositoryImpl.undoRetweet(userProfile, tweetEntity);
 
       expect(result, equals(Right(true)));
     });
@@ -127,7 +136,8 @@ void main() {
     test('should return a TweetingFailure when it fails', () async {
       when(mockFirebaseFirestore.collection(any)).thenThrow(Error());
 
-      final response = await tweetingRepositoryImpl.undoRetweet(userProfile, tweetEntity);
+      final response =
+          await tweetingRepositoryImpl.undoRetweet(userProfile, tweetEntity);
 
       expect(response, Left(TweetingFailure(message: 'Failed to retweet')));
     });
@@ -140,7 +150,10 @@ void main() {
       when(collectionReference.doc(any)).thenReturn(documentReference);
       when(documentReference.update(any)).thenAnswer((_) => null);
 
-      final result = await tweetingRepositoryImpl.comment(tweetEntity, tweetEntity);
+      final result = await tweetingRepositoryImpl.comment(
+          userProfile: userProfile,
+          tweet: tweetEntity,
+          commentTweet: tweetEntity);
 
       expect(result, equals(Right(true)));
     });
@@ -148,7 +161,10 @@ void main() {
     test('should return a TweetingFailure when it fails', () async {
       when(mockFirebaseFirestore.collection(any)).thenThrow(Error());
 
-      final response = await tweetingRepositoryImpl.comment(tweetEntity, tweetEntity);
+      final response = await tweetingRepositoryImpl.comment(
+          userProfile: userProfile,
+          tweet: tweetEntity,
+          commentTweet: tweetEntity);
 
       expect(response, Left(TweetingFailure(message: 'Failed to comment')));
     });

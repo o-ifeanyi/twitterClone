@@ -1,16 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
-import 'package:fc_twitter/features/profile/domain/entity/user_profile_entity.dart';
 import 'package:flutter/cupertino.dart';
 
 class TweetEntity extends Equatable {
   final String id;
-  final UserProfileEntity userProfile;
-  final UserProfileEntity retweetersProfile;
+  final DocumentReference userProfile;
+  final DocumentReference retweetersProfile;
   final String message;
-  final TweetEntity quoteTo;
-  final TweetEntity retweetTo;
-  final TweetEntity commentTo;
+  final DocumentReference quoteTo;
+  final DocumentReference retweetTo;
+  final DocumentReference commentTo;
   final int noOfComments;
   final List retweetedBy;
   final List likedBy;
@@ -20,7 +19,7 @@ class TweetEntity extends Equatable {
 
   TweetEntity({
     @required this.id,
-    @required this.userProfile,
+    this.userProfile,
     @required this.message,
     @required this.timeStamp,
     this.retweetersProfile,
@@ -35,17 +34,18 @@ class TweetEntity extends Equatable {
   });
 
   TweetEntity copyWith({
+    DocumentReference userProfile,
     List likedBy,
     List retweetedBy,
     int noOfComments,
-    TweetEntity commentTo,
-    TweetEntity retweetTo,
+    DocumentReference commentTo,
+    DocumentReference retweetTo,
     bool isRetweet,
-    UserProfileEntity retweetersProfile,
+    DocumentReference retweetersProfile,
   }) {
     return TweetEntity(
       id: this.id,
-      userProfile: this.userProfile,
+      userProfile: userProfile ?? this.userProfile,
       message: this.message,
       quoteTo: this.quoteTo,
       commentTo: commentTo ?? this.commentTo,
@@ -74,5 +74,5 @@ class TweetEntity extends Equatable {
   }
 
   @override
-  List<Object> get props => [userProfile.id, userProfile.userName, message, timeStamp];
+  List<Object> get props => [message, timeStamp];
 }

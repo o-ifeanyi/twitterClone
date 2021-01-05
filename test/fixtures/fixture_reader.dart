@@ -10,6 +10,12 @@ import 'package:fc_twitter/features/settings/domain/entity/theme_entity.dart';
 import 'package:fc_twitter/features/tweeting/data/model/tweet_model.dart';
 import 'package:fc_twitter/features/tweeting/domain/entity/tweet_entity.dart';
 
+import '../mocks/mocks.dart';
+
+final _mockDocumentReference = MockDocumentReference();
+
+MockDocumentReference get docReference => _mockDocumentReference;
+
 Map<String, dynamic> themeJsonFixture() => {
       'isLight': true,
       'isDim': false,
@@ -71,7 +77,7 @@ String jsonUserProfileFixture() => json.encode({
 
 TweetEntity tweetEntityFixture() => TweetEntity(
       id: '001',
-      userProfile: userProfileEntityFixture(),
+      userProfile: docReference,
       message: 'hello world',
       noOfComments: 0,
       isComment: false,
@@ -81,7 +87,7 @@ TweetEntity tweetEntityFixture() => TweetEntity(
 
 TweetModel tweetModelFixture() => TweetModel(
       id: '001',
-      userProfile: userProfileEntityFixture(),
+      userProfile: docReference,
       message: 'hello world',
       noOfComments: 0,
       isComment: false,
@@ -90,7 +96,7 @@ TweetModel tweetModelFixture() => TweetModel(
     );
 
 String jsonTweetFixture() => json.encode({
-      "userProfile": json.decode(jsonUserProfileFixture()),
+      // "userProfile": json.decode(jsonUserProfileFixture()),
       "message": "hello world",
       "timeStamp": "0s",
       "noOfComments": 0,

@@ -4,6 +4,7 @@ import 'package:fc_twitter/features/settings/representation/bloc/theme_bloc.dart
 import 'package:fc_twitter/features/timeline/representation/bloc/comment_bloc.dart';
 import 'package:fc_twitter/features/tweeting/representation/bloc/bloc.dart';
 import 'package:fc_twitter/features/timeline/representation/pages/comments_screen.dart';
+import 'package:fc_twitter/features/tweeting/representation/bloc/tweet_media_bloc.dart';
 import 'package:fc_twitter/injection_container.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -29,6 +30,7 @@ void main() async {
         BlocProvider<CommentBloc>(create: (_) => sl<CommentBloc>()),
         BlocProvider<TweetingBloc>(create: (_) => sl<TweetingBloc>()),
         BlocProvider<ProfileBloc>(create: (_) => sl<ProfileBloc>()),
+        BlocProvider<TweetMediaBloc>(create: (_) => sl<TweetMediaBloc>()),
         BlocProvider<ThemeBloc>(create: (_) => sl<ThemeBloc>()),
       ],
       child: MyApp(),

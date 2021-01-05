@@ -1,5 +1,7 @@
 import 'package:fc_twitter/core/util/config.dart';
+import 'package:fc_twitter/features/tweeting/representation/bloc/tweet_media_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 
 class MediaPreview extends StatelessWidget {
@@ -37,7 +39,9 @@ class MediaPreview extends StatelessWidget {
               color: Theme.of(context).primaryColor,
               size: Config.xMargin(context, 10),
             ),
-            onPressed: () {},
+            onPressed: () {
+              context.read<TweetMediaBloc>().add(PickMultiImages());
+            },
           ),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
@@ -53,7 +57,10 @@ class MediaPreview extends StatelessWidget {
           margin: const EdgeInsets.symmetric(horizontal: 5),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-            color: Theme.of(context).accentColor,
+            border: Border.all(
+              width: 0.5,
+              color: Theme.of(context).accentColor,
+            ),
           ),
         );
     }

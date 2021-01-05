@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fc_twitter/features/profile/domain/entity/user_profile_entity.dart';
 import 'package:fc_twitter/features/tweeting/domain/entity/tweet_entity.dart';
 import 'package:fc_twitter/features/tweeting/representation/bloc/bloc.dart';
@@ -18,8 +19,7 @@ class LikeButton extends StatelessWidget {
   final TweetEntity _tweet;
 
   bool isLiked(UserProfileEntity profile, TweetEntity tweet) {
-    // return false;
-    return tweet.likedBy.any((element) => element['id'] == profile?.id);
+    return tweet.likedBy.any((element) => (element as DocumentReference).path.endsWith(profile.id));
   }
 
   @override
@@ -40,12 +40,24 @@ class LikeButton extends StatelessWidget {
                     ),
             );
       },
-      child: Icon(
-        isTweetLiked
-            ? MaterialCommunityIcons.heart
-            : MaterialCommunityIcons.heart_outline,
-        size: 18,
-        color: isTweetLiked ? Colors.red : Theme.of(context).accentColor,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            isTweetLiked
+                ? MaterialCommunityIcons.heart
+                : MaterialCommunityIcons.heart_outline,
+            size: 18,
+            color: isTweetLiked ? Colors.red : Theme.of(context).accentColor,
+          ),
+          SizedBox(width: 5),
+          Text(
+            '${_tweet.likedBy.length}',
+            style: TextStyle(
+              color: isTweetLiked ? Colors.red : Theme.of(context).accentColor,
+            ),
+          ),
+        ],
       ),
     );
   }

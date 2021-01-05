@@ -19,7 +19,6 @@ class _TweetScreenState extends State<TweetScreen> {
   final _tweetController = TextEditingController();
   final _focusNode = FocusNode();
   String _tweetMessage = '';
-  UserProfileEntity _userProfile;
   TweetEntity _tweet;
 
   @override
@@ -34,10 +33,8 @@ class _TweetScreenState extends State<TweetScreen> {
       (bloc) => bloc.state.userProfile,
     );
     if (profile != null) {
-      _userProfile = profile;
       _tweet = TweetEntity(
         id: null,
-        userProfile: _userProfile,
         message: _tweetMessage,
         timeStamp: Timestamp.now(),
       );
@@ -59,7 +56,7 @@ class _TweetScreenState extends State<TweetScreen> {
             onTap: _tweetMessage.isEmpty
                 ? null
                 : () {
-                    context.read<TweetingBloc>().add(SendTweet(tweet: _tweet));
+                    context.read<TweetingBloc>().add(SendTweet(tweet: _tweet, userProfile: profile));
                     _focusNode.unfocus();
                     Navigator.pop(context);
                   },

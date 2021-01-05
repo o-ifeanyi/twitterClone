@@ -13,7 +13,7 @@ class TweetingBloc extends Bloc<TweetingEvent, TweetingState> {
   @override
   Stream<TweetingState> mapEventToState(TweetingEvent event) async* {
     if (event is SendTweet) {
-      yield* _mapSendTweetToState(event.tweet);
+      yield* _mapSendTweetToState(event.userProfile, event.tweet);
     }
     if (event is LikeTweet) {
       yield* _mapLikeTweetToState(event.userProfile, event.tweet);
@@ -28,12 +28,13 @@ class TweetingBloc extends Bloc<TweetingEvent, TweetingState> {
       yield* _mapUndoRetweetToState(event.userProfile, event.tweet);
     }
     if (event is Comment) {
-      yield* _mapCommentToState(event.tweet, event.comment);
+      yield* _mapCommentToState(event.userProfile ,event.tweet, event.comment);
     }
   }
 
-  Stream<TweetingState> _mapSendTweetToState(TweetEntity tweet) async* {
-    final sendEither = await tweetingRepository.sendTweet(tweet);
+  Stream<TweetingState> _mapSendTweetToState(
+      UserProfileEntity userProfile, TweetEntity tweet) async* {
+    final sendEither = await tweetingRepository.sendTweet(userProfile, tweet);
     yield* sendEither.fold(
       (failure) async* {
         yield TweetingError(message: failure.message);
@@ -78,15 +79,15 @@ class TweetingBloc extends Bloc<TweetingEvent, TweetingState> {
         yield TweetingError(message: failure.message);
       },
       (success) async* {
-        tweet = tweet.copyWith(isRetweet: true, retweetersProfile: userProfile, retweetTo: tweet);
-        yield* _mapSendTweetToState(tweet);
+        yield TweetingComplete();
       },
     );
   }
 
   Stream<TweetingState> _mapUndoRetweetToState(
       UserProfileEntity userProfile, TweetEntity tweet) async* {
-    final retweetEither = await tweetingRepository.undoRetweet(userProfile, tweet);
+    final retweetEither =
+        await tweetingRepository.undoRetweet(userProfile, tweet);
     yield* retweetEither.fold(
       (failure) async* {
         yield TweetingError(message: failure.message);
@@ -98,8 +99,10 @@ class TweetingBloc extends Bloc<TweetingEvent, TweetingState> {
     );
   }
 
-  Stream<TweetingState> _mapCommentToState(TweetEntity tweet, TweetEntity comment) async* {
-    final retweetEither = await tweetingRepository.comment(tweet, comment);
+  Stream<TweetingState> _mapCommentToState(UserProfileEntity userProfile,
+      TweetEntity tweet, TweetEntity comment) async* {
+    final retweetEither = await tweetingRepository.comment(
+        userProfile: userProfile, tweet: tweet, commentTweet: comment);
     yield* retweetEither.fold(
       (failure) async* {
         yield TweetingError(message: failure.message);
