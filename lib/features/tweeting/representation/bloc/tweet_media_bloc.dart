@@ -8,6 +8,8 @@ class TweetMediaEvent extends Equatable {
   List<Object> get props => [];
 }
 
+class Reset extends TweetMediaEvent {}
+
 class PickMultiImages extends TweetMediaEvent {}
 
 class TweetMediaState extends Equatable {
@@ -20,7 +22,7 @@ class InitialMediaState extends TweetMediaState {}
 class MultiImagesLoaded extends TweetMediaState {
   final List<Asset> images;
 
-  MultiImagesLoaded(this.images);
+  MultiImagesLoaded({this.images});
 }
 
 class TweetMediaBloc extends Bloc<TweetMediaEvent, TweetMediaState> {
@@ -30,6 +32,9 @@ class TweetMediaBloc extends Bloc<TweetMediaEvent, TweetMediaState> {
 
   @override
   Stream<TweetMediaState> mapEventToState(TweetMediaEvent event) async* {
+    if (event is Reset) {
+      yield InitialMediaState();
+    }
     if (event is PickMultiImages) {
       yield* _mapPickMultiImagesToState();
     }
@@ -38,10 +43,11 @@ class TweetMediaBloc extends Bloc<TweetMediaEvent, TweetMediaState> {
   Stream<TweetMediaState> _mapPickMultiImagesToState() async* {
     final imagesEither = await tweetingRepository.pickImages();
     yield* imagesEither.fold((failure) async* {
+      yield InitialMediaState();
       print(failure.message);
     }, (images) async* {
-      print('done');
-      yield MultiImagesLoaded(images);
+      yield InitialMediaState();
+      yield MultiImagesLoaded(images: images);
     });
   }
 }

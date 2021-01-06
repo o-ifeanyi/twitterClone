@@ -4,6 +4,7 @@ import 'package:fc_twitter/features/tweeting/domain/repository/tweeting_reposito
 import 'package:fc_twitter/features/tweeting/representation/bloc/tweeting_event.dart';
 import 'package:fc_twitter/features/tweeting/representation/bloc/tweeting_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
 
 class TweetingBloc extends Bloc<TweetingEvent, TweetingState> {
   final TweetingRepository tweetingRepository;
@@ -28,12 +29,20 @@ class TweetingBloc extends Bloc<TweetingEvent, TweetingState> {
       yield* _mapUndoRetweetToState(event.userProfile, event.tweet);
     }
     if (event is Comment) {
-      yield* _mapCommentToState(event.userProfile ,event.tweet, event.comment);
+      yield* _mapCommentToState(event.userProfile, event.tweet, event.comment);
     }
   }
 
   Stream<TweetingState> _mapSendTweetToState(
       UserProfileEntity userProfile, TweetEntity tweet) async* {
+    if (tweet.hasMedia && tweet.images[0].runtimeType == Asset) {
+      final imageLinks = await tweetingRepository.uploadImages(tweet.images);
+      yield* imageLinks.fold((failure) async* {
+        yield TweetingError(message: failure.message);
+      }, (imageLinks) async* {
+        tweet = tweet.copyWith(images: imageLinks);
+      });
+    }
     final sendEither = await tweetingRepository.sendTweet(userProfile, tweet);
     yield* sendEither.fold(
       (failure) async* {

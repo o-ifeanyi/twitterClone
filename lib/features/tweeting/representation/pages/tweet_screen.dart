@@ -2,12 +2,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fc_twitter/core/util/config.dart';
 import 'package:fc_twitter/features/profile/domain/entity/user_profile_entity.dart';
 import 'package:fc_twitter/features/profile/representation/bloc/profile_bloc.dart';
+import 'package:fc_twitter/features/profile/representation/widgets/avatar.dart';
 import 'package:fc_twitter/features/tweeting/domain/entity/tweet_entity.dart';
 import 'package:fc_twitter/features/tweeting/representation/bloc/bloc.dart';
+import 'package:fc_twitter/features/tweeting/representation/bloc/tweet_media_bloc.dart';
 import 'package:fc_twitter/features/tweeting/representation/widgets/media_preview.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
 
 class TweetScreen extends StatefulWidget {
   static const String pageId = '/composeTweet';
@@ -29,6 +33,8 @@ class _TweetScreenState extends State<TweetScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isPotrait =
+        MediaQuery.of(context).orientation == Orientation.portrait;
     final profile = context.select<ProfileBloc, UserProfileEntity>(
       (bloc) => bloc.state.userProfile,
     );
@@ -41,6 +47,7 @@ class _TweetScreenState extends State<TweetScreen> {
     }
 
     return Scaffold(
+      resizeToAvoidBottomInset: isPotrait,
       appBar: AppBar(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
@@ -56,7 +63,9 @@ class _TweetScreenState extends State<TweetScreen> {
             onTap: _tweetMessage.isEmpty
                 ? null
                 : () {
-                    context.read<TweetingBloc>().add(SendTweet(tweet: _tweet, userProfile: profile));
+                    context
+                        .read<TweetingBloc>()
+                        .add(SendTweet(tweet: _tweet, userProfile: profile));
                     _focusNode.unfocus();
                     Navigator.pop(context);
                   },
@@ -80,69 +89,115 @@ class _TweetScreenState extends State<TweetScreen> {
           )
         ],
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      body: Stack(
         children: [
-          Row(
+          Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.all(10),
-                child: CircleAvatar(),
-              ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 5),
-                  child: TextField(
-                    controller: _tweetController,
-                    focusNode: _focusNode,
-                    textInputAction: TextInputAction.newline,
-                    keyboardType: TextInputType.multiline,
-                    textCapitalization: TextCapitalization.sentences,
-                    maxLines: 8,
-                    decoration: InputDecoration(
-                      hintText: 'What\'s happening?',
-                      border: InputBorder.none,
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: profile != null
+                        ? Avatar(userProfile: profile, radius: 20)
+                        : CircleAvatar(),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 5),
+                      child: TextField(
+                        controller: _tweetController,
+                        focusNode: _focusNode,
+                        textInputAction: TextInputAction.newline,
+                        keyboardType: TextInputType.multiline,
+                        textCapitalization: TextCapitalization.sentences,
+                        maxLines: 2,
+                        decoration: InputDecoration(
+                          hintText: 'What\'s happening?',
+                          border: InputBorder.none,
+                        ),
+                        onChanged: (val) {
+                          setState(() {
+                            _tweetMessage = val;
+                          });
+                        },
+                      ),
                     ),
-                    onChanged: (val) {
-                      setState(() {
-                        _tweetMessage = val;
-                      });
+                  ),
+                ],
+              ),
+              SingleChildScrollView(
+                child: Container(
+                  padding: const EdgeInsets.only(left: 60),
+                  height: 200,
+                  width: MediaQuery.of(context).size.width,
+                  child: BlocBuilder<TweetMediaBloc, TweetMediaState>(
+                    builder: (context, state) {
+                      if (state is MultiImagesLoaded) {
+                        _tweet = _tweet.copyWith(
+                          images: state.images,
+                          hasMedia: state.images.isNotEmpty,
+                        );
+                        return ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: state.images.length,
+                          itemBuilder: (context, index) => Container(
+                            constraints: BoxConstraints(
+                              maxWidth: 340,
+                              maxHeight:
+                                  state.images[index].originalHeight.toDouble(),
+                            ),
+                            padding: const EdgeInsets.only(right: 10),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(15),
+                              child: AssetThumb(
+                                asset: state.images[index],
+                                width: state.images[index].originalWidth,
+                                height: state.images[index].originalHeight,
+                              ),
+                            ),
+                          ),
+                        );
+                      }
+                      return SizedBox.shrink();
                     },
                   ),
                 ),
               ),
+              Spacer(),
+              Divider(thickness: 2, height: 0),
+              FlatButton.icon(
+                onPressed: () {},
+                icon: Icon(
+                  MaterialCommunityIcons.earth,
+                  color: Theme.of(context).primaryColor,
+                ),
+                label: Text(
+                  'Everyone can reply',
+                  style: TextStyle(
+                      color: Theme.of(context).primaryColor,
+                      fontSize: Config.xMargin(context, 3.5),
+                      fontWeight: FontWeight.w400),
+                ),
+              ),
+              Divider(thickness: 2, height: 0),
             ],
           ),
-          Spacer(),
-          // twwet.isEmpty and device 1s potrait
           if (_tweetMessage.isEmpty)
-            Container(
-              height: Config.yMargin(context, 10),
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: List.generate(15, (index) {
-                  return MediaPreview(index);
-                }),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                margin: const EdgeInsets.only(bottom: 60),
+                height: Config.yMargin(context, 10),
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: List.generate(15, (index) {
+                    return MediaPreview(index);
+                  }),
+                ),
               ),
             ),
-          SizedBox(height: 10),
-          Divider(thickness: 2, height: 0),
-          FlatButton.icon(
-            onPressed: () {},
-            icon: Icon(
-              MaterialCommunityIcons.earth,
-              color: Theme.of(context).primaryColor,
-            ),
-            label: Text(
-              'Everyone can reply',
-              style: TextStyle(
-                  color: Theme.of(context).primaryColor,
-                  fontSize: Config.xMargin(context, 3.5),
-                  fontWeight: FontWeight.w400),
-            ),
-          ),
-          Divider(thickness: 2, height: 0),
         ],
       ),
     );

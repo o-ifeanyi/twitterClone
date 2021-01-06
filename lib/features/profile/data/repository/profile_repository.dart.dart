@@ -89,17 +89,12 @@ class ProfileRepositoryImpl implements ProfileRepository {
   ) async {
     try {
       final userCollection = firebaseFirestore.collection('users');
-      print(1);
       final followers = userProfile.followers;
       followers?.add(firebaseFirestore.collection('users').doc(currentUser.id));
-      print(2);
       await userCollection.doc(userProfile.id).update({'followers': followers});
-      print(3);
       final following = currentUser.following;
       following?.add(firebaseFirestore.collection('users').doc(userProfile.id));
-      print(4);
       await userCollection.doc(currentUser.id).update({'following': following});
-      print(5);
       return Right(true);
     } catch (error) {
       print(error);
@@ -116,11 +111,9 @@ class ProfileRepositoryImpl implements ProfileRepository {
     try {
       final followers = userProfile.followers;
       followers?.removeWhere((element) => element.path.endsWith(currentUser.id));
-      // userProfile = userProfile.copyWith(followers: followers);
       await userCollection.doc(userProfile.id).update({'followers': followers});
       final following = currentUser.following;
       following?.removeWhere((element) => element.path.endsWith(userProfile.id));
-      // currentUser = currentUser.copyWith(following: following);
       await userCollection.doc(currentUser.id).update({'following': following});
       return Right(true);
     } catch (error) {

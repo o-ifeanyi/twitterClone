@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:fc_twitter/core/error/failure.dart';
@@ -5,12 +7,15 @@ import 'package:fc_twitter/features/profile/domain/entity/user_profile_entity.da
 import 'package:fc_twitter/features/tweeting/data/model/tweet_model.dart';
 import 'package:fc_twitter/features/tweeting/domain/entity/tweet_entity.dart';
 import 'package:fc_twitter/features/tweeting/domain/repository/tweeting_repository.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 
 class TweetingRepositoryImpl implements TweetingRepository {
   final FirebaseFirestore firebaseFirestore;
+  final FirebaseStorage firebaseStorage;
 
-  TweetingRepositoryImpl({this.firebaseFirestore})
+  TweetingRepositoryImpl({this.firebaseFirestore, this.firebaseStorage})
       : assert(firebaseFirestore != null);
 
   @override
@@ -52,13 +57,12 @@ class TweetingRepositoryImpl implements TweetingRepository {
   Future<Either<TweetingFailure, bool>> sendTweet(
       UserProfileEntity userProfile, TweetEntity tweet) async {
     try {
-      tweet = tweet.copyWith(
-          userProfile:
-              firebaseFirestore.collection('users').doc(userProfile.id));
-      await firebaseFirestore
-          .collection('tweets')
-          .add(TweetModel.fromEntity(tweet).toMap());
-      return Right(true);
+    tweet = tweet.copyWith(
+        userProfile: firebaseFirestore.collection('users').doc(userProfile.id));    
+    await firebaseFirestore
+        .collection('tweets')
+        .add(TweetModel.fromEntity(tweet).toMap());
+    return Right(true);
     } catch (error) {
       print(error);
       return Left(TweetingFailure(message: 'Failed to send tweet'));
@@ -175,7 +179,7 @@ class TweetingRepositoryImpl implements TweetingRepository {
   }
 
   @override
-  Future<Either<TweetingFailure, List<Asset>>> pickImages() async{
+  Future<Either<TweetingFailure, List<Asset>>> pickImages() async {
     List<Asset> resultList = List<Asset>();
 
     try {
@@ -196,6 +200,30 @@ class TweetingRepositoryImpl implements TweetingRepository {
     } catch (error) {
       print(error);
       return Left(TweetingFailure(message: 'Failed to load images'));
+    }
+  }
+
+  @override
+  Future<Either<TweetingFailure, List<String>>> uploadImages(
+      List<Asset> images) async {
+    try {
+      final List<String> imageLinks = [];
+      for (var image in images) {
+        final filePath =
+            await FlutterAbsolutePath.getAbsolutePath(image.identifier);
+        final ref = firebaseStorage
+            .ref()
+            .child('tweetImages')
+            .child(image.hashCode.toString());
+        await ref.putFile(File(filePath)).whenComplete(() async {
+          final imageUrl = await ref.getDownloadURL();
+          imageLinks.add(imageUrl);
+        });
+      }
+      return Right(imageLinks);
+    } catch (error) {
+      print(error);
+      return Left(TweetingFailure(message: 'Failed to upload image'));
     }
   }
 }

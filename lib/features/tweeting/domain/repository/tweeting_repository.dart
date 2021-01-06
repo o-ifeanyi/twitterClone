@@ -24,4 +24,6 @@ abstract class TweetingRepository {
       UserProfileEntity userProfile, TweetEntity tweet);
 
   Future<Either<TweetingFailure, List<Asset>>> pickImages();
+
+  Future<Either<TweetingFailure, List<String>>> uploadImages(List<Asset> images);
 }

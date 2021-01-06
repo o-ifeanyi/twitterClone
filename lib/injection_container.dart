@@ -107,6 +107,7 @@ Future<void> init() async {
   // Repository
   sl.registerLazySingleton<TweetingRepository>(() => TweetingRepositoryImpl(
         firebaseFirestore: sl(),
+        firebaseStorage: sl(),
       ));
 
   // Feature Setting

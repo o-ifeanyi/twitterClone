@@ -67,8 +67,10 @@ void main() {
         'commentTo': null,
         'retweetTo': null,
         'noOfComments': 0,
+        'images': null,
         'retweetedBy': null,
         'likedBy': null,
+        'hasMedia': false,
         'isRetweet': false,
         'isComment': false
       };

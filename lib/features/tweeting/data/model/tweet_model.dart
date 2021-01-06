@@ -13,9 +13,11 @@ class TweetModel extends TweetEntity {
       noOfComments,
       commentTo,
       retweetTo,
+      images,
       retweetedBy,
       likedBy,
       isRetweet,
+      hasMedia,
       isComment})
       : super(
           id: id,
@@ -27,9 +29,11 @@ class TweetModel extends TweetEntity {
           retweetTo: retweetTo,
           commentTo: commentTo,
           noOfComments: noOfComments,
+          images: images,
           retweetedBy: retweetedBy,
           likedBy: likedBy,
           isRetweet: isRetweet,
+          hasMedia: hasMedia,
           isComment: isComment,
         );
 
@@ -45,8 +49,10 @@ class TweetModel extends TweetEntity {
       retweetTo: data['retweetTo'],
       commentTo: data['commentTo'],
       noOfComments: data['noOfComments'] ?? 0,
+      images: data['images'] ?? List(),
       retweetedBy: data['retweetedBy'] ?? List(),
       likedBy: data['likedBy'] ?? List(),
+      hasMedia: data['hasMedia'] ?? false,
       isRetweet: data['isRetweet'] ?? false,
       isComment: data['isComment'] ?? false,
     );
@@ -63,8 +69,10 @@ class TweetModel extends TweetEntity {
       quoteTo: tweet.quoteTo,
       commentTo: tweet.commentTo,
       noOfComments: tweet.noOfComments,
+      images: tweet.images,
       retweetedBy: tweet.retweetedBy,
       likedBy: tweet.likedBy,
+      hasMedia: tweet.hasMedia,
       isRetweet: tweet.isRetweet,
       isComment: tweet.isComment,
     );
@@ -81,8 +89,10 @@ class TweetModel extends TweetEntity {
       commentTo: data['commentTo'],
       retweetTo: data['retweetTo'],
       noOfComments: data['noOfComments'] ?? 0,
+      images: data['images'] ?? List(),
       retweetedBy: data['retweetedBy'] ?? List(),
       likedBy: data['likedBy'] ?? List(),
+      hasMedia: data['hasMedia'] ?? false,
       isRetweet: data['isRetweet'] ?? false,
       isComment: data['isComment'] ?? false,
     );
@@ -99,8 +109,10 @@ class TweetModel extends TweetEntity {
       retweetTo: this.retweetTo,
       commentTo: this.commentTo,
       noOfComments: this.noOfComments,
+      images: this.images,
       retweetedBy: this.retweetedBy,
       likedBy: this.likedBy,
+      hasMedia: this.hasMedia,
       isRetweet: this.isRetweet,
       isComment: this.isComment,
     );
@@ -117,8 +129,10 @@ class TweetModel extends TweetEntity {
       'commentTo': this.commentTo,
       'retweetTo': this.retweetTo,
       'noOfComments': this.noOfComments,
+      'images': this.images,
       'retweetedBy': this.retweetedBy,
       'likedBy': this.likedBy,
+      'hasMedia': this.hasMedia,
       'isRetweet': this.isRetweet,
       'isComment': this.isComment,
     };

@@ -82,6 +82,7 @@ TweetEntity tweetEntityFixture() => TweetEntity(
       noOfComments: 0,
       isComment: false,
       isRetweet: false,
+      hasMedia: false,
       timeStamp: Timestamp(0, 0),
     );
 
@@ -92,6 +93,7 @@ TweetModel tweetModelFixture() => TweetModel(
       noOfComments: 0,
       isComment: false,
       isRetweet: false,
+      hasMedia: false,
       timeStamp: Timestamp(0, 0),
     );
 

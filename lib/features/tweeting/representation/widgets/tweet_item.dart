@@ -6,6 +6,7 @@ import 'package:fc_twitter/features/timeline/representation/bloc/comment_bloc.da
 import 'package:fc_twitter/features/tweeting/data/model/tweet_model.dart';
 import 'package:fc_twitter/features/tweeting/domain/entity/tweet_entity.dart';
 import 'package:fc_twitter/features/timeline/representation/pages/comments_screen.dart';
+import 'package:fc_twitter/features/tweeting/representation/widgets/tweet_image_display.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -106,11 +107,13 @@ class _TweetItemState extends State<TweetItem> {
                                       SizedBox(width: 5),
                                       Text(
                                         retweetersProfile?.userName ==
-                                                widget._currentUserProfile?.userName
+                                                widget._currentUserProfile
+                                                    ?.userName
                                             ? 'You Retweeted'
                                             : '${retweetersProfile?.userName} Retweeted',
                                         style: TextStyle(
-                                          fontSize: Config.xMargin(context, 3.2),
+                                          fontSize:
+                                              Config.xMargin(context, 3.2),
                                           color: theme.accentColor,
                                         ),
                                       ),
@@ -158,16 +161,20 @@ class _TweetItemState extends State<TweetItem> {
                                     children: [
                                       Text(
                                         'Replying to ',
-                                        style: TextStyle(color: theme.accentColor),
+                                        style:
+                                            TextStyle(color: theme.accentColor),
                                       ),
                                       Text(
                                         commentTo.userName,
-                                        style: TextStyle(color: theme.primaryColor),
+                                        style: TextStyle(
+                                            color: theme.primaryColor),
                                       ),
                                     ],
                                   );
                                 }),
                           Text(widget._tweet.message),
+                          if (widget._tweet.hasMedia)
+                            TweetImageDisplay(tweet: widget._tweet),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
