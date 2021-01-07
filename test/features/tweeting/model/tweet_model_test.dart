@@ -59,6 +59,7 @@ void main() {
 
       final expected = {
         'id': '001',
+        'userId': '001',
         'message': 'hello world',
         'timeStamp': Timestamp(0, 0),
         'userProfile': docReference,

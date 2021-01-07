@@ -8,6 +8,7 @@ class TweetModel extends TweetEntity {
       @required userProfile,
       @required message,
       @required timeStamp,
+      userId,
       retweetersProfile,
       quoteTo,
       noOfComments,
@@ -21,6 +22,7 @@ class TweetModel extends TweetEntity {
       isComment})
       : super(
           id: id,
+          userId: userId,
           userProfile: userProfile,
           retweetersProfile: retweetersProfile,
           message: message,
@@ -41,6 +43,7 @@ class TweetModel extends TweetEntity {
     final data = snapShot.data();
     return TweetModel(
       id: snapShot.id,
+      userId: data['userId'],
       userProfile: data['userProfile'],
       message: data['message'],
       timeStamp: data['timeStamp'],
@@ -61,6 +64,7 @@ class TweetModel extends TweetEntity {
   factory TweetModel.fromEntity(TweetEntity tweet) {
     return TweetModel(
       id: tweet.id,
+      userId: tweet.userId,
       userProfile: tweet.userProfile,
       retweetersProfile: tweet.retweetersProfile,
       message: tweet.message,
@@ -81,6 +85,7 @@ class TweetModel extends TweetEntity {
   factory TweetModel.fromMap(Map<String, dynamic> data) {
     return TweetModel(
       id: data['id'],
+      userId: data['userId'],
       userProfile: data['userProfile'],
       retweetersProfile: data['retweetersProfile'],
       message: data['message'],
@@ -101,6 +106,7 @@ class TweetModel extends TweetEntity {
   TweetEntity toEntity() {
     return TweetEntity(
       id: this.id,
+      userId: this.userId,
       userProfile: this.userProfile,
       retweetersProfile: this.retweetersProfile,
       message: this.message,
@@ -121,6 +127,7 @@ class TweetModel extends TweetEntity {
   Map<String, dynamic> toMap() {
     return {
       'id': this.id,
+      'userId': this.userId,
       'userProfile': this.userProfile,
       'retweetersProfile': this.retweetersProfile,
       'message': this.message,

@@ -88,6 +88,7 @@ TweetEntity tweetEntityFixture() => TweetEntity(
 
 TweetModel tweetModelFixture() => TweetModel(
       id: '001',
+      userId: '001',
       userProfile: docReference,
       message: 'hello world',
       noOfComments: 0,

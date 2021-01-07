@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:fc_twitter/core/error/failure.dart';
+import 'package:fc_twitter/core/model/stream_converter.dart';
 import 'package:fc_twitter/features/profile/data/model/user_profile_model.dart';
 import 'package:fc_twitter/features/profile/domain/entity/user_profile_entity.dart';
 import 'package:fc_twitter/features/profile/domain/repository/profile_repository.dart.dart';
@@ -119,6 +120,19 @@ class ProfileRepositoryImpl implements ProfileRepository {
     } catch (error) {
       print(error);
       return Left(ProfileFailure());
+    }
+  }
+
+  @override
+  Future<Either<ProfileFailure, StreamConverter>> fetchUserTweets(String userId) async{
+    try {
+      final collection = firebaseFirestore
+          .collection('tweets')
+          .where('userId', isEqualTo: userId);
+      return Right(StreamConverter(query: collection));
+    } catch (error) {
+      print(error);
+      return Left(ProfileFailure(message: 'Failed to load user tweets'));
     }
   }
 }

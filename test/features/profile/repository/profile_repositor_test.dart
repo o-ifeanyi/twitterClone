@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:fc_twitter/core/error/failure.dart';
+import 'package:fc_twitter/core/model/stream_converter.dart';
 import 'package:fc_twitter/features/profile/data/repository/profile_repository.dart.dart';
 import 'package:fc_twitter/features/profile/domain/entity/user_profile_entity.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -159,6 +160,24 @@ void main() {
       final result = await profileRepositoryImpl.unfollow(userEntity, userEntity);
 
       expect(result, Left(ProfileFailure()));
+    });
+  });
+
+  group('profile repository fetchUserTweets', () {
+    test('should return a StreamConverter when successful', () async {
+      when(firebaseFirestore.collection(any)).thenReturn(collectionReference);
+
+      final result = await profileRepositoryImpl.fetchUserTweets(userEntity.id);
+
+      expect(result, Right(StreamConverter()));
+    });
+
+    test('should return ProfileFailure when it fails', () async {
+      when(firebaseFirestore.collection(any)).thenThrow(Error());
+
+      final result = await profileRepositoryImpl.fetchUserTweets(userEntity.id);
+
+      expect(result, Left(ProfileFailure(message: 'Failed to load user tweets')));
     });
   });
 }

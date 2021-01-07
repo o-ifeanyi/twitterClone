@@ -24,6 +24,8 @@ class MockProfileRepository extends Mock implements ProfileRepository {}
 // Externals
 class MockCollectionReference extends Mock implements CollectionReference {}
 
+class MockQuery extends Mock implements Query {}
+
 class MockFirebaseFirestore extends Mock implements FirebaseFirestore {}
 
 class MockFirebaseStorage  extends Mock implements FirebaseStorage {}

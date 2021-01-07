@@ -40,7 +40,7 @@ void main() {
           .thenAnswer((_) => streamController.stream);
       when(mockTimeLineRepository.fetchComments(any)).thenAnswer(
         (_) => Future.value(
-            Right(StreamConverter(commentQuery: collectionReference))),
+            Right(StreamConverter(query: collectionReference))),
       );
 
       final expectations = [

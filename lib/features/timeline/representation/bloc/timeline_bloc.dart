@@ -82,7 +82,7 @@ class TimeLineBloc extends Bloc<TimeLineEvent, TimeLineState> {
         //   print(event);
         // });
         yield FetchingTweetComplete(
-            tweetStream: converter.toTweetEntity(converter.collection));
+            tweetStream: converter.fromCollection(converter.collection));
       },
     );
   }

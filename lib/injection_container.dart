@@ -6,6 +6,7 @@ import 'package:fc_twitter/features/authentication/data/repository/user_reposito
 import 'package:fc_twitter/features/authentication/representation/bloc/bloc.dart';
 import 'package:fc_twitter/features/profile/data/repository/profile_repository.dart.dart';
 import 'package:fc_twitter/features/profile/representation/bloc/image_picker_bloc.dart';
+import 'package:fc_twitter/features/profile/representation/bloc/profile_tabs_bloc.dart';
 import 'package:fc_twitter/features/settings/representation/bloc/theme_bloc.dart';
 import 'package:fc_twitter/features/timeline/data/repository/timeline_repository.dart';
 import 'package:fc_twitter/features/timeline/representation/bloc/comment_bloc.dart';
@@ -78,9 +79,15 @@ Future<void> init() async {
         profileRepository: sl(),
       ));
 
+  sl.registerFactory(() => ProfileTabBloc(
+        initialState: sl(),
+        profileRepository: sl(),
+      ));
+
   // State
   sl.registerLazySingleton<ProfileState>(() => ProfileInitialState());
   sl.registerLazySingleton<ImagePickerState>(() => InitialImagePickerState());
+  sl.registerLazySingleton<ProfileTabState>(() => InitialProfileTabState());
 
   // Repository
   sl.registerLazySingleton<ProfileRepository>(() => ProfileRepositoryImpl(

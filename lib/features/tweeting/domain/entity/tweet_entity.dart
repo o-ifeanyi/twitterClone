@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 
 class TweetEntity extends Equatable {
   final String id;
+  final String userId;
   final DocumentReference userProfile;
   final DocumentReference retweetersProfile;
   final String message;
@@ -21,6 +22,7 @@ class TweetEntity extends Equatable {
 
   TweetEntity({
     @required this.id,
+    this.userId,
     this.userProfile,
     @required this.message,
     @required this.timeStamp,
@@ -51,6 +53,7 @@ class TweetEntity extends Equatable {
   }) {
     return TweetEntity(
       id: this.id,
+      userId: this.userId,
       userProfile: userProfile ?? this.userProfile,
       message: this.message,
       quoteTo: this.quoteTo,

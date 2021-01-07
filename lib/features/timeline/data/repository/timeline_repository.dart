@@ -29,7 +29,7 @@ class TimeLineRepositoryImpl implements TimeLineRepository {
       final collection = firebaseFirestore
           .collection('comments')
           .where('id', isEqualTo: tweet.isRetweet ? tweet.retweetTo.id : tweet.id);
-      return Right(StreamConverter(commentQuery: collection));
+      return Right(StreamConverter(query: collection));
     } catch (error) {
       print(error);
       return Left(TimeLineFailure(message: 'Failed to load comments'));

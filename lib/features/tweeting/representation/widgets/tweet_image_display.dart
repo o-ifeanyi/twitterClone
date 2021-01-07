@@ -13,21 +13,19 @@ class TweetImageDisplay extends StatelessWidget {
 
   Widget _buildImage(BuildContext context, String url) {
     final theme = Theme.of(context);
-    return Container(
-      child: CachedNetworkImage(
-        imageUrl: url,
-        imageBuilder: (_, imageProvider) => Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
-          ),
+    return CachedNetworkImage(
+      imageUrl: url,
+      imageBuilder: (_, imageProvider) => Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
         ),
-        placeholder: (_, __) => Container(
-          decoration: BoxDecoration(
-            color: theme.accentColor,
-          ),
-        ),
-        fit: BoxFit.cover,
       ),
+      placeholder: (_, __) => Container(
+        decoration: BoxDecoration(
+          color: theme.accentColor,
+        ),
+      ),
+      fit: BoxFit.cover,
     );
   }
 
@@ -58,12 +56,13 @@ class TweetImageDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(top: 8),
-      height: Config.yMargin(context, 25),
-      child: ClipRRect(
-          borderRadius: BorderRadius.circular(10),
-          child: _getLayout(context, tweet)),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(10),
+      child: Container(
+        margin: const EdgeInsets.only(top: 8),
+        height: Config.yMargin(context, 25),
+        child: _getLayout(context, tweet),
+      ),
     );
   }
 }

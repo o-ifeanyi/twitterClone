@@ -41,7 +41,9 @@ class _TweetScreenState extends State<TweetScreen> {
     if (profile != null) {
       _tweet = TweetEntity(
         id: null,
+        userId: profile.id,
         message: _tweetMessage,
+        hasMedia: false,
         timeStamp: Timestamp.now(),
       );
     }
