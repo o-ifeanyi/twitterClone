@@ -111,10 +111,12 @@ class ProfileRepositoryImpl implements ProfileRepository {
     final userCollection = firebaseFirestore.collection('users');
     try {
       final followers = userProfile.followers;
-      followers?.removeWhere((element) => element.path.endsWith(currentUser.id));
+      followers
+          ?.removeWhere((element) => element.path.endsWith(currentUser.id));
       await userCollection.doc(userProfile.id).update({'followers': followers});
       final following = currentUser.following;
-      following?.removeWhere((element) => element.path.endsWith(userProfile.id));
+      following
+          ?.removeWhere((element) => element.path.endsWith(userProfile.id));
       await userCollection.doc(currentUser.id).update({'following': following});
       return Right(true);
     } catch (error) {
@@ -124,15 +126,63 @@ class ProfileRepositoryImpl implements ProfileRepository {
   }
 
   @override
-  Future<Either<ProfileFailure, StreamConverter>> fetchUserTweets(String userId) async{
+  Future<Either<ProfileFailure, StreamConverter>> fetchUserTweets(
+      String userId) async {
     try {
       final collection = firebaseFirestore
           .collection('tweets')
-          .where('userId', isEqualTo: userId);
+          .where('userId', isEqualTo: userId)
+          .where('isComment', isEqualTo: false);
       return Right(StreamConverter(query: collection));
     } catch (error) {
       print(error);
       return Left(ProfileFailure(message: 'Failed to load user tweets'));
+    }
+  }
+
+  @override
+  Future<Either<ProfileFailure, StreamConverter>> fetchUserReplies(
+      String userId) async {
+    try {
+      final collection = firebaseFirestore
+          .collection('tweets')
+          .where('userId', isEqualTo: userId)
+          .where('isComment', isEqualTo: true);
+      return Right(StreamConverter(query: collection));
+    } catch (error) {
+      print(error);
+      return Left(ProfileFailure(message: 'Failed to load user replies'));
+    }
+  }
+
+  @override
+  Future<Either<ProfileFailure, StreamConverter>> fetchUserLikes(
+      String userId) async {
+    try {
+      final userDocReference =
+          firebaseFirestore.collection('users').doc(userId);
+      final collection = firebaseFirestore
+          .collection('tweets')
+          .where('likedBy', arrayContains: userDocReference);
+      return Right(StreamConverter(query: collection));
+    } catch (error) {
+      print(error);
+      return Left(ProfileFailure(message: 'Failed to load user likes'));
+    }
+  }
+
+  @override
+  Future<Either<ProfileFailure, StreamConverter>> fetchUserMedias(
+      String userId) async {
+    try {
+      final collection = firebaseFirestore
+          .collection('tweets')
+          .where('userId', isEqualTo: userId)
+          .where('hasMedia', isEqualTo: true);
+      return Right(StreamConverter(query: collection));
+    } catch (error) {
+      print(error);
+      return Left(ProfileFailure(message: 'Failed to load user medias'));
     }
   }
 }

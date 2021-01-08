@@ -21,6 +21,7 @@ void main() {
   ProfileRepositoryImpl profileRepositoryImpl;
   CollectionReference collectionReference;
   DocumentReference documentReference;
+  Query query;
   DocumentSnapshot documentSnapshot;
   UserProfileEntity userEntity;
 
@@ -29,6 +30,7 @@ void main() {
     firebaseFirestore = MockFirebaseFirestore();
     firebaseStorage = MockFirebaseStorage();
     reference = MockReference();
+    query = MockQuery();
     collectionReference = MockCollectionReference();
     documentReference = MockDocumentReference();
     documentSnapshot = MockDocumentSnapshot();
@@ -166,6 +168,7 @@ void main() {
   group('profile repository fetchUserTweets', () {
     test('should return a StreamConverter when successful', () async {
       when(firebaseFirestore.collection(any)).thenReturn(collectionReference);
+      when(collectionReference.where(any, isEqualTo: anyNamed('isEqualTo'))).thenReturn(query);
 
       final result = await profileRepositoryImpl.fetchUserTweets(userEntity.id);
 
@@ -178,6 +181,62 @@ void main() {
       final result = await profileRepositoryImpl.fetchUserTweets(userEntity.id);
 
       expect(result, Left(ProfileFailure(message: 'Failed to load user tweets')));
+    });
+  });
+
+  group('profile repository fetchUserReplies', () {
+    test('should return a StreamConverter when successful', () async {
+      when(firebaseFirestore.collection(any)).thenReturn(collectionReference);
+      when(collectionReference.where(any, isEqualTo: anyNamed('isEqualTo'))).thenReturn(query);
+
+      final result = await profileRepositoryImpl.fetchUserReplies(userEntity.id);
+
+      expect(result, Right(StreamConverter()));
+    });
+
+    test('should return ProfileFailure when it fails', () async {
+      when(firebaseFirestore.collection(any)).thenThrow(Error());
+
+      final result = await profileRepositoryImpl.fetchUserReplies(userEntity.id);
+
+      expect(result, Left(ProfileFailure(message: 'Failed to load user replies')));
+    });
+  });
+
+  group('profile repository fetchUserMedias', () {
+    test('should return a StreamConverter when successful', () async {
+      when(firebaseFirestore.collection(any)).thenReturn(collectionReference);
+      when(collectionReference.where(any, isEqualTo: anyNamed('isEqualTo'))).thenReturn(query);
+
+      final result = await profileRepositoryImpl.fetchUserMedias(userEntity.id);
+
+      expect(result, Right(StreamConverter()));
+    });
+
+    test('should return ProfileFailure when it fails', () async {
+      when(firebaseFirestore.collection(any)).thenThrow(Error());
+
+      final result = await profileRepositoryImpl.fetchUserMedias(userEntity.id);
+
+      expect(result, Left(ProfileFailure(message: 'Failed to load user medias')));
+    });
+  });
+
+  group('profile repository fetchUserLikes', () {
+    test('should return a StreamConverter when successful', () async {
+      when(firebaseFirestore.collection(any)).thenReturn(collectionReference);
+
+      final result = await profileRepositoryImpl.fetchUserLikes(userEntity.id);
+
+      expect(result, Right(StreamConverter()));
+    });
+
+    test('should return ProfileFailure when it fails', () async {
+      when(firebaseFirestore.collection(any)).thenThrow(Error());
+
+      final result = await profileRepositoryImpl.fetchUserLikes(userEntity.id);
+
+      expect(result, Left(ProfileFailure(message: 'Failed to load user likes')));
     });
   });
 }

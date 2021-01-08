@@ -1,5 +1,4 @@
 import 'package:fc_twitter/features/profile/domain/entity/user_profile_entity.dart';
-import 'package:fc_twitter/features/profile/representation/bloc/profile_bloc.dart';
 import 'package:fc_twitter/features/profile/representation/bloc/profile_tabs_bloc.dart';
 import 'package:fc_twitter/features/tweeting/domain/entity/tweet_entity.dart';
 import 'package:fc_twitter/features/tweeting/representation/widgets/tweet_item.dart';
@@ -7,9 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class UserTabTweets extends StatefulWidget {
-  final String userId;
+  final UserProfileEntity userProfile;
 
-  UserTabTweets({@required this.userId});
+  UserTabTweets({@required this.userProfile});
   @override
   _UserTabTweetsState createState() => _UserTabTweetsState();
 }
@@ -19,21 +18,21 @@ class _UserTabTweetsState extends State<UserTabTweets> {
   void initState() {
     super.initState();
     Future.delayed(Duration.zero).then((_) {
-      context.read<ProfileTabBloc>().add(FetchUserTweets(userId: widget.userId));
+      context
+          .read<ProfileTabBloc>()
+          .add(FetchUserTweets(userId: widget.userProfile.id));
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final profile = context.select<ProfileBloc, UserProfileEntity>(
-      (bloc) => bloc.state.userProfile,
-    );
     return BlocBuilder<ProfileTabBloc, ProfileTabState>(
       buildWhen: (_, currentState) {
         return currentState is FetchingUserTweetsComplete;
       },
       builder: (context, state) {
-        if (state is FetchingContent) {
+        if (state is FetchingUserTweets) {
+          print('fetching');
           return Center(child: CircularProgressIndicator());
         }
         if (state is FetchingUserTweetsFailed) {
@@ -50,10 +49,10 @@ class _UserTabTweetsState extends State<UserTabTweets> {
                       itemBuilder: (ctx, index) => TweetItem(
                         key: ValueKey(snapshot.data[index].id),
                         tweet: snapshot.data[index],
-                        profile: profile,
+                        profile: widget.userProfile,
                       ),
                     )
-                  : Center(child: Text('No tweets'));
+                  : Center(child: Text('No Tweets'));
             },
           );
         }

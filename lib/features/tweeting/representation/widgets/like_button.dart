@@ -18,13 +18,14 @@ class LikeButton extends StatelessWidget {
   final UserProfileEntity _profile;
   final TweetEntity _tweet;
 
-  bool isLiked(UserProfileEntity profile, TweetEntity tweet) {
-    return tweet.likedBy.any((element) => (element as DocumentReference).path.endsWith(profile.id));
+  bool isLiked() {
+    if (_tweet == null || _profile == null) return false;
+    return _tweet.likedBy.any((element) => (element as DocumentReference).path.endsWith(_profile?.id));
   }
 
   @override
   Widget build(BuildContext context) {
-    bool isTweetLiked = isLiked(_profile, _tweet);
+    bool isTweetLiked = isLiked();
     return GestureDetector(
       onTap: () {
         if (_profile == null) return;

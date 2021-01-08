@@ -37,14 +37,15 @@ class RetweetButton extends StatelessWidget {
     );
   }
 
-  bool isRetweeted(UserProfileEntity profile, TweetEntity tweet) {
-    return tweet.retweetedBy.any(
-        (element) => (element as DocumentReference).path.endsWith(profile.id));
+  bool isRetweeted() {
+    if (_tweet == null || _profile == null) return false;
+    return _tweet.retweetedBy.any(
+        (element) => (element as DocumentReference).path.endsWith(_profile.id));
   }
 
   @override
   Widget build(BuildContext context) {
-    bool isTweetRetweeted = isRetweeted(_profile, _tweet);
+    bool isTweetRetweeted = isRetweeted();
     return GestureDetector(
       onTap: () {
         showModalBottomSheet(

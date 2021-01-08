@@ -40,9 +40,11 @@ class _CommentsScreenState extends State<CommentsScreen> {
             tweet: tweet,
             userProfile: profile,
             comment: TweetEntity(
-              id: tweet.id,
+              id: null,
+              userId: profile.id,
               message: _replyController.text,
               isComment: true,
+              isRetweet: false,
               timeStamp: Timestamp.now(),
             ),
           ),
@@ -63,7 +65,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    final isTyping = _replyNode.hasFocus;
+    bool isTyping = _replyNode.hasFocus;
 
     return Scaffold(
       appBar: AppBar(

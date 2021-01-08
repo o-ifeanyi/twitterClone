@@ -28,21 +28,21 @@ class TweetingRepositoryImpl implements TweetingRepository {
       comments++;
       tweet = tweet.copyWith(noOfComments: comments);
       await firebaseFirestore
-          .collection(tweet.isComment ? 'comments' : 'tweets')
+          .collection('tweets')
           .doc(tweet.id)
           .update({'noOfComments': comments});
       commentTweet = commentTweet.copyWith(
           commentTo: firebaseFirestore
-              .collection(tweet.isComment ? 'comments' : 'tweets')
+              .collection('tweets')
               .doc(tweet.id),
           userProfile:
               firebaseFirestore.collection('users').doc(userProfile.id));
       await firebaseFirestore
-          .collection('comments')
+          .collection('tweets')
           .add(TweetModel.fromEntity(commentTweet).toMap());
       if (tweet.isRetweet) {
         await firebaseFirestore
-            .collection(tweet.isComment ? 'comments' : 'tweets')
+            .collection('tweets')
             .doc(tweet.retweetTo.id)
             .update({'noOfComments': comments});
       }
@@ -77,13 +77,12 @@ class TweetingRepositoryImpl implements TweetingRepository {
       likedBy?.add(firebaseFirestore.collection('users').doc(userProfile.id));
       tweet = tweet.copyWith(likedBy: likedBy);
       await firebaseFirestore
-          .collection(
-              tweet.isComment && !tweet.isRetweet ? 'comments' : 'tweets')
+          .collection('tweets')
           .doc(tweet.id)
           .update({'likedBy': likedBy});
       if (tweet.isRetweet) {
         await firebaseFirestore
-            .collection(tweet.isComment ? 'comments' : 'tweets')
+            .collection('tweets')
             .doc(tweet.retweetTo.id)
             .update({'likedBy': likedBy});
       }
@@ -103,13 +102,12 @@ class TweetingRepositoryImpl implements TweetingRepository {
           (element as DocumentReference).path.endsWith(userProfile.id));
       tweet = tweet.copyWith(likedBy: likedBy);
       await firebaseFirestore
-          .collection(
-              tweet.isComment && !tweet.isRetweet ? 'comments' : 'tweets')
+          .collection('tweets')
           .doc(tweet.id)
           .update({'likedBy': likedBy});
       if (tweet.isRetweet) {
         await firebaseFirestore
-            .collection(tweet.isComment ? 'comments' : 'tweets')
+            .collection('tweets')
             .doc(tweet.retweetTo.id)
             .update({'likedBy': likedBy});
       }
@@ -129,14 +127,14 @@ class TweetingRepositoryImpl implements TweetingRepository {
           ?.add(firebaseFirestore.collection('users').doc(userProfile.id));
       tweet = tweet.copyWith(retweetedBy: retweetedBy);
       await firebaseFirestore
-          .collection(
-              tweet.isComment && !tweet.isRetweet ? 'comments' : 'tweets')
+          .collection('tweets')
           .doc(tweet.id)
           .update({'retweetedBy': retweetedBy});
       tweet = tweet.copyWith(
           isRetweet: true,
+          commentTo: null, // if its a comment the retweet also show in comments
           retweetTo: firebaseFirestore
-              .collection(tweet.isComment ? 'comments' : 'tweets')
+              .collection('tweets')
               .doc(tweet.id),
           retweetersProfile:
               firebaseFirestore.collection('users').doc(userProfile.id));
@@ -159,13 +157,12 @@ class TweetingRepositoryImpl implements TweetingRepository {
           (element as DocumentReference).path.endsWith(userProfile.id));
       tweet = tweet.copyWith(retweetedBy: retweetedBy);
       await firebaseFirestore
-          .collection(
-              tweet.isComment && !tweet.isRetweet ? 'comments' : 'tweets')
+          .collection('tweets')
           .doc(tweet.id)
           .update({'retweetedBy': retweetedBy});
       if (tweet.isRetweet ?? false) {
         await firebaseFirestore
-            .collection(tweet.isComment ? 'comments' : 'tweets')
+            .collection('tweets')
             .doc(tweet.retweetTo.id)
             .update({'retweetedBy': retweetedBy});
         // await undoRetweet(userProfile, tweet.retweetTo);

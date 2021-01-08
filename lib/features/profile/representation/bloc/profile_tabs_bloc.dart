@@ -15,11 +15,23 @@ class FetchUserTweets extends ProfileTabEvent {
   FetchUserTweets({@required this.userId});
 }
 
-class FetchUserReplies extends ProfileTabEvent {}
+class FetchUserReplies extends ProfileTabEvent {
+  final String userId;
 
-class FetchUserMedias extends ProfileTabEvent {}
+  FetchUserReplies({@required this.userId});
+}
 
-class FetchUserLikes extends ProfileTabEvent {}
+class FetchUserMedias extends ProfileTabEvent {
+  final String userId;
+
+  FetchUserMedias({@required this.userId});
+}
+
+class FetchUserLikes extends ProfileTabEvent {
+  final String userId;
+
+  FetchUserLikes({@required this.userId});
+}
 
 class ProfileTabState extends Equatable {
   @override
@@ -28,7 +40,7 @@ class ProfileTabState extends Equatable {
 
 class InitialProfileTabState extends ProfileTabState {}
 
-class FetchingContent extends ProfileTabState {}
+class FetchingUserTweets extends ProfileTabState {}
 
 class FetchingUserTweetsComplete extends ProfileTabState {
   final Stream<List<TweetEntity>> content;
@@ -42,6 +54,48 @@ class FetchingUserTweetsFailed extends ProfileTabState {
   FetchingUserTweetsFailed({this.message});
 }
 
+class FetchingUserReplies extends ProfileTabState {}
+
+class FetchingUserRepliesComplete extends ProfileTabState {
+  final Stream<List<TweetEntity>> content;
+
+  FetchingUserRepliesComplete({this.content});
+}
+
+class FetchingUserRepliesFailed extends ProfileTabState {
+  final String message;
+
+  FetchingUserRepliesFailed({this.message});
+}
+
+class FetchingUserMedias extends ProfileTabState {}
+
+class FetchingUserMediasComplete extends ProfileTabState {
+  final Stream<List<TweetEntity>> content;
+
+  FetchingUserMediasComplete({this.content});
+}
+
+class FetchingUserMediasFailed extends ProfileTabState {
+  final String message;
+
+  FetchingUserMediasFailed({this.message});
+}
+
+class FetchingUserLikes extends ProfileTabState {}
+
+class FetchingUserLikesComplete extends ProfileTabState {
+  final Stream<List<TweetEntity>> content;
+
+  FetchingUserLikesComplete({this.content});
+}
+
+class FetchingUserLikesFailed extends ProfileTabState {
+  final String message;
+
+  FetchingUserLikesFailed({this.message});
+}
+
 class ProfileTabBloc extends Bloc<ProfileTabEvent, ProfileTabState> {
   final ProfileRepository profileRepository;
   ProfileTabBloc({ProfileTabState initialState, this.profileRepository})
@@ -52,15 +106,57 @@ class ProfileTabBloc extends Bloc<ProfileTabEvent, ProfileTabState> {
     if (event is FetchUserTweets) {
       yield* _mapFetchUserTweetsToEvent(event.userId);
     }
+    if (event is FetchUserReplies) {
+      yield* _mapFetchUserRepliesToState(event.userId);
+    }
+    if (event is FetchUserMedias) {
+      yield* _mapFetchUserMediasToState(event.userId);
+    }
+    if (event is FetchUserLikes) {
+      yield* _mapFetchUserLikesToState(event.userId);
+    }
   }
 
   Stream<ProfileTabState> _mapFetchUserTweetsToEvent(String id) async* {
-    yield FetchingContent();
+    yield FetchingUserTweets();
     final userTweetsEither = await profileRepository.fetchUserTweets(id);
     yield* userTweetsEither.fold((failure) async* {
       yield FetchingUserTweetsFailed(message: failure.message);
     }, (converter) async* {
       yield FetchingUserTweetsComplete(
+          content: converter.fromQuery(converter.query));
+    });
+  }
+
+  Stream<ProfileTabState> _mapFetchUserRepliesToState(String id) async* {
+    yield FetchingUserReplies();
+    final userRepliesEither = await profileRepository.fetchUserReplies(id);
+    yield* userRepliesEither.fold((failure) async* {
+      yield FetchingUserRepliesFailed(message: failure.message);
+    }, (converter) async* {
+      yield FetchingUserRepliesComplete(
+          content: converter.fromQuery(converter.query));
+    });
+  }
+
+  Stream<ProfileTabState> _mapFetchUserMediasToState(String id) async* {
+    yield FetchingUserMedias();
+    final userMediasEither = await profileRepository.fetchUserMedias(id);
+    yield* userMediasEither.fold((failure) async* {
+      yield FetchingUserMediasFailed(message: failure.message);
+    }, (converter) async* {
+      yield FetchingUserMediasComplete(
+          content: converter.fromQuery(converter.query));
+    });
+  }
+
+  Stream<ProfileTabState> _mapFetchUserLikesToState(String id) async* {
+    yield FetchingUserLikes();
+    final userLikesEither = await profileRepository.fetchUserLikes(id);
+    yield* userLikesEither.fold((failure) async* {
+      yield FetchingUserLikesFailed(message: failure.message);
+    }, (converter) async* {
+      yield FetchingUserLikesComplete(
           content: converter.fromQuery(converter.query));
     });
   }

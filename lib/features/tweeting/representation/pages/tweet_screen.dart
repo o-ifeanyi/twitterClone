@@ -43,6 +43,7 @@ class _TweetScreenState extends State<TweetScreen> {
         id: null,
         userId: profile.id,
         message: _tweetMessage,
+        isComment: false,
         hasMedia: false,
         timeStamp: Timestamp.now(),
       );

@@ -56,11 +56,11 @@ class TweetImageDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(10),
-      child: Container(
-        margin: const EdgeInsets.only(top: 8),
-        height: Config.yMargin(context, 25),
+    return Container(
+      margin: const EdgeInsets.only(top: 8),
+      height: Config.yMargin(context, 25),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10),
         child: _getLayout(context, tweet),
       ),
     );

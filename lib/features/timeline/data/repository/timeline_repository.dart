@@ -25,10 +25,14 @@ class TimeLineRepositoryImpl implements TimeLineRepository {
   @override
   Future<Either<TimeLineFailure, StreamConverter>> fetchComments(
       TweetEntity tweet) async {
+        print(tweet.id);
     try {
+      final tweetReference = firebaseFirestore
+          .collection('tweets')
+          .doc(tweet.isRetweet ? tweet.retweetTo.id : tweet.id);
       final collection = firebaseFirestore
-          .collection('comments')
-          .where('id', isEqualTo: tweet.isRetweet ? tweet.retweetTo.id : tweet.id);
+          .collection('tweets')
+          .where('commentTo', isEqualTo: tweetReference).where('isRetweet', isEqualTo: false);
       return Right(StreamConverter(query: collection));
     } catch (error) {
       print(error);

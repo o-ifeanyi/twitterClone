@@ -14,15 +14,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ProfileScreen extends StatelessWidget {
   static const String pageId = '/profileScreen';
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final UserProfileEntity userProfile =
         ModalRoute.of(context).settings.arguments;
-    final profile = context.select<ProfileBloc, UserProfileEntity>(
+    final currentUser = context.select<ProfileBloc, UserProfileEntity>(
       (bloc) => bloc.state.userProfile,
     );
+
     return DefaultTabController(
       length: 4,
       child: Scaffold(
@@ -37,19 +37,25 @@ class ProfileScreen extends StatelessWidget {
                 flexibleSpace: FlexibleSpaceBar(
                   background: Container(
                     color: theme.scaffoldBackgroundColor,
-                    child: UserProfileInfo(
-                      currentUser: profile,
-                      displayUser: userProfile,
-                      isCurrentUser: userProfile != null
-                          ? userProfile.id == profile.id
-                          : true,
-                      isFollowing: userProfile != null
-                          ? profile.following.any((element) =>
-                              (element as DocumentReference)
-                                  .path
-                                  .endsWith(userProfile.id))
-                          : false,
-                    ),
+                    child: BlocBuilder<ProfileBloc, ProfileState>(
+                        builder: (context, state) {
+                      if (state is FetchingUserProfileComplete) {
+                        return UserProfileInfo(
+                          currentUser: state.userProfile,
+                          displayUser: userProfile,
+                          isCurrentUser: userProfile != null
+                              ? userProfile.id == state.userProfile.id
+                              : true,
+                          isFollowing: userProfile != null
+                              ? state.userProfile.following?.any((element) =>
+                                  (element as DocumentReference)
+                                      .path
+                                      .endsWith(userProfile?.id))
+                              : false,
+                        );
+                      }
+                      return SizedBox.expand();
+                    }),
                   ),
                 ),
                 bottom: TabBar(
@@ -70,14 +76,10 @@ class ProfileScreen extends StatelessWidget {
                   create: (context) => sl<ProfileTabBloc>(),
                   child: TabBarView(
                     children: [
-                      UserTabTweets(userId: userProfile != null
-                          ? userProfile.id : profile.id),
-                      UserTabReplies(userId: userProfile != null
-                          ? userProfile.id : profile.id),
-                      UserTabMedias(userId: userProfile != null
-                          ? userProfile.id : profile.id),
-                      UserTabLikes(userId: userProfile != null
-                          ? userProfile.id : profile.id),
+                      UserTabTweets(userProfile: userProfile ?? currentUser),
+                      UserTabReplies(userProfile: userProfile ?? currentUser),
+                      UserTabMedias(userProfile: userProfile ?? currentUser),
+                      UserTabLikes(userProfile: userProfile ?? currentUser),
                     ],
                   ),
                 ),

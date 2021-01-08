@@ -21,4 +21,10 @@ abstract class ProfileRepository {
   Future<Either<ProfileFailure, bool>> unfollow(UserProfileEntity userProfile ,UserProfileEntity currentUser);
 
   Future<Either<ProfileFailure, StreamConverter>> fetchUserTweets(String userId);
+
+  Future<Either<ProfileFailure, StreamConverter>> fetchUserReplies(String userId);
+
+  Future<Either<ProfileFailure, StreamConverter>> fetchUserMedias(String userId);
+
+  Future<Either<ProfileFailure, StreamConverter>> fetchUserLikes(String userId);
 }
