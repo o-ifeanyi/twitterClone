@@ -31,7 +31,7 @@ class Avatar extends StatelessWidget {
         placeholder: (_, __) => CircleAvatar(
           radius: _radius,
           backgroundColor: theme.accentColor,
-          child: Icon(Icons.person, size: Config.xMargin(context, 10)),
+          child: Icon(Icons.person, size: _radius * 2),
         ),
         fit: BoxFit.contain,
       ),

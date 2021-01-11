@@ -8,6 +8,9 @@ abstract class TweetingRepository {
   Future<Either<TweetingFailure, bool>> comment(
       {UserProfileEntity userProfile, TweetEntity tweet, TweetEntity commentTweet});
 
+  Future<Either<TweetingFailure, bool>> quoteTweet(
+      {UserProfileEntity userProfile, TweetEntity tweet, TweetEntity quoteTweet});
+
   Future<Either<TweetingFailure, bool>> sendTweet(
       UserProfileEntity userProfile, TweetEntity tweet);
 

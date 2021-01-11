@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fc_twitter/core/util/config.dart';
+import 'package:fc_twitter/features/tweeting/representation/pages/tweet_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fc_twitter/features/profile/domain/entity/user_profile_entity.dart';
 import 'package:fc_twitter/features/tweeting/domain/entity/tweet_entity.dart';
@@ -91,6 +92,13 @@ class RetweetButton extends StatelessWidget {
                         onPressed: () {
                           print('hi');
                           Navigator.pop(context);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  TweetScreen(quoteTweet: _tweet),
+                            ),
+                          );
                         },
                         label: 'Quote Tweet',
                         icon: Icon(Feather.edit_2),

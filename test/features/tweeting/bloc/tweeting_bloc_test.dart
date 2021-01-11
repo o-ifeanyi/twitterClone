@@ -181,7 +181,7 @@ void main() {
     });
   });
 
-  group('tweeting bloc Coomment', () {
+  group('tweeting bloc Comment', () {
     test('should emit [TweetingComplete] when successful', () async {
       when(mockTweetingRepository.comment(
               userProfile: userProfile,
@@ -216,6 +216,44 @@ void main() {
       expectLater(tweetingBloc, emitsInOrder(expectations));
 
       tweetingBloc.add(Comment(userProfile: userProfile, comment: tweetEntity, tweet: tweetEntity));
+    });
+  });
+
+  group('tweeting bloc QuoteTweet', () {
+    test('should emit [TweetingComplete] when successful', () async {
+      when(mockTweetingRepository.quoteTweet(
+              userProfile: userProfile,
+              tweet: tweetEntity,
+              quoteTweet: tweetEntity))
+          .thenAnswer(
+        (_) => Future.value(Right(true)),
+      );
+
+      final expectations = [
+        TweetingComplete(),
+      ];
+      expectLater(tweetingBloc, emitsInOrder(expectations));
+
+      tweetingBloc.add(QuoteTweet(
+          userProfile: userProfile, quoteTweet: tweetEntity, tweet: tweetEntity));
+    });
+
+    test('should emit [TweetingError] when sending tweet fails', () async {
+      when(mockTweetingRepository.quoteTweet(
+              userProfile: userProfile,
+              tweet: tweetEntity,
+              quoteTweet: tweetEntity))
+          .thenAnswer(
+        (_) =>
+            Future.value(Left(TweetingFailure(message: 'Failed to quote tweet'))),
+      );
+
+      final expectations = [
+        TweetingError(message: 'Failed to quote tweet'),
+      ];
+      expectLater(tweetingBloc, emitsInOrder(expectations));
+
+      tweetingBloc.add(QuoteTweet(userProfile: userProfile, quoteTweet: tweetEntity, tweet: tweetEntity));
     });
   });
 }

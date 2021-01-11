@@ -42,8 +42,6 @@ void main() {
 
       streamConverter = StreamConverter(collection: tweets);
 
-      expect(streamConverter.collection, isA<CollectionReference>());
-
       final converted = streamConverter.fromCollection(collection);
 
       expect(converted, isA<Stream<List<TweetEntity>>>());
@@ -70,8 +68,6 @@ void main() {
       final queryResult = firebaseFirestore.collection('tweets').where('id', isEqualTo: '001');
 
       streamConverter = StreamConverter(query: queryResult);
-
-      expect(streamConverter.query, isA<Query>());
 
       final converted = streamConverter.fromQuery(queryResult);
 

@@ -31,6 +31,9 @@ class TweetingBloc extends Bloc<TweetingEvent, TweetingState> {
     if (event is Comment) {
       yield* _mapCommentToState(event.userProfile, event.tweet, event.comment);
     }
+    if (event is QuoteTweet) {
+      yield* _mapQuoteTweetToState(event.userProfile, event.tweet, event.quoteTweet);
+    }
   }
 
   Stream<TweetingState> _mapSendTweetToState(
@@ -95,9 +98,9 @@ class TweetingBloc extends Bloc<TweetingEvent, TweetingState> {
 
   Stream<TweetingState> _mapUndoRetweetToState(
       UserProfileEntity userProfile, TweetEntity tweet) async* {
-    final retweetEither =
+    final undoRetweetEither =
         await tweetingRepository.undoRetweet(userProfile, tweet);
-    yield* retweetEither.fold(
+    yield* undoRetweetEither.fold(
       (failure) async* {
         yield TweetingError(message: failure.message);
       },
@@ -110,14 +113,27 @@ class TweetingBloc extends Bloc<TweetingEvent, TweetingState> {
 
   Stream<TweetingState> _mapCommentToState(UserProfileEntity userProfile,
       TweetEntity tweet, TweetEntity comment) async* {
-    final retweetEither = await tweetingRepository.comment(
+    final commentEither = await tweetingRepository.comment(
         userProfile: userProfile, tweet: tweet, commentTweet: comment);
-    yield* retweetEither.fold(
+    yield* commentEither.fold(
       (failure) async* {
         yield TweetingError(message: failure.message);
       },
       (success) async* {
-        // Delete tweet
+        yield TweetingComplete();
+      },
+    );
+  }
+
+  Stream<TweetingState> _mapQuoteTweetToState(UserProfileEntity userProfile,
+      TweetEntity tweet, TweetEntity quoteTweet) async* {
+    final quoteEither = await tweetingRepository.quoteTweet(
+        userProfile: userProfile, tweet: tweet, quoteTweet: quoteTweet);
+    yield* quoteEither.fold(
+      (failure) async* {
+        yield TweetingError(message: failure.message);
+      },
+      (success) async* {
         yield TweetingComplete();
       },
     );

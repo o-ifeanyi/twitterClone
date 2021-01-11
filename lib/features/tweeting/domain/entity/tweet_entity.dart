@@ -15,6 +15,7 @@ class TweetEntity extends Equatable {
   final List retweetedBy;
   final List likedBy;
   final List images;
+  final bool isQuote;
   final bool isRetweet;
   final bool isComment;
   final bool hasMedia;
@@ -34,29 +35,34 @@ class TweetEntity extends Equatable {
     this.images,
     this.retweetedBy,
     this.likedBy,
+    this.isQuote,
     this.isRetweet,
     this.hasMedia,
     this.isComment
   });
 
   TweetEntity copyWith({
+    String userId,
     DocumentReference userProfile,
     List likedBy,
     List images,
     List retweetedBy,
     int noOfComments,
+    DocumentReference quoteTo,
     DocumentReference commentTo,
     DocumentReference retweetTo,
+    bool isQuote,
     bool isRetweet,
+    bool isComment,
     bool hasMedia,
     DocumentReference retweetersProfile,
   }) {
     return TweetEntity(
       id: this.id,
-      userId: this.userId,
+      userId: userId ?? this.userId,
       userProfile: userProfile ?? this.userProfile,
       message: this.message,
-      quoteTo: this.quoteTo,
+      quoteTo: quoteTo ?? this.quoteTo,
       commentTo: commentTo ?? this.commentTo,
       retweetTo: retweetTo ?? this.retweetTo,
       noOfComments: noOfComments ?? this.noOfComments,
@@ -64,9 +70,10 @@ class TweetEntity extends Equatable {
       retweetedBy: retweetedBy ?? this.retweetedBy,
       likedBy: likedBy ?? this.likedBy,
       images: images ?? this.images,
+      isQuote: isQuote ?? this.isQuote,
       isRetweet: isRetweet ?? this.isRetweet,
       hasMedia: hasMedia ?? this.hasMedia,
-      isComment: this.isComment,
+      isComment: isComment ?? this.isComment,
       timeStamp: this.timeStamp,
     );
   }

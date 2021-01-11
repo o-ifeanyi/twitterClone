@@ -6,6 +6,7 @@ import 'package:fc_twitter/features/timeline/representation/bloc/comment_bloc.da
 import 'package:fc_twitter/features/tweeting/data/model/tweet_model.dart';
 import 'package:fc_twitter/features/tweeting/domain/entity/tweet_entity.dart';
 import 'package:fc_twitter/features/timeline/representation/pages/comments_screen.dart';
+import 'package:fc_twitter/features/tweeting/representation/widgets/quoteItem.dart';
 import 'package:fc_twitter/features/tweeting/representation/widgets/tweet_image_display.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
@@ -34,6 +35,7 @@ class _TweetItemState extends State<TweetItem> {
   Future<UserProfileEntity> _getUserProfile;
   Future<UserProfileEntity> _getRetweetersProfile;
   Future<UserProfileEntity> _getCommentto;
+  Future<TweetEntity> _getQuoteto;
 
   @override
   void initState() {
@@ -52,6 +54,9 @@ class _TweetItemState extends State<TweetItem> {
         final user = await tweet.userProfile.get();
         return UserProfileModel.fromDoc(user);
       });
+    }
+    if (widget._tweet.isQuote) {
+      _getQuoteto = widget._tweet.quoteTo.get().then((value) => TweetModel.fromSnapShot(value));
     }
   }
 
@@ -175,6 +180,20 @@ class _TweetItemState extends State<TweetItem> {
                           Text(widget._tweet.message),
                           if (widget._tweet.hasMedia)
                             TweetImageDisplay(tweet: widget._tweet),
+                          if (widget._tweet.isQuote)
+                            FutureBuilder<TweetEntity>(
+                              future: _getQuoteto,
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  return SizedBox.fromSize();
+                                }
+                                final quoteTweet = snapshot.data;
+                                return QuoteItem(
+                                  tweet: quoteTweet,
+                                  profile: widget._currentUserProfile,
+                                );
+                              }
+                            ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [

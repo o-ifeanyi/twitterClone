@@ -32,9 +32,7 @@ class TweetingRepositoryImpl implements TweetingRepository {
           .doc(tweet.id)
           .update({'noOfComments': comments});
       commentTweet = commentTweet.copyWith(
-          commentTo: firebaseFirestore
-              .collection('tweets')
-              .doc(tweet.id),
+          commentTo: firebaseFirestore.collection('tweets').doc(tweet.id),
           userProfile:
               firebaseFirestore.collection('users').doc(userProfile.id));
       await firebaseFirestore
@@ -57,12 +55,13 @@ class TweetingRepositoryImpl implements TweetingRepository {
   Future<Either<TweetingFailure, bool>> sendTweet(
       UserProfileEntity userProfile, TweetEntity tweet) async {
     try {
-    tweet = tweet.copyWith(
-        userProfile: firebaseFirestore.collection('users').doc(userProfile.id));    
-    await firebaseFirestore
-        .collection('tweets')
-        .add(TweetModel.fromEntity(tweet).toMap());
-    return Right(true);
+      tweet = tweet.copyWith(
+          userProfile:
+              firebaseFirestore.collection('users').doc(userProfile.id));
+      await firebaseFirestore
+          .collection('tweets')
+          .add(TweetModel.fromEntity(tweet).toMap());
+      return Right(true);
     } catch (error) {
       print(error);
       return Left(TweetingFailure(message: 'Failed to send tweet'));
@@ -133,9 +132,7 @@ class TweetingRepositoryImpl implements TweetingRepository {
       tweet = tweet.copyWith(
           isRetweet: true,
           commentTo: null, // if its a comment the retweet also show in comments
-          retweetTo: firebaseFirestore
-              .collection('tweets')
-              .doc(tweet.id),
+          retweetTo: firebaseFirestore.collection('tweets').doc(tweet.id),
           retweetersProfile:
               firebaseFirestore.collection('users').doc(userProfile.id));
       await firebaseFirestore
@@ -221,6 +218,27 @@ class TweetingRepositoryImpl implements TweetingRepository {
     } catch (error) {
       print(error);
       return Left(TweetingFailure(message: 'Failed to upload image'));
+    }
+  }
+
+  @override
+  Future<Either<TweetingFailure, bool>> quoteTweet(
+      {UserProfileEntity userProfile,
+      TweetEntity tweet,
+      TweetEntity quoteTweet}) async {
+    try {
+      tweet = tweet.copyWith(
+        userProfile: firebaseFirestore.collection('users').doc(userProfile.id),
+        isQuote: true,
+        quoteTo: firebaseFirestore.collection('tweets').doc(quoteTweet.id),
+      );
+      await firebaseFirestore
+          .collection('tweets')
+          .add(TweetModel.fromEntity(tweet).toMap());
+      return Right(true);
+    } catch (error) {
+      print(error);
+      return Left(TweetingFailure(message: 'Failed to quote tweet'));
     }
   }
 }

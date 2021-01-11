@@ -169,4 +169,32 @@ void main() {
       expect(response, Left(TweetingFailure(message: 'Failed to comment')));
     });
   });
+
+  group('tweeting repository quoteTeet', () {
+    test('should return a true when successful', () async {
+      when(mockFirebaseFirestore.collection(any))
+          .thenReturn(collectionReference);
+      when(collectionReference.add(any))
+          .thenAnswer((_) => Future.value(documentReference));
+
+      final response = await tweetingRepositoryImpl.quoteTweet(
+          userProfile: userProfile,
+          tweet: tweetEntity,
+          quoteTweet: tweetEntity);
+
+      expect(response, Right(true));
+    });
+
+    test('should return a TweetingFailure when it fails', () async {
+      when(mockFirebaseFirestore.collection(any)).thenThrow(Error());
+
+      final response =
+          await tweetingRepositoryImpl.quoteTweet(
+          userProfile: userProfile,
+          tweet: tweetEntity,
+          quoteTweet: tweetEntity);
+
+      expect(response, Left(TweetingFailure(message: 'Failed to quote tweet')));
+    });
+  });
 }

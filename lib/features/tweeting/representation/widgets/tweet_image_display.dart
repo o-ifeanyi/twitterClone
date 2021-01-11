@@ -7,9 +7,11 @@ class TweetImageDisplay extends StatelessWidget {
   const TweetImageDisplay({
     Key key,
     @required this.tweet,
+    this.isQuote = false,
   }) : super(key: key);
 
   final TweetEntity tweet;
+  final bool isQuote;
 
   Widget _buildImage(BuildContext context, String url) {
     final theme = Theme.of(context);
@@ -60,7 +62,12 @@ class TweetImageDisplay extends StatelessWidget {
       margin: const EdgeInsets.only(top: 8),
       height: Config.yMargin(context, 25),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: isQuote
+            ? BorderRadius.only(
+                bottomLeft: Radius.circular(10),
+                bottomRight: Radius.circular(10),
+              )
+            : BorderRadius.circular(10),
         child: _getLayout(context, tweet),
       ),
     );

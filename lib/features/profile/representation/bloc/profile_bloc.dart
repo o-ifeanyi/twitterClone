@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:equatable/equatable.dart';
 import 'package:fc_twitter/features/profile/domain/entity/user_profile_entity.dart';
 import 'package:fc_twitter/features/profile/domain/repository/profile_repository.dart.dart';
@@ -38,13 +36,10 @@ class UnFollow extends ProfileEvent {
 
 class ProfileState extends Equatable {
   final UserProfileEntity userProfile;
-  final File pickedProfileImage;
-  final File pickedCoverImage;
 
-  ProfileState(
-      {this.userProfile, this.pickedProfileImage, this.pickedCoverImage});
+  ProfileState({this.userProfile});
   @override
-  List<Object> get props => [];
+  List<Object> get props => [userProfile];
 }
 
 class ProfileInitialState extends ProfileState {}
@@ -56,8 +51,7 @@ class FetchingUserProfileFailed extends ProfileState {}
 class FetchingUserProfileComplete extends ProfileState {
   final UserProfileEntity userProfile;
 
-  FetchingUserProfileComplete({this.userProfile})
-      : super(userProfile: userProfile);
+  FetchingUserProfileComplete({this.userProfile}) : super(userProfile: userProfile);
 }
 
 class UpdateFailed extends ProfileState {}

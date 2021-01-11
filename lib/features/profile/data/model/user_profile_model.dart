@@ -49,23 +49,6 @@ class UserProfileModel extends UserProfileEntity {
     );
   }
 
-  factory UserProfileModel.fromMap(Map<String, dynamic> userMap) {
-    return UserProfileModel(
-      id: userMap['id'],
-      name: userMap['name'],
-      userName: userMap['userName'],
-      bio: userMap['bio'] ?? '',
-      location: userMap['location'] ?? '',
-      website: userMap['website'] ?? '',
-      dateOfBirth: userMap['dateOfBirth'] ?? '',
-      dateJoined: userMap['dateJoined'],
-      profilePhoto: userMap['profilePhoto'] ?? '',
-      coverPhoto: userMap['coverPhoto'] ?? '',
-      following: userMap['following'] ?? List(),
-      followers: userMap['followers'] ?? List(),
-    );
-  }
-
   factory UserProfileModel.fromEntity(UserProfileEntity entity) {
     return UserProfileModel(
       id: entity.id,

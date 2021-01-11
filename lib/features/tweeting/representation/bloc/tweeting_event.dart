@@ -65,5 +65,16 @@ class Comment extends TweetingEvent {
   Comment({this.tweet, this.comment, this.userProfile});
 
   @override
-  List<Object> get props => [tweet, comment];
+  List<Object> get props => [tweet, comment, userProfile];
+}
+
+class QuoteTweet extends TweetingEvent {
+    final UserProfileEntity userProfile;
+  final TweetEntity tweet;
+  final TweetEntity quoteTweet;
+
+  QuoteTweet({this.tweet, this.quoteTweet, this.userProfile});
+
+  @override
+  List<Object> get props => [tweet, quoteTweet, userProfile];
 }

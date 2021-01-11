@@ -17,6 +17,7 @@ class TweetModel extends TweetEntity {
       images,
       retweetedBy,
       likedBy,
+      isQuote,
       isRetweet,
       hasMedia,
       isComment})
@@ -34,6 +35,7 @@ class TweetModel extends TweetEntity {
           images: images,
           retweetedBy: retweetedBy,
           likedBy: likedBy,
+          isQuote: isQuote,
           isRetweet: isRetweet,
           hasMedia: hasMedia,
           isComment: isComment,
@@ -55,6 +57,7 @@ class TweetModel extends TweetEntity {
       images: data['images'] ?? List(),
       retweetedBy: data['retweetedBy'] ?? List(),
       likedBy: data['likedBy'] ?? List(),
+      isQuote: data['isQuote'] ?? false,
       hasMedia: data['hasMedia'] ?? false,
       isRetweet: data['isRetweet'] ?? false,
       isComment: data['isComment'] ?? false,
@@ -76,30 +79,10 @@ class TweetModel extends TweetEntity {
       images: tweet.images,
       retweetedBy: tweet.retweetedBy,
       likedBy: tweet.likedBy,
+      isQuote: tweet.isQuote,
       hasMedia: tweet.hasMedia,
       isRetweet: tweet.isRetweet,
       isComment: tweet.isComment,
-    );
-  }
-
-  factory TweetModel.fromMap(Map<String, dynamic> data) {
-    return TweetModel(
-      id: data['id'],
-      userId: data['userId'],
-      userProfile: data['userProfile'],
-      retweetersProfile: data['retweetersProfile'],
-      message: data['message'],
-      timeStamp: data['timeStamp'],
-      quoteTo: data['quoteTo'],
-      commentTo: data['commentTo'],
-      retweetTo: data['retweetTo'],
-      noOfComments: data['noOfComments'] ?? 0,
-      images: data['images'] ?? List(),
-      retweetedBy: data['retweetedBy'] ?? List(),
-      likedBy: data['likedBy'] ?? List(),
-      hasMedia: data['hasMedia'] ?? false,
-      isRetweet: data['isRetweet'] ?? false,
-      isComment: data['isComment'] ?? false,
     );
   }
 
@@ -118,6 +101,7 @@ class TweetModel extends TweetEntity {
       images: this.images,
       retweetedBy: this.retweetedBy,
       likedBy: this.likedBy,
+      isQuote: this.isQuote,
       hasMedia: this.hasMedia,
       isRetweet: this.isRetweet,
       isComment: this.isComment,
@@ -139,6 +123,7 @@ class TweetModel extends TweetEntity {
       'images': this.images,
       'retweetedBy': this.retweetedBy,
       'likedBy': this.likedBy,
+      'isQuote': this.isQuote,
       'hasMedia': this.hasMedia,
       'isRetweet': this.isRetweet,
       'isComment': this.isComment,

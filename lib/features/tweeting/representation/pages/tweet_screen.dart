@@ -7,6 +7,7 @@ import 'package:fc_twitter/features/tweeting/domain/entity/tweet_entity.dart';
 import 'package:fc_twitter/features/tweeting/representation/bloc/bloc.dart';
 import 'package:fc_twitter/features/tweeting/representation/bloc/tweet_media_bloc.dart';
 import 'package:fc_twitter/features/tweeting/representation/widgets/media_preview.dart';
+import 'package:fc_twitter/features/tweeting/representation/widgets/quoteItem.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,6 +16,10 @@ import 'package:multi_image_picker/multi_image_picker.dart';
 
 class TweetScreen extends StatefulWidget {
   static const String pageId = '/composeTweet';
+
+  final TweetEntity quoteTweet;
+
+  TweetScreen({this.quoteTweet});
   @override
   _TweetScreenState createState() => _TweetScreenState();
 }
@@ -28,36 +33,38 @@ class _TweetScreenState extends State<TweetScreen> {
   @override
   void initState() {
     super.initState();
+    _tweet = TweetEntity(
+      id: null,
+      message: _tweetMessage,
+      images: [],
+      isComment: false,
+      hasMedia: false,
+      timeStamp: Timestamp.now(),
+    );
     _focusNode.requestFocus();
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final isPotrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
     final profile = context.select<ProfileBloc, UserProfileEntity>(
       (bloc) => bloc.state.userProfile,
     );
     if (profile != null) {
-      _tweet = TweetEntity(
-        id: null,
-        userId: profile.id,
-        message: _tweetMessage,
-        isComment: false,
-        hasMedia: false,
-        timeStamp: Timestamp.now(),
-      );
+      _tweet = _tweet.copyWith(userId: profile.id);
     }
 
     return Scaffold(
       resizeToAvoidBottomInset: isPotrait,
       appBar: AppBar(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0,
         leading: IconButton(
           icon: Icon(
             Icons.clear,
-            color: Theme.of(context).primaryColor,
+            color: theme.primaryColor,
           ),
           onPressed: () => Navigator.pop(context),
         ),
@@ -66,9 +73,15 @@ class _TweetScreenState extends State<TweetScreen> {
             onTap: _tweetMessage.isEmpty
                 ? null
                 : () {
-                    context
-                        .read<TweetingBloc>()
-                        .add(SendTweet(tweet: _tweet, userProfile: profile));
+                    widget.quoteTweet == null
+                        ? context
+                            .read<TweetingBloc>()
+                            .add(SendTweet(tweet: _tweet, userProfile: profile))
+                        : context.read<TweetingBloc>().add(QuoteTweet(
+                              tweet: _tweet,
+                              quoteTweet: widget.quoteTweet,
+                              userProfile: profile,
+                            ));
                     _focusNode.unfocus();
                     Navigator.pop(context);
                   },
@@ -79,8 +92,8 @@ class _TweetScreenState extends State<TweetScreen> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(30),
                 color: _tweetMessage.isEmpty
-                    ? Theme.of(context).primaryColor.withOpacity(0.5)
-                    : Theme.of(context).primaryColor,
+                    ? theme.primaryColor.withOpacity(0.5)
+                    : theme.primaryColor,
               ),
               child: Text(
                 'Tweet',
@@ -92,115 +105,139 @@ class _TweetScreenState extends State<TweetScreen> {
           )
         ],
       ),
-      body: Stack(
+      body: Column(
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: profile != null
-                        ? Avatar(userProfile: profile, radius: 20)
-                        : CircleAvatar(),
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 5),
-                      child: TextField(
-                        controller: _tweetController,
-                        focusNode: _focusNode,
-                        textInputAction: TextInputAction.newline,
-                        keyboardType: TextInputType.multiline,
-                        textCapitalization: TextCapitalization.sentences,
-                        maxLines: 2,
-                        decoration: InputDecoration(
-                          hintText: 'What\'s happening?',
-                          border: InputBorder.none,
-                        ),
-                        onChanged: (val) {
-                          setState(() {
-                            _tweetMessage = val;
-                          });
-                        },
-                      ),
+          Expanded(
+            child: ListView(
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: profile != null
+                          ? Avatar(userProfile: profile, radius: 20)
+                          : CircleAvatar(),
                     ),
-                  ),
-                ],
-              ),
-              SingleChildScrollView(
-                child: Container(
-                  padding: const EdgeInsets.only(left: 60),
-                  height: 200,
-                  width: MediaQuery.of(context).size.width,
-                  child: BlocBuilder<TweetMediaBloc, TweetMediaState>(
-                    builder: (context, state) {
-                      if (state is MultiImagesLoaded) {
-                        _tweet = _tweet.copyWith(
-                          images: state.images,
-                          hasMedia: state.images.isNotEmpty,
-                        );
-                        return ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: state.images.length,
-                          itemBuilder: (context, index) => Container(
-                            constraints: BoxConstraints(
-                              maxWidth: 340,
-                              maxHeight:
-                                  state.images[index].originalHeight.toDouble(),
-                            ),
-                            padding: const EdgeInsets.only(right: 10),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(15),
-                              child: AssetThumb(
-                                asset: state.images[index],
-                                width: state.images[index].originalWidth,
-                                height: state.images[index].originalHeight,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 5),
+                            child: SizedBox(
+                              width: 200,
+                              child: TextField(
+                                controller: _tweetController,
+                                focusNode: _focusNode,
+                                textInputAction: TextInputAction.newline,
+                                keyboardType: TextInputType.multiline,
+                                textCapitalization:
+                                    TextCapitalization.sentences,
+                                maxLines: 2,
+                                decoration: InputDecoration(
+                                  hintText: 'What\'s happening?',
+                                  border: InputBorder.none,
+                                ),
+                                onChanged: (val) {
+                                  setState(() {
+                                    _tweetMessage = val;
+                                  });
+                                },
                               ),
                             ),
                           ),
-                        );
-                      }
-                      return SizedBox.shrink();
-                    },
+                          BlocBuilder<TweetMediaBloc, TweetMediaState>(
+                            builder: (context, state) {
+                              if (state is MultiImagesLoaded) {
+                                print('hello');
+                                _tweet = _tweet.copyWith(
+                                  images: state.images,
+                                  hasMedia: state.images.isNotEmpty,
+                                );
+                                return Container(
+                                  height: 200,
+                                  width: MediaQuery.of(context).size.width,
+                                  child: ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: state.images.length,
+                                    itemBuilder: (context, index) =>
+                                        Container(
+                                      constraints: BoxConstraints(
+                                        maxWidth: 340,
+                                        maxHeight: state
+                                            .images[index].originalHeight
+                                            .toDouble(),
+                                      ),
+                                      padding:
+                                          const EdgeInsets.only(right: 10),
+                                      child: ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(15),
+                                        child: AssetThumb(
+                                          asset: state.images[index],
+                                          width: state
+                                              .images[index].originalWidth,
+                                          height: state
+                                              .images[index].originalHeight,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }
+                              return SizedBox.shrink();
+                            },
+                          ),
+                          if (widget.quoteTweet != null)
+                            Padding(
+                              padding: const EdgeInsets.only(right: 10),
+                              child: QuoteItem(
+                                  tweet: widget.quoteTweet,
+                                  profile: profile),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                Spacer(),
+              ],
+            ),
+          ),
+          SizedBox(height: 15),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (_tweetMessage.isEmpty && widget.quoteTweet == null)
+                Container(
+                  margin: const EdgeInsets.only(bottom: 8),
+                  height: Config.yMargin(context, 10),
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    children: List.generate(15, (index) {
+                      return MediaPreview(index);
+                    }),
                   ),
                 ),
-              ),
-              Spacer(),
               Divider(thickness: 2, height: 0),
               FlatButton.icon(
                 onPressed: () {},
                 icon: Icon(
                   MaterialCommunityIcons.earth,
-                  color: Theme.of(context).primaryColor,
+                  color: theme.primaryColor,
                 ),
                 label: Text(
                   'Everyone can reply',
                   style: TextStyle(
-                      color: Theme.of(context).primaryColor,
+                      color: theme.primaryColor,
                       fontSize: Config.xMargin(context, 3.5),
                       fontWeight: FontWeight.w400),
                 ),
               ),
               Divider(thickness: 2, height: 0),
             ],
-          ),
-          if (_tweetMessage.isEmpty)
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                margin: const EdgeInsets.only(bottom: 60),
-                height: Config.yMargin(context, 10),
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: List.generate(15, (index) {
-                    return MediaPreview(index);
-                  }),
-                ),
-              ),
-            ),
+          )
         ],
       ),
     );
