@@ -46,6 +46,7 @@ class RetweetButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     bool isTweetRetweeted = isRetweeted();
     return GestureDetector(
       onTap: () {
@@ -67,7 +68,7 @@ class RetweetButton extends StatelessWidget {
                       Navigator.pop(context);
                     },
                     label: 'Undo Retweet',
-                    icon: Icon(EvilIcons.retweet, size: 30),
+                    icon: Icon(EvilIcons.retweet, size: 30, color: theme.accentColor),
                   )
                 : Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -85,7 +86,7 @@ class RetweetButton extends StatelessWidget {
                           Navigator.pop(context);
                         },
                         label: 'Retweet',
-                        icon: Icon(EvilIcons.retweet, size: 30),
+                        icon: Icon(EvilIcons.retweet, size: 30, color: theme.accentColor),
                       ),
                       _button(
                         context: context,
@@ -101,7 +102,7 @@ class RetweetButton extends StatelessWidget {
                           );
                         },
                         label: 'Quote Tweet',
-                        icon: Icon(Feather.edit_2),
+                        icon: Icon(Feather.edit_2, color: theme.accentColor),
                       ),
                     ],
                   ),
@@ -121,7 +122,7 @@ class RetweetButton extends StatelessWidget {
           ),
           SizedBox(width: 5),
           Text(
-            '${_tweet.retweetedBy.length},',
+            '${_tweet.retweetedBy.length + _tweet.quotedBy.length},',
             style: TextStyle(
               color: isTweetRetweeted
                   ? Colors.greenAccent

@@ -35,7 +35,7 @@ class _TweetScreenState extends State<TweetScreen> {
     super.initState();
     _tweet = TweetEntity(
       id: null,
-      message: _tweetMessage,
+      message: '',
       images: [],
       isComment: false,
       hasMedia: false,
@@ -52,9 +52,9 @@ class _TweetScreenState extends State<TweetScreen> {
     final profile = context.select<ProfileBloc, UserProfileEntity>(
       (bloc) => bloc.state.userProfile,
     );
-    if (profile != null) {
-      _tweet = _tweet.copyWith(userId: profile.id);
-    }
+    // if (profile != null) {
+    //   _tweet = _tweet.copyWith(userId: profile.id);
+    // }
 
     return Scaffold(
       resizeToAvoidBottomInset: isPotrait,
@@ -73,6 +73,8 @@ class _TweetScreenState extends State<TweetScreen> {
             onTap: _tweetMessage.isEmpty
                 ? null
                 : () {
+                    _tweet = _tweet.copyWith(
+                        userId: profile.id, message: _tweetMessage);
                     widget.quoteTweet == null
                         ? context
                             .read<TweetingBloc>()
@@ -161,23 +163,20 @@ class _TweetScreenState extends State<TweetScreen> {
                                   child: ListView.builder(
                                     scrollDirection: Axis.horizontal,
                                     itemCount: state.images.length,
-                                    itemBuilder: (context, index) =>
-                                        Container(
+                                    itemBuilder: (context, index) => Container(
                                       constraints: BoxConstraints(
                                         maxWidth: 340,
                                         maxHeight: state
                                             .images[index].originalHeight
                                             .toDouble(),
                                       ),
-                                      padding:
-                                          const EdgeInsets.only(right: 10),
+                                      padding: const EdgeInsets.only(right: 10),
                                       child: ClipRRect(
-                                        borderRadius:
-                                            BorderRadius.circular(15),
+                                        borderRadius: BorderRadius.circular(15),
                                         child: AssetThumb(
                                           asset: state.images[index],
-                                          width: state
-                                              .images[index].originalWidth,
+                                          width:
+                                              state.images[index].originalWidth,
                                           height: state
                                               .images[index].originalHeight,
                                         ),
@@ -193,8 +192,7 @@ class _TweetScreenState extends State<TweetScreen> {
                             Padding(
                               padding: const EdgeInsets.only(right: 10),
                               child: QuoteItem(
-                                  tweet: widget.quoteTweet,
-                                  profile: profile),
+                                  tweet: widget.quoteTweet, profile: profile),
                             ),
                         ],
                       ),

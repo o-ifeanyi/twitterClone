@@ -1,4 +1,4 @@
-import 'package:fc_twitter/features/authentication/data/model/user_model.dart';
+import 'package:fc_twitter/features/authentication/domain/user_entity/user_entity.dart';
 import 'package:fc_twitter/features/authentication/representation/bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fc_twitter/core/util/config.dart';
@@ -75,7 +75,7 @@ class _LoginFormState extends State<LoginForm> {
                 FocusScope.of(context).unfocus();
                 context.read<AuthBloc>().add(
                       Login(
-                          user: UserModel(
+                          user: UserEntity(
                         email: _loginEmailController.text,
                         password: _loginPasswordController.text,
                       )),

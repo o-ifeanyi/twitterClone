@@ -61,6 +61,7 @@ void main() {
         'noOfComments': 0,
         'images': null,
         'retweetedBy': null,
+        'quotedBy': null,
         'likedBy': null,
         'isQuote': null,
         'hasMedia': false,

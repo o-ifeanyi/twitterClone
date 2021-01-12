@@ -68,7 +68,6 @@ class _CommentItemState extends State<CommentItem> {
                       return SizedBox.shrink();
                     }
                     final retweetersProfile = snapshot.data;
-                    print(retweetersProfile.userName);
                     return Row(
                       children: [
                         Icon(EvilIcons.retweet,
@@ -138,7 +137,7 @@ class _CommentItemState extends State<CommentItem> {
                     profile: widget._currentUserProfile,
                   );
                 }),
-          SizedBox(height: 5),
+          SizedBox(height: 8),
           Row(
             children: [
               Text(
@@ -154,7 +153,8 @@ class _CommentItemState extends State<CommentItem> {
             ],
           ),
           if (widget._tweet.retweetedBy.isNotEmpty ||
-              widget._tweet.likedBy.isNotEmpty)
+              widget._tweet.likedBy.isNotEmpty ||
+              widget._tweet.quotedBy.isNotEmpty)
             SizedBox(
               height: 10,
             ),
@@ -166,6 +166,16 @@ class _CommentItemState extends State<CommentItem> {
                     Text('${widget._tweet.retweetedBy.length}'),
                     Text(
                       ' Retweet',
+                      style: TextStyle(
+                        color: theme.accentColor,
+                      ),
+                    ),
+                    SizedBox(width: 15),
+                  ],
+                  if (widget._tweet.quotedBy.isNotEmpty) ...[
+                    Text('${widget._tweet.quotedBy.length}'),
+                    Text(
+                      ' Quote tweets',
                       style: TextStyle(
                         color: theme.accentColor,
                       ),

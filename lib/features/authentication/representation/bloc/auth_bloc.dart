@@ -1,6 +1,6 @@
 import 'package:fc_twitter/features/authentication/domain/repository/user_repository.dart';
 import 'package:fc_twitter/features/authentication/domain/user_entity/user_entity.dart';
-import 'package:fc_twitter/features/profile/data/model/user_profile_model.dart';
+import 'package:fc_twitter/features/profile/domain/entity/user_profile_entity.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'auth_event.dart';
@@ -33,7 +33,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     yield* response.fold((failure) async* {
       yield AuthFailed(message: failure.message);
     }, (credentials) async* {
-      final userProfile = UserProfileModel(
+      final userProfile = UserProfileEntity(
         id: credentials.user.uid,
         name: user.email.split('@').first,
         userName: '@' + user.userName,

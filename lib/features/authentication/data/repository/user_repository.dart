@@ -3,6 +3,7 @@ import 'package:fc_twitter/core/error/failure.dart';
 import 'package:fc_twitter/features/authentication/domain/repository/user_repository.dart';
 import 'package:fc_twitter/features/authentication/domain/user_entity/user_entity.dart';
 import 'package:fc_twitter/features/profile/data/model/user_profile_model.dart';
+import 'package:fc_twitter/features/profile/domain/entity/user_profile_entity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -51,12 +52,12 @@ class UserRepositoryImpl extends UserRepository {
 
   @override
   Future<Either<AuthFailure, bool>> saveUserDetail(
-      UserProfileModel userProfile) async {
+      UserProfileEntity userProfile) async {
     try {
       await firebaseFirestore
           .collection('users')
           .doc(userProfile.id)
-          .set(userProfile.toMap());
+          .set(UserProfileModel.fromEntity(userProfile).toMap());
       return Right(true);
     } catch (error) {
       return Left(AuthFailure(message: 'Saving failed'));

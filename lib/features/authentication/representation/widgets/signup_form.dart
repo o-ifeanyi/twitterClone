@@ -1,5 +1,5 @@
 import 'package:fc_twitter/core/util/config.dart';
-import 'package:fc_twitter/features/authentication/data/model/user_model.dart';
+import 'package:fc_twitter/features/authentication/domain/user_entity/user_entity.dart';
 import 'package:fc_twitter/features/authentication/representation/bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -101,7 +101,7 @@ class _SignupFormState extends State<SignupForm> {
                 FocusScope.of(context).unfocus();
                 context.read<AuthBloc>().add(
                       SignUp(
-                          user: UserModel(
+                          user: UserEntity(
                         email: _signupEmailController.text,
                         userName: _signupUsernameController.text,
                         password: _signupPasswordController.text,

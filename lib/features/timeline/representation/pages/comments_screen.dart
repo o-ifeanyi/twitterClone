@@ -29,6 +29,7 @@ class CommentsScreen extends StatefulWidget {
 
 class _CommentsScreenState extends State<CommentsScreen> {
   Future<UserProfileEntity> _getUserProfile;
+  bool isTyping = false;
 
   final _replyController = TextEditingController();
   final _replyNode = FocusNode();
@@ -56,16 +57,20 @@ class _CommentsScreenState extends State<CommentsScreen> {
   @override
   void initState() {
     super.initState();
+    _replyNode.addListener(() {
+      print(_replyNode.hasPrimaryFocus);
+      setState(() {
+        isTyping = _replyNode.hasPrimaryFocus;
+      });
+    });
     _getUserProfile = widget._tweet.userProfile
-          .get()
-          .then((snapshot) => UserProfileModel.fromDoc(snapshot));
+        .get()
+        .then((snapshot) => UserProfileModel.fromDoc(snapshot));
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
-    bool isTyping = _replyNode.hasFocus;
 
     return Scaffold(
       appBar: AppBar(
@@ -167,8 +172,8 @@ class _CommentsScreenState extends State<CommentsScreen> {
                                 color: theme.primaryColor,
                               ),
                               GestureDetector(
-                                onTap: () =>
-                                    sendReply(widget._currentUserProfile, widget._tweet),
+                                onTap: () => sendReply(
+                                    widget._currentUserProfile, widget._tweet),
                                 child: Container(
                                   alignment: Alignment.center,
                                   padding: const EdgeInsets.symmetric(

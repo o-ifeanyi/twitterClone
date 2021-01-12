@@ -13,4 +13,13 @@ class UserModel extends UserEntity {
           email: email,
           password: password,
         );
+
+  factory UserModel.fromEntity(UserEntity userEntity) {
+    return UserModel(
+      email: userEntity.email,
+      password: userEntity.password,
+      userName: userEntity.userName,
+      name: userEntity.name,
+    );
+  }
 }

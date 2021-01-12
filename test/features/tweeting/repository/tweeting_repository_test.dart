@@ -56,7 +56,6 @@ void main() {
       when(mockFirebaseFirestore.collection(any))
           .thenReturn(collectionReference);
       when(collectionReference.doc(any)).thenReturn(documentReference);
-      when(documentReference.update(any)).thenAnswer((_) => null);
 
       final result =
           await tweetingRepositoryImpl.likeTweet(userProfile, tweetEntity);
@@ -79,7 +78,6 @@ void main() {
       when(mockFirebaseFirestore.collection(any))
           .thenReturn(collectionReference);
       when(collectionReference.doc(any)).thenReturn(documentReference);
-      when(documentReference.update(any)).thenAnswer((_) => null);
 
       final result =
           await tweetingRepositoryImpl.unlikeTweet(userProfile, tweetEntity);
@@ -102,7 +100,6 @@ void main() {
       when(mockFirebaseFirestore.collection(any))
           .thenReturn(collectionReference);
       when(collectionReference.doc(any)).thenReturn(documentReference);
-      when(documentReference.update(any)).thenAnswer((_) => null);
 
       final result =
           await tweetingRepositoryImpl.retweet(userProfile, tweetEntity);
@@ -125,7 +122,6 @@ void main() {
       when(mockFirebaseFirestore.collection(any))
           .thenReturn(collectionReference);
       when(collectionReference.doc(any)).thenReturn(documentReference);
-      when(documentReference.update(any)).thenAnswer((_) => null);
 
       final result =
           await tweetingRepositoryImpl.undoRetweet(userProfile, tweetEntity);
@@ -148,7 +144,6 @@ void main() {
       when(mockFirebaseFirestore.collection(any))
           .thenReturn(collectionReference);
       when(collectionReference.doc(any)).thenReturn(documentReference);
-      when(documentReference.update(any)).thenAnswer((_) => null);
 
       final result = await tweetingRepositoryImpl.comment(
           userProfile: userProfile,
@@ -174,6 +169,7 @@ void main() {
     test('should return a true when successful', () async {
       when(mockFirebaseFirestore.collection(any))
           .thenReturn(collectionReference);
+      when(collectionReference.doc(any)).thenReturn(documentReference);
       when(collectionReference.add(any))
           .thenAnswer((_) => Future.value(documentReference));
 

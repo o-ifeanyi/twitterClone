@@ -13,6 +13,7 @@ import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'like_button.dart';
+import 'more_options_button.dart';
 import 'retweet_button.dart';
 
 class TweetItem extends StatefulWidget {
@@ -56,7 +57,9 @@ class _TweetItemState extends State<TweetItem> {
       });
     }
     if (widget._tweet.isQuote) {
-      _getQuoteto = widget._tweet.quoteTo.get().then((value) => TweetModel.fromSnapShot(value));
+      _getQuoteto = widget._tweet.quoteTo
+          .get()
+          .then((value) => TweetModel.fromSnapShot(value));
     }
   }
 
@@ -149,8 +152,10 @@ class _TweetItemState extends State<TweetItem> {
                                 ),
                               ),
                               Spacer(),
-                              Icon(Icons.expand_more_outlined,
-                                  color: theme.accentColor),
+                              MoreOptionsButton(
+                                userProfile: profile,
+                                currentUser: widget._currentUserProfile,
+                              ),
                             ],
                           ),
                           if (widget._tweet.isComment)
@@ -182,18 +187,18 @@ class _TweetItemState extends State<TweetItem> {
                             TweetImageDisplay(tweet: widget._tweet),
                           if (widget._tweet.isQuote)
                             FutureBuilder<TweetEntity>(
-                              future: _getQuoteto,
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState == ConnectionState.waiting) {
-                                  return SizedBox.fromSize();
-                                }
-                                final quoteTweet = snapshot.data;
-                                return QuoteItem(
-                                  tweet: quoteTweet,
-                                  profile: widget._currentUserProfile,
-                                );
-                              }
-                            ),
+                                future: _getQuoteto,
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return SizedBox.fromSize();
+                                  }
+                                  final quoteTweet = snapshot.data;
+                                  return QuoteItem(
+                                    tweet: quoteTweet,
+                                    profile: widget._currentUserProfile,
+                                  );
+                                }),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [

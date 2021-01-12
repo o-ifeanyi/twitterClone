@@ -232,9 +232,17 @@ class TweetingRepositoryImpl implements TweetingRepository {
         isQuote: true,
         quoteTo: firebaseFirestore.collection('tweets').doc(quoteTweet.id),
       );
-      await firebaseFirestore
+      final reference = await firebaseFirestore
           .collection('tweets')
           .add(TweetModel.fromEntity(tweet).toMap());
+
+      final quotedBy = quoteTweet.quotedBy;
+      quotedBy?.add(reference);
+      
+      await firebaseFirestore
+          .collection('tweets')
+          .doc(quoteTweet.id)
+          .update({'quotedBy': quotedBy});
       return Right(true);
     } catch (error) {
       print(error);

@@ -25,7 +25,6 @@ class TimeLineRepositoryImpl implements TimeLineRepository {
   @override
   Future<Either<TimeLineFailure, StreamConverter>> fetchComments(
       TweetEntity tweet) async {
-        print(tweet.id);
     try {
       final tweetReference = firebaseFirestore
           .collection('tweets')
