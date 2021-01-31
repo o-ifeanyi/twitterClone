@@ -62,7 +62,7 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
         //   print(event);
         // });
         yield FetchingCommentsComplete(
-            commentStream: converter.fromQuery(converter.query));
+            commentStream: converter.fromQueryToTweets(converter.query));
       },
     );
   }

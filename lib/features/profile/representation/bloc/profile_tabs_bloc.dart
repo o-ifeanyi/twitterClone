@@ -124,7 +124,7 @@ class ProfileTabBloc extends Bloc<ProfileTabEvent, ProfileTabState> {
       yield FetchingUserTweetsFailed(message: failure.message);
     }, (converter) async* {
       yield FetchingUserTweetsComplete(
-          content: converter.fromQuery(converter.query));
+          content: converter.fromQueryToTweets(converter.query));
     });
   }
 
@@ -135,7 +135,7 @@ class ProfileTabBloc extends Bloc<ProfileTabEvent, ProfileTabState> {
       yield FetchingUserRepliesFailed(message: failure.message);
     }, (converter) async* {
       yield FetchingUserRepliesComplete(
-          content: converter.fromQuery(converter.query));
+          content: converter.fromQueryToTweets(converter.query));
     });
   }
 
@@ -146,7 +146,7 @@ class ProfileTabBloc extends Bloc<ProfileTabEvent, ProfileTabState> {
       yield FetchingUserMediasFailed(message: failure.message);
     }, (converter) async* {
       yield FetchingUserMediasComplete(
-          content: converter.fromQuery(converter.query));
+          content: converter.fromQueryToTweets(converter.query));
     });
   }
 
@@ -157,7 +157,7 @@ class ProfileTabBloc extends Bloc<ProfileTabEvent, ProfileTabState> {
       yield FetchingUserLikesFailed(message: failure.message);
     }, (converter) async* {
       yield FetchingUserLikesComplete(
-          content: converter.fromQuery(converter.query));
+          content: converter.fromQueryToTweets(converter.query));
     });
   }
 }

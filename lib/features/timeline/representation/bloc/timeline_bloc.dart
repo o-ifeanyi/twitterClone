@@ -78,11 +78,11 @@ class TimeLineBloc extends Bloc<TimeLineEvent, TimeLineState> {
         yield FetchingTweetError(message: failure.message);
       },
       (converter) async* {
-        // converter.toTweetEntity(converter.collection).listen((event) {
+        // converter.fromCollectionToTweets(converter.collection).listen((event) {
         //   print(event);
         // });
         yield FetchingTweetComplete(
-            tweetStream: converter.fromCollection(converter.collection));
+            tweetStream: converter.fromCollectionToTweets(converter.collection));
       },
     );
   }

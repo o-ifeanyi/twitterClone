@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fc_twitter/core/util/config.dart';
 import 'package:fc_twitter/features/tweeting/representation/pages/tweet_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -41,7 +40,7 @@ class RetweetButton extends StatelessWidget {
   bool isRetweeted() {
     if (_tweet == null || _profile == null) return false;
     return _tweet.retweetedBy.any(
-        (element) => (element as DocumentReference).path.endsWith(_profile.id));
+        (element) => element.path.endsWith(_profile.id));
   }
 
   @override

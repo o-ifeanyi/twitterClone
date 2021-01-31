@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fc_twitter/core/util/themes.dart';
 import 'package:fc_twitter/features/authentication/data/repository/user_repository.dart';
 import 'package:fc_twitter/features/authentication/representation/bloc/bloc.dart';
+import 'package:fc_twitter/features/notification/representation/bloc/notification_bloc.dart';
 import 'package:fc_twitter/features/profile/data/repository/profile_repository.dart.dart';
 import 'package:fc_twitter/features/profile/representation/bloc/image_picker_bloc.dart';
 import 'package:fc_twitter/features/profile/representation/bloc/profile_tabs_bloc.dart';
@@ -15,11 +16,15 @@ import 'package:fc_twitter/features/tweeting/domain/repository/tweeting_reposito
 import 'package:fc_twitter/features/tweeting/representation/bloc/bloc.dart';
 import 'package:fc_twitter/features/tweeting/representation/bloc/tweet_media_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get_it/get_it.dart';
+import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'features/authentication/domain/repository/user_repository.dart';
+import 'features/notification/data/repository/notification_repository.dart';
+import 'features/notification/domain/repository/notification_repository.dart';
 import 'features/profile/domain/repository/profile_repository.dart.dart';
 import 'features/profile/representation/bloc/profile_bloc.dart';
 import 'features/settings/data/model/theme_model.dart';
@@ -30,6 +35,7 @@ import 'features/timeline/representation/bloc/timeline_bloc.dart';
 
 final sl = GetIt.instance;
 Future<void> init() async {
+  final userId = FirebaseAuth.instance.currentUser.uid;
   final sharedPreferences = await SharedPreferences.getInstance();
   // Feature Autheentication
   // Bloc
@@ -44,6 +50,7 @@ Future<void> init() async {
   sl.registerLazySingleton<UserRepository>(() => UserRepositoryImpl(
         firebaseAuth: sl(),
         firebaseFirestore: sl(),
+        firebaseMessaging: sl(),
       ));
 
   // Feature TimeLine
@@ -99,7 +106,8 @@ Future<void> init() async {
   // Bloc
   sl.registerFactory(() => TweetingBloc(
         initialState: sl(),
-        tweetingRepository: sl()
+        tweetingRepository: sl(),
+        notificationRepository: sl(),
       ));
 
   sl.registerFactory(() => TweetMediaBloc(
@@ -116,6 +124,23 @@ Future<void> init() async {
         firebaseFirestore: sl(),
         firebaseStorage: sl(),
       ));
+
+  // Feature Notification
+  // Bloc
+  sl.registerFactory(() => NotificationBloc(
+        initialState: sl(),
+        notificationRepository: sl(),
+      )..add(FetchNotifications(userId: userId)));
+
+  // State
+  sl.registerLazySingleton<NotificationState>(() => InitialNotificationState());
+
+  // Repository
+  sl.registerLazySingleton<NotificationRepository>(() => NotificationRepositoryImpl(
+    firebaseFirestore: sl(),
+    firebaseMessaging: sl(),
+    httpClient: sl(),
+  ));
 
   // Feature Setting
   // Bloc
@@ -144,7 +169,9 @@ Future<void> init() async {
       ));
 
   // Externals
+  sl.registerLazySingleton<Client>(() => Client());
   sl.registerLazySingleton<FirebaseAuth>(() => FirebaseAuth.instance);
+  sl.registerLazySingleton<FirebaseMessaging>(() => FirebaseMessaging());
   sl.registerLazySingleton<FirebaseFirestore>(() => FirebaseFirestore.instance);
   sl.registerLazySingleton<FirebaseStorage>(() => FirebaseStorage.instance);
   sl.registerLazySingleton<SharedPreferences>(() => sharedPreferences);

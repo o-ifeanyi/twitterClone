@@ -1,3 +1,4 @@
+import 'package:fc_twitter/features/notification/representation/bloc/notification_bloc.dart';
 import 'package:fc_twitter/features/profile/representation/pages/edit_profile_screen.dart';
 import 'package:fc_twitter/features/profile/representation/pages/profile_screen.dart';
 import 'package:fc_twitter/features/settings/representation/bloc/theme_bloc.dart';
@@ -29,6 +30,7 @@ void main() async {
         BlocProvider<TimeLineBloc>(create: (_) => sl<TimeLineBloc>()),
         BlocProvider<CommentBloc>(create: (_) => sl<CommentBloc>()),
         BlocProvider<TweetingBloc>(create: (_) => sl<TweetingBloc>()),
+        BlocProvider<NotificationBloc>(create: (_) => sl<NotificationBloc>()),
         BlocProvider<ProfileBloc>(create: (_) => sl<ProfileBloc>()),
         BlocProvider<TweetMediaBloc>(create: (_) => sl<TweetMediaBloc>()),
         BlocProvider<ThemeBloc>(create: (_) => sl<ThemeBloc>()),

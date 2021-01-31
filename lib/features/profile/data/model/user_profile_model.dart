@@ -7,6 +7,7 @@ class UserProfileModel extends UserProfileEntity {
     @required id,
     @required name,
     @required userName,
+    token,
     bio,
     location,
     website,
@@ -18,6 +19,7 @@ class UserProfileModel extends UserProfileEntity {
     followers,
   }) : super(
           id: id,
+          token: token,
           name: name,
           userName: userName,
           bio: bio,
@@ -35,6 +37,7 @@ class UserProfileModel extends UserProfileEntity {
     final data = userDoc.data();
     return UserProfileModel(
       id: userDoc.id,
+      token: data['token'],
       name: data['name'],
       userName: data['userName'],
       bio: data['bio'] ?? '',
@@ -44,14 +47,15 @@ class UserProfileModel extends UserProfileEntity {
       dateJoined: data['dateJoined'],
       profilePhoto: data['profilePhoto'] ?? '',
       coverPhoto: data['coverPhoto'] ?? '',
-      following: data['following'] ?? List(),
-      followers: data['followers'] ?? List(),
+      following: data['following'] ?? List<DocumentReference>(),
+      followers: data['followers'] ?? List<DocumentReference>(),
     );
   }
 
   factory UserProfileModel.fromEntity(UserProfileEntity entity) {
     return UserProfileModel(
       id: entity.id,
+      token: entity.token,
       name: entity.name,
       userName: entity.userName,
       bio: entity.bio,
@@ -69,6 +73,7 @@ class UserProfileModel extends UserProfileEntity {
   UserProfileEntity toEntity() {
     return UserProfileEntity(
       id: this.id,
+      token: this.token,
       name: this.name,
       userName: this.userName,
       bio: this.bio,
@@ -86,6 +91,7 @@ class UserProfileModel extends UserProfileEntity {
   Map<String, dynamic> toMap() {
     return {
       'id': this.id,
+      'token': this.token,
       'name': this.name,
       'userName': this.userName,
       'bio': this.bio,

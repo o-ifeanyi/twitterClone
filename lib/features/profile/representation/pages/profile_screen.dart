@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fc_twitter/core/util/config.dart';
 import 'package:fc_twitter/features/profile/domain/entity/user_profile_entity.dart';
 import 'package:fc_twitter/features/profile/representation/bloc/profile_bloc.dart';
@@ -48,9 +47,7 @@ class ProfileScreen extends StatelessWidget {
                               : true,
                           isFollowing: userProfile != null
                               ? state.userProfile.following?.any((element) =>
-                                  (element as DocumentReference)
-                                      .path
-                                      .endsWith(userProfile?.id))
+                                  element.path.endsWith(userProfile?.id))
                               : false,
                         );
                       }

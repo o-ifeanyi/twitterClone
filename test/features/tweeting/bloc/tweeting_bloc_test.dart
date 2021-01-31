@@ -16,14 +16,17 @@ void main() {
   UserProfileEntity userProfile;
   TweetingBloc tweetingBloc;
   MockTweetingRepository mockTweetingRepository;
+  MockNotificationRepository mockNotificationRepository;
 
   setUp(() {
     tweetEntity = tweetEntityFixture();
     userProfile = userProfileEntityFixture();
     mockTweetingRepository = MockTweetingRepository();
+    mockNotificationRepository = MockNotificationRepository();
     tweetingBloc = TweetingBloc(
       initialState: InitialTweetingState(),
       tweetingRepository: mockTweetingRepository,
+      notificationRepository: mockNotificationRepository,
     );
   });
 
@@ -62,6 +65,9 @@ void main() {
   group('tweeting bloc LikeTweet', () {
     test('should emit [TweetingComplete] when successful', () async {
       when(mockTweetingRepository.likeTweet(any, any)).thenAnswer(
+        (_) => Future.value(Right(true)),
+      );
+      when(mockNotificationRepository.sendLikeNotification(any)).thenAnswer(
         (_) => Future.value(Right(true)),
       );
 
@@ -215,7 +221,8 @@ void main() {
       ];
       expectLater(tweetingBloc, emitsInOrder(expectations));
 
-      tweetingBloc.add(Comment(userProfile: userProfile, comment: tweetEntity, tweet: tweetEntity));
+      tweetingBloc.add(Comment(
+          userProfile: userProfile, comment: tweetEntity, tweet: tweetEntity));
     });
   });
 
@@ -235,7 +242,9 @@ void main() {
       expectLater(tweetingBloc, emitsInOrder(expectations));
 
       tweetingBloc.add(QuoteTweet(
-          userProfile: userProfile, quoteTweet: tweetEntity, tweet: tweetEntity));
+          userProfile: userProfile,
+          quoteTweet: tweetEntity,
+          tweet: tweetEntity));
     });
 
     test('should emit [TweetingError] when sending tweet fails', () async {
@@ -244,8 +253,8 @@ void main() {
               tweet: tweetEntity,
               quoteTweet: tweetEntity))
           .thenAnswer(
-        (_) =>
-            Future.value(Left(TweetingFailure(message: 'Failed to quote tweet'))),
+        (_) => Future.value(
+            Left(TweetingFailure(message: 'Failed to quote tweet'))),
       );
 
       final expectations = [
@@ -253,7 +262,10 @@ void main() {
       ];
       expectLater(tweetingBloc, emitsInOrder(expectations));
 
-      tweetingBloc.add(QuoteTweet(userProfile: userProfile, quoteTweet: tweetEntity, tweet: tweetEntity));
+      tweetingBloc.add(QuoteTweet(
+          userProfile: userProfile,
+          quoteTweet: tweetEntity,
+          tweet: tweetEntity));
     });
   });
 }

@@ -72,6 +72,7 @@ void main() {
         'name': 'ifeanyi',
         'userName': 'onuoha',
         'location': 'Abuja',
+        'token': null,
         'bio': null,
         'website': null,
         'dateOfBirth': null,

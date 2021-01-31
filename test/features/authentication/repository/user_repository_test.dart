@@ -16,6 +16,7 @@ void main() {
   MockFireBaseAuth mockFireBaseAuth;
   FirebaseFirestore mockFirebaseFirestore;
   MockUserCredential mockUserCredential;
+  MockFirebaseMessaging mockFirebaseMessaging;
   UserRepositoryImpl fireBaseUserRepositoryImpl;
   MockCollectionReference collectionReference;
   MockDocumentReference documentReference;
@@ -27,12 +28,15 @@ void main() {
     mockUser = MockFireBaseUser();
     mockFireBaseAuth = MockFireBaseAuth();
     mockUserCredential = MockUserCredential();
+    mockFirebaseMessaging = MockFirebaseMessaging();
     mockFirebaseFirestore = MockFirebaseFirestore();
     collectionReference = MockCollectionReference();
     documentReference = MockDocumentReference();
     fireBaseUserRepositoryImpl = UserRepositoryImpl(
-        firebaseAuth: mockFireBaseAuth,
-        firebaseFirestore: mockFirebaseFirestore);
+      firebaseAuth: mockFireBaseAuth,
+      firebaseFirestore: mockFirebaseFirestore,
+      firebaseMessaging: mockFirebaseMessaging,
+    );
   });
 
   group('user repository signUpNewUser', () {
@@ -95,6 +99,7 @@ void main() {
           .thenReturn(collectionReference);
       when(collectionReference.doc(any)).thenReturn(documentReference);
       when(documentReference.set(any)).thenAnswer((realInvocation) => null);
+      when(mockFirebaseMessaging.getToken()).thenAnswer((_) => Future.value('token'));
 
       final user =
           await fireBaseUserRepositoryImpl.saveUserDetail(userProfileModel);

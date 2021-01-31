@@ -98,7 +98,7 @@ class TweetingRepositoryImpl implements TweetingRepository {
     try {
       final likedBy = tweet.likedBy;
       likedBy?.removeWhere((element) =>
-          (element as DocumentReference).path.endsWith(userProfile.id));
+          element.path.endsWith(userProfile.id));
       tweet = tweet.copyWith(likedBy: likedBy);
       await firebaseFirestore
           .collection('tweets')
@@ -151,7 +151,7 @@ class TweetingRepositoryImpl implements TweetingRepository {
     try {
       final retweetedBy = tweet.retweetedBy;
       retweetedBy?.removeWhere((element) =>
-          (element as DocumentReference).path.endsWith(userProfile.id));
+          element.path.endsWith(userProfile.id));
       tweet = tweet.copyWith(retweetedBy: retweetedBy);
       await firebaseFirestore
           .collection('tweets')
@@ -238,7 +238,7 @@ class TweetingRepositoryImpl implements TweetingRepository {
 
       final quotedBy = quoteTweet.quotedBy;
       quotedBy?.add(reference);
-      
+
       await firebaseFirestore
           .collection('tweets')
           .doc(quoteTweet.id)
@@ -250,3 +250,5 @@ class TweetingRepositoryImpl implements TweetingRepository {
     }
   }
 }
+
+    

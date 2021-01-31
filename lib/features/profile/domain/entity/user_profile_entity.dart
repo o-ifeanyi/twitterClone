@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/rendering.dart';
 
 class UserProfileEntity extends Equatable {
   final String id;
+  final String token;
   final String name;
   final String userName;
   final String bio;
@@ -12,11 +14,12 @@ class UserProfileEntity extends Equatable {
   final String dateJoined;
   final dynamic profilePhoto;
   final dynamic coverPhoto;
-  final List following;
-  final List followers;
+  final List<DocumentReference> following;
+  final List<DocumentReference> followers;
 
   UserProfileEntity({
     this.id,
+    this.token,
     this.name,
     this.userName,
     this.bio,
@@ -34,6 +37,7 @@ class UserProfileEntity extends Equatable {
 
   UserProfileEntity copyWith({
     String name,
+    String token,
     String bio,
     String location,
     String website,
@@ -44,6 +48,7 @@ class UserProfileEntity extends Equatable {
   }) {
     return UserProfileEntity(
       id: this.id,
+      token: token ?? this.token,
       userName: this.userName,
       name: name ?? this.name,
       bio: bio ?? this.bio,

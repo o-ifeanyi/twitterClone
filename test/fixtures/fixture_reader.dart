@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fc_twitter/features/authentication/data/model/user_model.dart';
 import 'package:fc_twitter/features/authentication/domain/user_entity/user_entity.dart';
+import 'package:fc_twitter/features/notification/data/model/notification_model.dart';
+import 'package:fc_twitter/features/notification/domain/entity/notification_entity.dart';
 import 'package:fc_twitter/features/profile/data/model/user_profile_model.dart';
 import 'package:fc_twitter/features/profile/domain/entity/user_profile_entity.dart';
 import 'package:fc_twitter/features/settings/data/model/theme_model.dart';
@@ -65,6 +67,7 @@ String jsonUserProfileFixture() => json.encode({
       "name": "ifeanyi",
       "userName": "onuoha",
       "location": "Abuja",
+      "token": null,
       "bio": null,
       "website": null,
       "dateOfBirth": null,
@@ -103,4 +106,25 @@ String jsonTweetFixture() => json.encode({
       "message": "hello world",
       "timeStamp": "0s",
       "noOfComments": 0,
+    });
+
+NotificationEntity notificationEntityFixture() => NotificationEntity(
+      userId: '001',
+      userProfile: docReference,
+      tweet: docReference,
+      isSeen: false,
+    );
+
+NotificationModel notificationModelFixture() => NotificationModel(
+      userId: '001',
+      userProfile: docReference,
+      tweet: docReference,
+      isSeen: false,
+    );
+
+String jsonNotificationFixture() => json.encode({
+      "userId": "001",
+      "userProfile": docReference,
+      "tweet": docReference,
+      "isSeen": false,
     });

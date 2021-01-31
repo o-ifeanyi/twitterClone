@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fc_twitter/features/profile/domain/entity/user_profile_entity.dart';
 import 'package:fc_twitter/features/tweeting/domain/entity/tweet_entity.dart';
 import 'package:fc_twitter/features/tweeting/representation/bloc/bloc.dart';
@@ -20,7 +19,7 @@ class LikeButton extends StatelessWidget {
 
   bool isLiked() {
     if (_tweet == null || _profile == null) return false;
-    return _tweet.likedBy.any((element) => (element as DocumentReference).path.endsWith(_profile?.id));
+    return _tweet.likedBy?.any((element) => element.path.endsWith(_profile?.id));
   }
 
   @override

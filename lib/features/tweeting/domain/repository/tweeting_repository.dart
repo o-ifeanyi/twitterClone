@@ -6,10 +6,14 @@ import 'package:multi_image_picker/multi_image_picker.dart';
 
 abstract class TweetingRepository {
   Future<Either<TweetingFailure, bool>> comment(
-      {UserProfileEntity userProfile, TweetEntity tweet, TweetEntity commentTweet});
+      {UserProfileEntity userProfile,
+      TweetEntity tweet,
+      TweetEntity commentTweet});
 
   Future<Either<TweetingFailure, bool>> quoteTweet(
-      {UserProfileEntity userProfile, TweetEntity tweet, TweetEntity quoteTweet});
+      {UserProfileEntity userProfile,
+      TweetEntity tweet,
+      TweetEntity quoteTweet});
 
   Future<Either<TweetingFailure, bool>> sendTweet(
       UserProfileEntity userProfile, TweetEntity tweet);
@@ -28,5 +32,6 @@ abstract class TweetingRepository {
 
   Future<Either<TweetingFailure, List<Asset>>> pickImages();
 
-  Future<Either<TweetingFailure, List<String>>> uploadImages(List<Asset> images);
+  Future<Either<TweetingFailure, List<String>>> uploadImages(
+      List<Asset> images);
 }
